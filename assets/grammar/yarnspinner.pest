@@ -1,0 +1,33 @@
+WHITESPACE = _{ " " }
+title = @{ (ASCII_ALPHANUMERIC | "_" )+ }
+title_header = _{ "title:" ~ title ~ NEWLINE }
+position_number = @{ ("-")? ~ (ASCII_DIGIT)+ }
+position = _{ "position: " ~ position_number ~ "," ~ position_number ~ NEWLINE}
+section_start = _{ "---" ~ NEWLINE }
+section_end = _{ "===" ~ NEWLINE }
+speaker = { (ASCII_ALPHANUMERIC)+ }
+dialog = { (!(if_statement | NEWLINE) ~ ANY)+ }
+
+condition = { "==" | "!=" }
+if_statement = { "<<if" ~ "$" ~ variable_name ~ condition ~ boolean_value ~ ">>" }
+
+dialog_line = { speaker ~ ":" ~ dialog ~ (if_statement)? ~ NEWLINE  }
+option_line = { "->" ~ dialog_line ~ jump_line }
+jump_line = { "<<jump" ~ title ~ ">>" ~ NEWLINE}
+option_lines = { (option_line)+ }
+
+variable_name = @{ (ASCII_ALPHANUMERIC | "_" )+ }
+boolean_value = { "true" | "false" }
+set_line = { "<<set" ~ "$" ~ variable_name ~ "to" ~ boolean_value ~ ">>" ~ NEWLINE }
+
+section_content = { (dialog_line | option_lines | jump_line | set_line )+ }
+
+section = { title_header ~ position ~ section_start ~ (section_content) ~ section_end }
+sections = _{ (section)* }
+
+yarnspinner = _{ SOI ~ sections ~ EOI }
+
+
+
+
+

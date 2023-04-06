@@ -1,0 +1,52 @@
+title: Librarian1PlayerConversationIntro
+position: 150,-475
+---
+<<set $knows_about_marriage to false>>
+Player: Dzien dobry Pani..
+Librarian1: Julio
+Player: .. Pani Julio, mam kilka pytan jesli mozna..
+Librarian1: Alez oczywiscie
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Librarian1PlayerPossibleQuestions
+position: 154,-189
+---
+-> Player: Znala Pani Denata?
+    <<jump Librarian1PlayerKnows>>
+-> Player: Dlugo Pani tu pracuje?
+    <<jump Librarian1PlayerWorking>>
+-> Player: Zonaty? Jak nazywa sie jego zona? <<if $knows_about_marriage == true>>
+    <<jump Librarian1Marriage>>
+-> Player: To wszystko, dziekuje
+    <<jump Librarian1PlayerOutro>>
+===
+title: Librarian1PlayerKnows
+position: 696,138
+---
+Librarian1: Znalam, to Pan Robert, przychodzil tu co tydzien poczytac gazety.
+Player: Wie Pani o nim cos wiecej?
+Librarian1: Nie za bardzo, duzo nie mowil. Wiem tylko ze byl zonaty
+<<set $knows_about_marriage to true>>
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Librarian1PlayerWorking
+position: -172,-4
+---
+Player: Jak dlugo Pani tu pracuje?
+Librarian1: Juz od 2 lat
+Player: To nie tak dlugo.
+Librarian1: Jak dla kogo
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Librarian1Marriage
+position: 501,217
+---
+Librarian1: Nazywala sie X Y, rowniez czesto tutaj przychodzi po ksiazki dla dzieci
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Librarian1PlayerOutro
+position: -34,286
+---
+Player: To wszystko z mojej strony.
+Librarian1: Dziekuje za rozmowe
+===
