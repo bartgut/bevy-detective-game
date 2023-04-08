@@ -1,6 +1,7 @@
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use crate::game_state::GameState;
+use crate::level_state::LevelState;
 use super::components::*;
 
 pub fn initialize_main_menu_ui(

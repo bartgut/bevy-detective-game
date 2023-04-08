@@ -1,12 +1,22 @@
-mod parsing;
-mod dialogs;
-mod main_menu;
-mod game_state;
+pub mod parsing;
+pub mod dialogs;
+pub mod main_menu;
+pub mod game_state;
+pub mod in_game_state;
+pub mod level_state;
+pub mod levels;
+pub mod player;
+pub mod movement;
 
 use bevy::prelude::*;
 use crate::dialogs::DialogsPlugin;
+use crate::levels::TrainPlatformLevelPlugin;
 use crate::game_state::GameState;
+use crate::in_game_state::InGameState;
+use crate::level_state::LevelState;
 use crate::main_menu::MainMenuPlugin;
+use crate::movement::MovementPlugin;
+use crate::player::PlayerPlugin;
 use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
 
 extern crate pest;
@@ -19,9 +29,14 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::BLACK))
         .add_state::<GameState>()
+        .add_state::<InGameState>()
+        .add_state::<LevelState>()
         .add_plugin(DialogsPlugin)
         .add_plugin(MainMenuPlugin)
+        .add_plugin(TrainPlatformLevelPlugin)
+        .add_plugin(PlayerPlugin)
         .add_plugins(DefaultPlugins)
+        .add_plugin(MovementPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)
