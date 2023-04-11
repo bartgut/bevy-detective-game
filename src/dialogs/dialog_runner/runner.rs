@@ -1,32 +1,36 @@
+use crate::dialogs::dialog_runner::context::StateContext;
 use super::components::*;
 use crate::parsing::yarnspinner::components::*;
+use bevy::utils::HashMap;
 
-pub struct DialogRunner {
+pub struct DialogRunner<T: StateContext + Default> {
     nodes: Vec<Node>,
     current_node: Node,
     current_line: LineType,
     current_line_index: usize,
-    dialog_state: DialogState
+    dialog_state: DialogState,
+    context: T
 }
 
-impl DialogRunner {
+impl<T: StateContext + Default> DialogRunner<T> {
 
-    pub fn create_from_nodes(nodes: Vec<Node>, start_node: &str) -> DialogRunner {
+    pub fn create_from_nodes(nodes: Vec<Node>, start_node: &str) -> Self {
         let current_node = nodes.iter()
             .find(|node| node.title == start_node)
             .unwrap()
             .clone();
         let current_line = current_node.lines.first().unwrap().clone();
-        DialogRunner {
+        Self {
             nodes,
             current_node,
             current_line,
             current_line_index: 0,
-            dialog_state: DialogState::Start
+            dialog_state: DialogState::Start,
+            context: T::default()
         }
     }
 
-    fn line_to_event(line: &LineType) -> Option<DialogEvent> {
+    fn line_to_event(&self, line: &LineType) -> Option<DialogEvent> {
         match line {
             LineType::DialogLine { speaker, text, condition } => {
                 Some(DialogEvent::Dialog { speaker: speaker.clone(), text: text.clone() })
@@ -34,6 +38,7 @@ impl DialogRunner {
             LineType::OptionLine { speaker, possibilites } => {
                 let options = possibilites
                     .iter()
+                    .filter(|&x| self.passes_condition(x))
                     .map(|possibility| (possibility.text.clone(), possibility.jump_to_node.clone()))
                     .collect();
                 Some(DialogEvent::Options { speaker: speaker.clone(), options })
@@ -42,10 +47,29 @@ impl DialogRunner {
         }
     }
 
-    fn update_context(&self) {
+    fn passes_condition(&self, possibility: &OptionPossibility) -> bool {
+        match &possibility.condition {
+            Some(condition) => {
+                match self.context.get_value(&condition.variable_name) {
+                    Some(value) => {
+                        match condition.condition.as_str() {
+                            "==" => value == &condition.value.parse::<bool>().unwrap(),
+                            "!=" => value != &condition.value.parse::<bool>().unwrap(),
+                            _ => false
+                        }
+                    },
+                    None => false
+                }
+            },
+            None => true
+        }
+    }
+
+    fn update_context(&mut self) {
         match &self.current_line {
             LineType::SetLine { variable_name, value } => {
-                println!("set {} to {} - LOGIC NOT IMPLEMENTED YET", variable_name, value);
+                println!("Setting {} to {}", variable_name, value);
+                self.context.set_value(variable_name, value);
             },
             _ => {}
         }
@@ -96,8 +120,8 @@ impl DialogRunner {
             DialogState::Start => {
                 self.update_context();
                 self.perform_jump();
-                let event = DialogRunner::line_to_event(&self.current_line);
-                let new_state = DialogRunner::event_to_dialog_state(&event);
+                let event = self.line_to_event(&self.current_line);
+                let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
                 match new_state {
@@ -108,8 +132,8 @@ impl DialogRunner {
             DialogState::Dialog => {
                 self.update_context();
                 self.perform_jump();
-                let event = DialogRunner::line_to_event(&self.current_line);
-                let new_state = DialogRunner::event_to_dialog_state(&event);
+                let event = self.line_to_event(&self.current_line);
+                let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
                 match new_state {

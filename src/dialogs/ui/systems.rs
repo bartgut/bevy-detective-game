@@ -2,6 +2,7 @@ use super::components::*;
 use bevy::prelude::*;
 use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialogs::resource::*;
+use crate::npc::components::CanStartDialog;
 
 pub fn build_dialog_ui_from_event(mut commands: &mut Commands,
                                   asset_server: Res<AssetServer>,
@@ -217,19 +218,22 @@ pub fn mouse_button_input(
     mut dialogs: ResMut<Dialogs>,
     dialog_query: Query<Entity, With<DialogUI>>,
     option_query: Query<Entity, With<OptionUI>>,
+    npc_dialog: Query<Entity, With<CanStartDialog>>
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        let event = dialogs.runner.next_event();
-        match event {
-            DialogEvent::Waiting => {}
-            _ => {
-                if let Ok(dialog_entity) = dialog_query.get_single() {
-                    commands.entity(dialog_entity).despawn_recursive();
+        if (!npc_dialog.is_empty()) {
+            let event = dialogs.runner.next_event();
+            match event {
+                DialogEvent::Waiting => {}
+                _ => {
+                    if let Ok(dialog_entity) = dialog_query.get_single() {
+                        commands.entity(dialog_entity).despawn_recursive();
+                    }
+                    if let Ok(option_entity) = option_query.get_single() {
+                        commands.entity(option_entity).despawn_recursive();
+                    }
+                    build_dialog_ui_from_event(&mut commands, asset_server, &event);
                 }
-                if let Ok(option_entity) = option_query.get_single() {
-                    commands.entity(option_entity).despawn_recursive();
-                }
-                build_dialog_ui_from_event(&mut commands, asset_server, &event);
             }
         }
     }

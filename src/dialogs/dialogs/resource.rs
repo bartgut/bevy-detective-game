@@ -2,11 +2,12 @@ use bevy::prelude::*;
 use crate::dialogs::dialog_runner::runner::*;
 use crate::parsing::yarnspinner::*;
 use bevy::time::TimerMode::Repeating;
+use bevy::utils::HashMap;
 
 #[derive(Resource)]
 pub struct Dialogs {
     pub name: String,
-    pub runner: DialogRunner,
+    pub runner: DialogRunner<HashMap<String, bool>>,
     pub timer: Timer
 }
 

@@ -41,7 +41,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                 _ => unreachable!()
                                             }
                                         }
-                                        node.lines.push(LineType::SetLine { variable_name: variable_name, value: false });
+                                        node.lines.push(LineType::SetLine { variable_name: variable_name, value: value });
                                     },
                                     Rule::dialog_line => {
                                         let mut speaker = "".to_string();
@@ -70,11 +70,11 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                 Rule::option_line => {
                                                     let mut text = "".to_string();
                                                     let mut node_title = "".to_string();
+                                                    let mut condition: Option<Condition> = None;
                                                     for option_line_field in option_lines_field.into_inner() {
                                                         match option_line_field.as_rule() {
                                                             Rule::dialog_line => {
                                                                 let mut speaker = "".to_string();
-                                                                let mut condition: Option<Condition> = None;
                                                                 for dialog_line_field in option_line_field.into_inner() {
                                                                     match dialog_line_field.as_rule() {
                                                                         Rule::speaker => {
@@ -84,6 +84,24 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                                             text = dialog_line_field.as_str().to_string();
                                                                         },
                                                                         Rule::if_statement => {
+                                                                            let mut variable_name = "".to_string();
+                                                                            let mut condition_sign = "".to_string();
+                                                                            let mut value = "".to_string();
+                                                                            for if_statement_field in dialog_line_field.into_inner() {
+                                                                                match if_statement_field.as_rule() {
+                                                                                    Rule::variable_name => {
+                                                                                        variable_name = if_statement_field.as_str().to_string();
+                                                                                    },
+                                                                                    Rule::condition => {
+                                                                                        condition_sign = if_statement_field.as_str().to_string();
+                                                                                    },
+                                                                                    Rule::boolean_value => {
+                                                                                        value = if_statement_field.as_str().to_string();
+                                                                                    },
+                                                                                    _ => unreachable!()
+                                                                                }
+                                                                            }
+                                                                            condition = Some(Condition { variable_name: variable_name, condition: condition_sign, value: value });
                                                                         },
                                                                         _ => unreachable!()
                                                                     }
@@ -102,7 +120,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                             _ => unreachable!()
                                                         }
                                                     }
-                                                    optionPossiblitites.push(OptionPossibility { text: text, jump_to_node: node_title, condition: None });
+                                                    optionPossiblitites.push(OptionPossibility { text: text, jump_to_node: node_title, condition: condition });
                                                 }
                                                 _ => unreachable!()
                                             }

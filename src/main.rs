@@ -6,6 +6,7 @@ pub mod in_game_state;
 pub mod level_state;
 pub mod levels;
 pub mod player;
+pub mod npc;
 pub mod movement;
 
 use bevy::prelude::*;
@@ -16,6 +17,7 @@ use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 use crate::main_menu::MainMenuPlugin;
 use crate::movement::MovementPlugin;
+use crate::npc::NpcPlugin;
 use crate::player::PlayerPlugin;
 use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
 
@@ -37,6 +39,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugins(DefaultPlugins)
         .add_plugin(MovementPlugin)
+        .add_plugin(NpcPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)
