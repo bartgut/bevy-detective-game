@@ -2,4 +2,4 @@
 
 Bevy detective game
 
-![Bevy Detective Game](https://github.com/bartgut/bevy-detective-game/tree/master/readme_images/dialog_with_npc.png?raw=true)
+![Bevy Detective Game](https://raw.githubusercontent.com/bartgut/bevy-detective-game/master/readme_images/dialog_with_npc.png)
