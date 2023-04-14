@@ -4,5 +4,5 @@ use bevy::prelude::*;
 pub enum LevelState {
     #[default]
     None,
-    TrainPlatform
+    TrainPlatform,
 }

@@ -1,13 +1,13 @@
-pub mod parsing;
 pub mod dialogs;
-pub mod main_menu;
 pub mod game_state;
 pub mod in_game_state;
 pub mod level_state;
 pub mod levels;
-pub mod player;
-pub mod npc;
+pub mod main_menu;
 pub mod movement;
+pub mod npc;
+pub mod parsing;
+pub mod player;
 
 use bevy::prelude::*;
 use crate::dialogs::DialogsPlugin;
@@ -49,12 +49,11 @@ fn main() {
         .add_system(disappearing_setup)
         .add_system(type_writing_len_update)
         .add_system(type_writing_text_update)*/
-//        .add_system(test_dialog_func)
+        //        .add_system(test_dialog_func)
         //.add_startup_system(intro_setup)
         //.add_system(intro_text_show)
         .run()
 }
-
 
 //// To be moved later to separate files and add as a render type to the dialog runner
 
@@ -84,7 +83,7 @@ impl Default for AppearingTextSettings {
 struct TypeWritingTextSettings {
     text: String,
     every: f32,
-    cur_len: usize
+    cur_len: usize,
 }
 
 #[derive(Component)]
@@ -94,19 +93,19 @@ struct TypeWritingTextTimer(Timer);
 struct TypeWritingTextBundle {
     settings: TypeWritingTextSettings,
     timer: TypeWritingTextTimer,
-    text: TextBundle
+    text: TextBundle,
 }
 
-fn type_writing_text_setup(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>
-) {
+fn type_writing_text_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let my_string = String::from("Hello, world!\nSecond line, third world");
     commands.spawn(create_type_writing_text(&my_string, 0.15, asset_server));
 }
 
-fn create_type_writing_text(text_to_show: &String, period: f32,
-                            asset_server: Res<AssetServer>) -> TypeWritingTextBundle {
+fn create_type_writing_text(
+    text_to_show: &String,
+    period: f32,
+    asset_server: Res<AssetServer>,
+) -> TypeWritingTextBundle {
     return TypeWritingTextBundle {
         timer: TypeWritingTextTimer(Timer::from_seconds(period, TimerMode::Repeating)),
         text: TextBundle::from_section(
@@ -114,29 +113,30 @@ fn create_type_writing_text(text_to_show: &String, period: f32,
             TextStyle {
                 font: asset_server.load("fonts/Noir_regular.ttf"),
                 font_size: 50.0,
-                color: Color::WHITE.with_a(1.0)
-            }
-        ).with_text_alignment(TextAlignment::Left)
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                position: UiRect {
-                    bottom: Val::Px(400.0),
-                    right: Val::Px(600.0),
-                    ..default()
-                },
+                color: Color::WHITE.with_a(1.0),
+            },
+        )
+        .with_text_alignment(TextAlignment::Left)
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                bottom: Val::Px(400.0),
+                right: Val::Px(600.0),
                 ..default()
-            }),
+            },
+            ..default()
+        }),
         settings: TypeWritingTextSettings {
             text: text_to_show.clone(),
             every: period,
-            cur_len: 0
-        }
-    }
+            cur_len: 0,
+        },
+    };
 }
 
 fn type_writing_len_update(
     mut type_writing_query: Query<(&mut TypeWritingTextSettings, &mut TypeWritingTextTimer)>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
     for (mut setting, mut timer) in type_writing_query.iter_mut() {
         if timer.0.tick(time.delta()).just_finished() {
@@ -147,14 +147,11 @@ fn type_writing_len_update(
     }
 }
 
-fn type_writing_text_update(
-    mut query: Query<(&mut TypeWritingTextSettings, &mut Text)>
-) {
+fn type_writing_text_update(mut query: Query<(&mut TypeWritingTextSettings, &mut Text)>) {
     for (mut settings, mut text) in query.iter_mut() {
         text.sections[0].value = settings.text.chars().take(settings.cur_len).collect()
     }
 }
-
 
 /* Appearing text */
 #[derive(Component)]
@@ -185,13 +182,11 @@ enum State {
     APPEARING,
     VISIBLE,
     DISAPPEARING,
-    INVISIBLE
+    INVISIBLE,
 }
 ////////////////////////////
 
-fn appearing_text_setup(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>) {
+fn appearing_text_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let appearingText = AppearingTextBundle {
         not_visible_timer: NotVisibleTimer(Timer::from_seconds(2.0, TimerMode::Once)),
         appearing_timer: AppearingTimer(Timer::from_seconds(3.0, TimerMode::Once)),
@@ -203,80 +198,81 @@ fn appearing_text_setup(
             TextStyle {
                 font: asset_server.load("fonts/Noir_regular.ttf"),
                 font_size: 50.0,
-                color: Color::WHITE.with_a(0.0)
-            }
-        ).with_text_alignment(TextAlignment::Center)
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                position: UiRect {
-                    bottom: Val::Px(5.0),
-                    right: Val::Px(15.0),
-                    ..default()
-                },
+                color: Color::WHITE.with_a(0.0),
+            },
+        )
+        .with_text_alignment(TextAlignment::Center)
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                bottom: Val::Px(5.0),
+                right: Val::Px(15.0),
                 ..default()
-            })
+            },
+            ..default()
+        }),
     };
     commands.spawn(appearingText);
 }
 
-fn not_visible_setup(
-    time: Res<Time>,
-    mut query: Query<(&mut State, &mut NotVisibleTimer)>) {
-    for (mut state,mut timer) in query.iter_mut() {
+fn not_visible_setup(time: Res<Time>, mut query: Query<(&mut State, &mut NotVisibleTimer)>) {
+    for (mut state, mut timer) in query.iter_mut() {
         match *state {
             NOT_VISIBLE => {
                 if timer.0.tick(time.delta()).just_finished() {
                     *state = APPEARING;
                 }
             }
-            _ => ()
+            _ => (),
         }
     }
 }
 
 fn appearing_setup(
     time: Res<Time>,
-    mut query: Query<(&mut Text, &mut State, &mut AppearingTimer)>) {
-    for (mut text,mut state,mut timer) in query.iter_mut() {
+    mut query: Query<(&mut Text, &mut State, &mut AppearingTimer)>,
+) {
+    for (mut text, mut state, mut timer) in query.iter_mut() {
         match *state {
             APPEARING => {
                 if timer.0.tick(time.delta()).just_finished() {
                     *state = VISIBLE;
                 }
-                text.sections[0].style.color = Color::WHITE.with_a(1.0/timer.0.duration().as_secs_f32() * timer.0.elapsed_secs())
+                text.sections[0].style.color = Color::WHITE
+                    .with_a(1.0 / timer.0.duration().as_secs_f32() * timer.0.elapsed_secs())
             }
-            _ => ()
+            _ => (),
         }
     }
 }
 
-fn visible_setup(
-    time: Res<Time>,
-    mut query: Query<(&mut State, &mut VisibleTimer)>) {
-    for (mut state,mut timer) in query.iter_mut() {
+fn visible_setup(time: Res<Time>, mut query: Query<(&mut State, &mut VisibleTimer)>) {
+    for (mut state, mut timer) in query.iter_mut() {
         match *state {
             VISIBLE => {
                 if timer.0.tick(time.delta()).just_finished() {
                     *state = DISAPPEARING;
                 }
             }
-            _ => ()
+            _ => (),
         }
     }
 }
 
 fn disappearing_setup(
     time: Res<Time>,
-    mut query: Query<(&mut Text, &mut State, &mut DisappearingTimer)>) {
-    for (mut text,mut state,mut timer) in query.iter_mut() {
+    mut query: Query<(&mut Text, &mut State, &mut DisappearingTimer)>,
+) {
+    for (mut text, mut state, mut timer) in query.iter_mut() {
         match *state {
             DISAPPEARING => {
                 if timer.0.tick(time.delta()).just_finished() {
                     *state = NOT_VISIBLE;
                 }
-                text.sections[0].style.color = Color::WHITE.with_a(1.0 - 1.0/timer.0.duration().as_secs_f32() * timer.0.elapsed_secs())
+                text.sections[0].style.color = Color::WHITE
+                    .with_a(1.0 - 1.0 / timer.0.duration().as_secs_f32() * timer.0.elapsed_secs())
             }
-            _ => ()
+            _ => (),
         }
     }
 }
@@ -284,14 +280,14 @@ fn disappearing_setup(
 struct AppearingTextPlugin;
 
 impl Plugin for AppearingTextPlugin {
-    fn build(&self, app: &mut App) {
-    }
+    fn build(&self, app: &mut App) {}
 }
 
 fn intro_text_show(time: Res<Time>, mut query: Query<&mut Text, With<StartText>>) {
     let mut intro_text = query.single_mut();
     let seconds = time.elapsed_seconds();
-    intro_text.sections[0].style.color = Color::WHITE.with_a(intro_text.sections[0].style.color.a() + 0.005 * seconds)
+    intro_text.sections[0].style.color =
+        Color::WHITE.with_a(intro_text.sections[0].style.color.a() + 0.005 * seconds)
 }
 
 fn camera_setup(mut commands: Commands) {
@@ -307,18 +303,19 @@ fn intro_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             TextStyle {
                 font: asset_server.load("fonts/Noir_regular.ttf"),
                 font_size: 50.0,
-                color: Color::WHITE.with_a(0.0)
-            }
-        ).with_text_alignment(TextAlignment::Center)
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                position: UiRect {
-                    bottom: Val::Px(5.0),
-                    right: Val::Px(15.0),
-                    ..default()
-                },
+                color: Color::WHITE.with_a(0.0),
+            },
+        )
+        .with_text_alignment(TextAlignment::Center)
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                bottom: Val::Px(5.0),
+                right: Val::Px(15.0),
                 ..default()
-            }),
-   StartText
+            },
+            ..default()
+        }),
+        StartText,
     ));
 }

@@ -18,8 +18,9 @@ impl Plugin for MainMenuPlugin {
             .add_systems(
                 (
                     new_game_button_click.in_set(MainMenuInteractions),
-                    quit_game_button_interaction.in_set(MainMenuInteractions)
-                ).in_set(OnUpdate(GameState::MainMenu))
+                    quit_game_button_interaction.in_set(MainMenuInteractions),
+                )
+                    .in_set(OnUpdate(GameState::MainMenu)),
             );
     }
 }

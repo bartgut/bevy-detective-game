@@ -4,13 +4,19 @@ pub enum DialogState {
     Dialog,
     Waiting,
     Ready,
-    End
+    End,
 }
 
 #[derive(Clone, Debug)]
 pub enum DialogEvent {
-    Dialog { speaker: String, text: String },
-    Options { speaker: String, options: Vec<(String, String)>},
+    Dialog {
+        speaker: String,
+        text: String,
+    },
+    Options {
+        speaker: String,
+        options: Vec<(String, String)>,
+    },
     Waiting,
-    End
+    End,
 }

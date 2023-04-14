@@ -5,5 +5,5 @@ pub enum GameState {
     #[default]
     MainMenu,
     InGame,
-    GameOver
+    GameOver,
 }

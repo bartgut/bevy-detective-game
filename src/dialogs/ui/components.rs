@@ -14,5 +14,5 @@ pub struct OptionUI;
 
 #[derive(Component)]
 pub struct OptionUINode {
-    pub node_title: String
+    pub node_title: String,
 }

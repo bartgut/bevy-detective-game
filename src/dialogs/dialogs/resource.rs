@@ -8,7 +8,7 @@ use bevy::utils::HashMap;
 pub struct Dialogs {
     pub name: String,
     pub runner: DialogRunner<HashMap<String, bool>>,
-    pub timer: Timer
+    pub timer: Timer,
 }
 
 impl Dialogs {
@@ -17,7 +17,7 @@ impl Dialogs {
         Dialogs {
             name: "test".to_string(),
             runner: DialogRunner::create_from_nodes(nodes, start_node),
-            timer: Timer::from_seconds(1.0, Repeating)
+            timer: Timer::from_seconds(1.0, Repeating),
         }
     }
 }

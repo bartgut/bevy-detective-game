@@ -4,35 +4,35 @@ use crate::game_state::GameState;
 use crate::level_state::LevelState;
 use super::components::*;
 
-pub fn initialize_main_menu_ui(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>) {
-    commands.spawn((main_menu_bundle(), MainMenuUI))
+pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands
+        .spawn((main_menu_bundle(), MainMenuUI))
         .with_children(|parent| {
-            parent.spawn((main_menu_image(&asset_server), MainMenuImage)).with_children(|parent| {
-                parent.spawn((new_game_button(), StartGameButton))
-                    .with_children(|parent| {
-                        parent.spawn((new_game_text(&asset_server), StartGameText));
-                    });
-                parent.spawn((quit_game_button(), QuitGameButton))
-                    .with_children(|parent| {
-                        parent.spawn((quit_game_text(&asset_server), QuitGameText));
-                    });
-            });
+            parent
+                .spawn((main_menu_image(&asset_server), MainMenuImage))
+                .with_children(|parent| {
+                    parent
+                        .spawn((new_game_button(), StartGameButton))
+                        .with_children(|parent| {
+                            parent.spawn((new_game_text(&asset_server), StartGameText));
+                        });
+                    parent
+                        .spawn((quit_game_button(), QuitGameButton))
+                        .with_children(|parent| {
+                            parent.spawn((quit_game_text(&asset_server), QuitGameText));
+                        });
+                });
         });
 }
 
-pub fn despawn_main_menu_ui(
-    mut commands: Commands,
-    query: Query<Entity, With<MainMenuUI>>) {
+pub fn despawn_main_menu_ui(mut commands: Commands, query: Query<Entity, With<MainMenuUI>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }
 
 pub fn new_game_button_click(
-    mut button_query: Query<&Interaction,
-        (Changed<Interaction>, With<StartGameButton>),>,
+    mut button_query: Query<&Interaction, (Changed<Interaction>, With<StartGameButton>)>,
     mut text_query: Query<&mut Text, With<StartGameText>>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -56,10 +56,9 @@ pub fn new_game_button_click(
 }
 
 pub fn quit_game_button_interaction(
-    mut button_query: Query<&Interaction,
-        (Changed<Interaction>, With<QuitGameButton>),>,
+    mut button_query: Query<&Interaction, (Changed<Interaction>, With<QuitGameButton>)>,
     mut text_query: Query<&mut Text, With<QuitGameText>>,
-    mut exit: EventWriter<AppExit>
+    mut exit: EventWriter<AppExit>,
 ) {
     for interaction in button_query.iter_mut() {
         match *interaction {
@@ -131,17 +130,14 @@ fn new_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
             ..default()
         },
         text: Text {
-            sections: vec![
-                TextSection {
-                    value: "Nowa gra".to_string(),
-                    style: TextStyle {
-                        font: asset_server.load("fonts/Noir_regular.ttf"),
-                        font_size: 20.0,
-                        color: Color::WHITE,
-                    },
-
+            sections: vec![TextSection {
+                value: "Nowa gra".to_string(),
+                style: TextStyle {
+                    font: asset_server.load("fonts/Noir_regular.ttf"),
+                    font_size: 20.0,
+                    color: Color::WHITE,
                 },
-            ],
+            }],
             alignment: TextAlignment::Center,
             ..default()
         },
@@ -171,17 +167,14 @@ fn quit_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
             ..default()
         },
         text: Text {
-            sections: vec![
-                TextSection {
-                    value: "Koniec gry".to_string(),
-                    style: TextStyle {
-                        font: asset_server.load("fonts/Noir_regular.ttf"),
-                        font_size: 20.0,
-                        color: Color::WHITE,
-                    },
-
+            sections: vec![TextSection {
+                value: "Koniec gry".to_string(),
+                style: TextStyle {
+                    font: asset_server.load("fonts/Noir_regular.ttf"),
+                    font_size: 20.0,
+                    color: Color::WHITE,
                 },
-            ],
+            }],
             alignment: TextAlignment::Center,
             ..default()
         },

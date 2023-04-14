@@ -9,6 +9,5 @@ impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(linear_movement_added)
             .add_system(linear_movement_executor);
-
     }
 }

@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use crate::level_state::LevelState;
-use crate::npc::systems::{dialogable_npc_can_start_dialog, initialize_npc, print_when_hovered_over_npc};
+use crate::npc::systems::{
+    dialogable_npc_can_start_dialog, initialize_npc, print_when_hovered_over_npc,
+};
 
 pub mod components;
 pub mod systems;

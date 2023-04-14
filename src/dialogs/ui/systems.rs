@@ -6,102 +6,123 @@ use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 use crate::npc::components::{CanStartDialog, HoveredOverNPC};
 
-pub fn build_dialog_ui_from_event(mut commands: &mut Commands,
-                                  asset_server: Res<AssetServer>,
-                                  event: &DialogEvent) {
+pub fn build_dialog_ui_from_event(
+    mut commands: &mut Commands,
+    asset_server: Res<AssetServer>,
+    event: &DialogEvent,
+) {
     match event {
         DialogEvent::Dialog { speaker, text } => {
             build_dialog_ui(commands, asset_server, speaker, text);
         }
-        DialogEvent::Options { speaker, options} => {
+        DialogEvent::Options { speaker, options } => {
             build_options_ui(commands, asset_server, speaker, options)
         }
         _ => {}
     }
 }
 
-pub fn build_options_ui(mut commands: &mut Commands,
-                        asset_server: Res<AssetServer>,
-                        speaker: &String,
-                        options: &Vec<(String, String)>) {
+pub fn build_options_ui(
+    mut commands: &mut Commands,
+    asset_server: Res<AssetServer>,
+    speaker: &String,
+    options: &Vec<(String, String)>,
+) {
     commands
-        .spawn( (NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
-                flex_direction: FlexDirection::Row,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
-                position: UiRect {
-                    top: Val::Percent(80.0),
-                    ..default()
-                },
-                ..default()
-            },
-            background_color: Color::BLACK.into(),
-            ..default()
-        }, OptionUI))
-        .with_children(|parent| {
-            parent.spawn( (ImageBundle {
+        .spawn((
+            NodeBundle {
                 style: Style {
-                    size: Size::new(Val::Px(160.0), Val::Px(160.0)),
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    ..default()
-                },
-                image: asset_server.load("images/avatars/Player.png").into(),
-                ..default()
-            }, DialogUIImage));
-            parent.spawn( (NodeBundle {
-                style: Style {
-                    size: Size::new(Val::Auto, Val::Auto),
-                    flex_direction: FlexDirection::Column,
+                    size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
+                    flex_direction: FlexDirection::Row,
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                    position: UiRect {
+                        top: Val::Percent(80.0),
+                        ..default()
+                    },
                     ..default()
                 },
                 background_color: Color::BLACK.into(),
                 ..default()
-            }, DialogUI))
+            },
+            OptionUI,
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                ImageBundle {
+                    style: Style {
+                        size: Size::new(Val::Px(160.0), Val::Px(160.0)),
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    image: asset_server.load("images/avatars/Player.png").into(),
+                    ..default()
+                },
+                DialogUIImage,
+            ));
+            parent
+                .spawn((
+                    NodeBundle {
+                        style: Style {
+                            size: Size::new(Val::Auto, Val::Auto),
+                            flex_direction: FlexDirection::Column,
+                            justify_content: JustifyContent::Center,
+                            align_items: AlignItems::Center,
+                            gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                            ..default()
+                        },
+                        background_color: Color::BLACK.into(),
+                        ..default()
+                    },
+                    DialogUI,
+                ))
                 .with_children(|parent| {
                     for option in options {
-                        parent.spawn( (ButtonBundle {
-                            style: Style {
-                                size: Size::new(Val::Auto, Val::Auto),
-                                justify_content: JustifyContent::Center,
-                                align_items: AlignItems::Center,
-                                ..default()
-                            },
-                            background_color: Color::BLACK.into(),
-                            ..default()
-                        }, OptionUINode { node_title: option.1.to_string() }))
-                            .with_children(|parent| {
-                                parent.spawn( (TextBundle {
-                                    text: Text {
-                                        sections: vec![
-                                            TextSection {
-                                                value: option.0.to_string(),
-                                                style: TextStyle {
-                                                    font: asset_server.load("fonts/Noir_regular.ttf"),
-                                                    font_size: 20.0,
-                                                    color: Color::WHITE,
-                                                },
-
-                                            },
-                                        ],
-                                        alignment: TextAlignment::Center,
-                                        ..default()
-                                    },
+                        parent
+                            .spawn((
+                                ButtonBundle {
                                     style: Style {
-                                        direction: Direction::RightToLeft,
-                                        justify_content: JustifyContent::Start,
-                                        align_content: AlignContent::Start,
+                                        size: Size::new(Val::Auto, Val::Auto),
+                                        justify_content: JustifyContent::Center,
                                         align_items: AlignItems::Center,
                                         ..default()
                                     },
+                                    background_color: Color::BLACK.into(),
                                     ..default()
-                                }, DialogUIText));
+                                },
+                                OptionUINode {
+                                    node_title: option.1.to_string(),
+                                },
+                            ))
+                            .with_children(|parent| {
+                                parent.spawn((
+                                    TextBundle {
+                                        text: Text {
+                                            sections: vec![TextSection {
+                                                value: option.0.to_string(),
+                                                style: TextStyle {
+                                                    font: asset_server
+                                                        .load("fonts/Noir_regular.ttf"),
+                                                    font_size: 20.0,
+                                                    color: Color::WHITE,
+                                                },
+                                            }],
+                                            alignment: TextAlignment::Center,
+                                            ..default()
+                                        },
+                                        style: Style {
+                                            direction: Direction::RightToLeft,
+                                            justify_content: JustifyContent::Start,
+                                            align_content: AlignContent::Start,
+                                            align_items: AlignItems::Center,
+                                            ..default()
+                                        },
+                                        ..default()
+                                    },
+                                    DialogUIText,
+                                ));
                             });
                     }
                 });
@@ -109,84 +130,103 @@ pub fn build_options_ui(mut commands: &mut Commands,
 }
 
 //image + text on the bottom of the screen
-pub fn build_dialog_ui(mut commands: &mut Commands,
-                       asset_server: Res<AssetServer>,
-                       speaker: &String,
-                       text: &String) {
+pub fn build_dialog_ui(
+    mut commands: &mut Commands,
+    asset_server: Res<AssetServer>,
+    speaker: &String,
+    text: &String,
+) {
     commands
-        .spawn( (NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
-                flex_direction: FlexDirection::Row,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
-                position: UiRect {
-                    top: Val::Percent(80.0),
-                    ..default()
-                },
-                ..default()
-            },
-            background_color: Color::BLACK.into(),
-            ..default()
-        }, DialogUI))
-        .with_children(|parent| {
-            parent.spawn( (ImageBundle {
+        .spawn((
+            NodeBundle {
                 style: Style {
-                    size: Size::new(Val::Px(160.0), Val::Px(160.0)),
+                    size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
+                    flex_direction: FlexDirection::Row,
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    ..default()
-                },
-                image: asset_server.load(format!("images/avatars/{}.png", speaker)).into(),
-                ..default()
-            }, DialogUIImage));
-            parent.spawn( ButtonBundle {
-                style: Style {
-                    size: Size::new(Val::Auto, Val::Auto),
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
+                    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                    position: UiRect {
+                        top: Val::Percent(80.0),
+                        ..default()
+                    },
                     ..default()
                 },
                 background_color: Color::BLACK.into(),
                 ..default()
-            }).with_children(|parent| {
-                parent.spawn( (TextBundle {
-                    text: Text {
-                        sections: vec![
-                            TextSection {
-                                value: text.to_string(),
-                                style: TextStyle {
-                                    font: asset_server.load("fonts/Noir_regular.ttf"),
-                                    font_size: 20.0,
-                                    color: Color::WHITE,
-                                },
-
-                            },
-                        ],
-                        alignment: TextAlignment::Center,
-                        ..default()
-                    },
+            },
+            DialogUI,
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                ImageBundle {
                     style: Style {
-                        direction: Direction::RightToLeft,
-                        justify_content: JustifyContent::Start,
-                        align_content: AlignContent::Start,
+                        size: Size::new(Val::Px(160.0), Val::Px(160.0)),
+                        justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
-                        flex_wrap: FlexWrap::Wrap,
                         ..default()
                     },
+                    image: asset_server
+                        .load(format!("images/avatars/{}.png", speaker))
+                        .into(),
                     ..default()
-                }, DialogUIText));
-            });
+                },
+                DialogUIImage,
+            ));
+            parent
+                .spawn(ButtonBundle {
+                    style: Style {
+                        size: Size::new(Val::Auto, Val::Auto),
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    background_color: Color::BLACK.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent.spawn((
+                        TextBundle {
+                            text: Text {
+                                sections: vec![TextSection {
+                                    value: text.to_string(),
+                                    style: TextStyle {
+                                        font: asset_server.load("fonts/Noir_regular.ttf"),
+                                        font_size: 20.0,
+                                        color: Color::WHITE,
+                                    },
+                                }],
+                                alignment: TextAlignment::Center,
+                                ..default()
+                            },
+                            style: Style {
+                                direction: Direction::RightToLeft,
+                                justify_content: JustifyContent::Start,
+                                align_content: AlignContent::Start,
+                                align_items: AlignItems::Center,
+                                flex_wrap: FlexWrap::Wrap,
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        DialogUIText,
+                    ));
+                });
         });
-
 }
 
 pub fn interact_with_dialog_text(
-    mut button_query: Query<(&Interaction, &mut BackgroundColor, &mut Children, &OptionUINode),
-        Changed<Interaction>,>,
+    mut button_query: Query<
+        (
+            &Interaction,
+            &mut BackgroundColor,
+            &mut Children,
+            &OptionUINode,
+        ),
+        Changed<Interaction>,
+    >,
     mut text_query: Query<&mut Text>,
-    mut dialogs: ResMut<Dialogs>) {
+    mut dialogs: ResMut<Dialogs>,
+) {
     for (interaction, mut background_color, mut children, mut node) in button_query.iter_mut() {
         match *interaction {
             Interaction::Clicked => {
@@ -230,7 +270,7 @@ pub fn mouse_button_input(
     dialog_query: Query<Entity, With<DialogUI>>,
     option_query: Query<Entity, With<OptionUI>>,
     npc_dialog: Query<Entity, With<CanStartDialog>>,
-    mut game_state: ResMut<NextState<InGameState>>
+    mut game_state: ResMut<NextState<InGameState>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         let event = dialogs.runner.next_event();
