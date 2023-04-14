@@ -2,7 +2,9 @@ use super::components::*;
 use bevy::prelude::*;
 use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialogs::resource::*;
-use crate::npc::components::CanStartDialog;
+use crate::game_state::GameState;
+use crate::in_game_state::InGameState;
+use crate::npc::components::{CanStartDialog, HoveredOverNPC};
 
 pub fn build_dialog_ui_from_event(mut commands: &mut Commands,
                                   asset_server: Res<AssetServer>,
@@ -186,8 +188,6 @@ pub fn interact_with_dialog_text(
     mut text_query: Query<&mut Text>,
     mut dialogs: ResMut<Dialogs>) {
     for (interaction, mut background_color, mut children, mut node) in button_query.iter_mut() {
-        //println!("{:?}", children);
-        //println!("Any found?");
         match *interaction {
             Interaction::Clicked => {
                 dialogs.runner.make_decision(node.node_title.clone());
@@ -198,7 +198,6 @@ pub fn interact_with_dialog_text(
                         text.sections[0].style.color = Color::RED
                     }
                 }
-                //background_color.0 = Color::rgb(0.6, 0.6, 0.6);
             }
             Interaction::None => {
                 for child in children.iter() {
@@ -211,6 +210,18 @@ pub fn interact_with_dialog_text(
     }
 }
 
+pub fn start_dialog(
+    mut game_state: ResMut<NextState<InGameState>>,
+    npc_dialog: Query<Entity, With<HoveredOverNPC>>,
+    buttons: Res<Input<MouseButton>>,
+) {
+    if buttons.just_pressed(MouseButton::Left) {
+        if (!npc_dialog.is_empty()) {
+            game_state.set(InGameState::Dialog);
+        }
+    }
+}
+
 pub fn mouse_button_input(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -218,22 +229,31 @@ pub fn mouse_button_input(
     mut dialogs: ResMut<Dialogs>,
     dialog_query: Query<Entity, With<DialogUI>>,
     option_query: Query<Entity, With<OptionUI>>,
-    npc_dialog: Query<Entity, With<CanStartDialog>>
+    npc_dialog: Query<Entity, With<CanStartDialog>>,
+    mut game_state: ResMut<NextState<InGameState>>
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        if (!npc_dialog.is_empty()) {
-            let event = dialogs.runner.next_event();
-            match event {
-                DialogEvent::Waiting => {}
-                _ => {
-                    if let Ok(dialog_entity) = dialog_query.get_single() {
-                        commands.entity(dialog_entity).despawn_recursive();
-                    }
-                    if let Ok(option_entity) = option_query.get_single() {
-                        commands.entity(option_entity).despawn_recursive();
-                    }
-                    build_dialog_ui_from_event(&mut commands, asset_server, &event);
+        let event = dialogs.runner.next_event();
+        match event {
+            DialogEvent::Waiting => {}
+            DialogEvent::End => {
+                game_state.set(InGameState::InGame);
+                if let Ok(dialog_entity) = dialog_query.get_single() {
+                    commands.entity(dialog_entity).despawn_recursive();
                 }
+                if let Ok(option_entity) = option_query.get_single() {
+                    commands.entity(option_entity).despawn_recursive();
+                }
+                dialogs.runner.reset_to("Librarian1PlayerPossibleQuestions")
+            }
+            _ => {
+                if let Ok(dialog_entity) = dialog_query.get_single() {
+                    commands.entity(dialog_entity).despawn_recursive();
+                }
+                if let Ok(option_entity) = option_query.get_single() {
+                    commands.entity(option_entity).despawn_recursive();
+                }
+                build_dialog_ui_from_event(&mut commands, asset_server, &event);
             }
         }
     }

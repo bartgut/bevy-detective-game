@@ -162,4 +162,14 @@ impl<T: StateContext + Default> DialogRunner<T> {
             _ => {}
         }
     }
+
+    pub fn reset_to(&mut self, node_title: &str) {
+        self.current_node = self.nodes.iter()
+            .find(|node| node.title == node_title)
+            .unwrap()
+            .clone();
+        self.current_line = self.current_node.lines.first().unwrap().clone();
+        self.current_line_index = 0;
+        self.dialog_state = DialogState::Start;
+    }
 }

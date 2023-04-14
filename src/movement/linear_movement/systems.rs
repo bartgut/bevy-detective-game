@@ -2,6 +2,20 @@ use bevy::math::vec3;
 use bevy::prelude::*;
 use crate::movement::linear_movement::components::LinearMovementComponent;
 
+pub fn linear_movement_added(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Transform, &LinearMovementComponent), Changed<LinearMovementComponent>>,
+) {
+    for (entity, mut transform, movement) in query.iter_mut() {
+        let direction_vector_norm = (movement.to - transform.translation).normalize();
+        if (direction_vector_norm.x > 0.0) {
+            transform.rotation = Quat::from_rotation_y(0.0);
+        } else {
+            transform.rotation = Quat::from_rotation_y(std::f32::consts::PI);
+        }
+    }
+}
+
 pub fn linear_movement_executor(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &mut LinearMovementComponent)>,

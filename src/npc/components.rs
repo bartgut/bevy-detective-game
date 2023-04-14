@@ -8,3 +8,6 @@ pub struct DialogableNPC;
 
 #[derive(Component)]
 pub struct CanStartDialog;
+
+#[derive(Component)]
+pub struct HoveredOverNPC;
