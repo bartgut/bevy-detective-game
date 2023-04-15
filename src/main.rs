@@ -1,4 +1,6 @@
 pub mod dialogs;
+pub mod game_levels;
+pub mod game_npc;
 pub mod game_state;
 pub mod in_game_state;
 pub mod level_state;
@@ -10,14 +12,19 @@ pub mod parsing;
 pub mod player;
 
 use bevy::prelude::*;
+use bevy::utils::HashMap;
 use crate::dialogs::DialogsPlugin;
-use crate::levels::TrainPlatformLevelPlugin;
+use crate::game_levels::level_map;
+use crate::game_npc::npc_map;
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
+use crate::levels::LevelPlugin;
+use crate::levels::resource::LevelsResource;
 use crate::main_menu::MainMenuPlugin;
 use crate::movement::MovementPlugin;
 use crate::npc::NpcPlugin;
+use crate::npc::resource::NPCResource;
 use crate::player::PlayerPlugin;
 use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
 
@@ -30,12 +37,16 @@ extern crate pest_derive;
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::BLACK))
+        .insert_resource(LevelsResource {
+            levels: level_map(),
+        })
+        .insert_resource(NPCResource { npcs: npc_map() })
         .add_state::<GameState>()
         .add_state::<InGameState>()
         .add_state::<LevelState>()
         .add_plugin(DialogsPlugin)
         .add_plugin(MainMenuPlugin)
-        .add_plugin(TrainPlatformLevelPlugin)
+        .add_plugin(LevelPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugins(DefaultPlugins)
         .add_plugin(MovementPlugin)

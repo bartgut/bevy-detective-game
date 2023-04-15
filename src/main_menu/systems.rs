@@ -2,6 +2,7 @@ use bevy::app::AppExit;
 use bevy::prelude::*;
 use crate::game_state::GameState;
 use crate::level_state::LevelState;
+use crate::levels::systems::load_current_level;
 use super::components::*;
 
 pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -35,11 +36,13 @@ pub fn new_game_button_click(
     mut button_query: Query<&Interaction, (Changed<Interaction>, With<StartGameButton>)>,
     mut text_query: Query<&mut Text, With<StartGameText>>,
     mut game_state: ResMut<NextState<GameState>>,
+    mut level_state: ResMut<NextState<LevelState>>,
 ) {
     for interaction in button_query.iter_mut() {
         match *interaction {
             Interaction::Clicked => {
-                game_state.set(GameState::InGame);
+                level_state.set(LevelState::TrainPlatform);
+                game_state.set(GameState::LevelLoading);
             }
             Interaction::Hovered => {
                 for mut text in text_query.iter_mut() {

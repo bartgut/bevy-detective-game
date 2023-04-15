@@ -3,7 +3,6 @@ use crate::level_state::LevelState;
 
 #[derive(Component)]
 pub struct NPC {
-    pub level: LevelState,
     pub texture_file: String,
     pub level_initial_position: Vec3,
 }

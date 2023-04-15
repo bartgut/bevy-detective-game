@@ -78,7 +78,6 @@ impl<T: StateContext + Default> DialogRunner<T> {
                 variable_name,
                 value,
             } => {
-                println!("Setting {} to {}", variable_name, value);
                 self.context.set_value(variable_name, value);
             }
             _ => {}

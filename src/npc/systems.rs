@@ -2,18 +2,38 @@ use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use crate::level_state::LevelState;
-use crate::levels::components::TrainPlatformLevel;
+use crate::levels::components::CurrentLevelSprite;
+use crate::npc::resource::NPCResource;
 use crate::player::components::Player;
 use super::components::*;
 
-pub fn initialize_npc(
+pub fn initialize_npcs(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    level_query: Query<Entity, With<TrainPlatformLevel>>,
+    level_query: Query<Entity, With<CurrentLevelSprite>>,
+    levels: Res<NPCResource>,
 ) {
     let level = level_query.get_single().unwrap();
     commands.entity(level).with_children(|parent| {
-        parent.spawn((
+        for (npc, dialogable_npc) in levels.npcs.get(&LevelState::TrainPlatform).unwrap() {
+            parent.spawn((
+                SpriteBundle {
+                    texture: asset_server.load(format!("images/npc/{}", npc.texture_file)),
+                    transform: Transform::from_translation(npc.level_initial_position),
+                    ..default()
+                },
+                NPC {
+                    texture_file: npc.texture_file.clone(),
+                    level_initial_position: npc.level_initial_position,
+                },
+                DialogableNPC {
+                    dialog_file_name: dialogable_npc.dialog_file_name.clone(),
+                    start_node: dialogable_npc.start_node.clone(),
+                    reset_node: dialogable_npc.reset_node.clone(),
+                },
+            ));
+        }
+        /*parent.spawn((
             SpriteBundle {
                 texture: asset_server.load("images/npc/librarian.png"),
                 transform: Transform::from_xyz(-100.0, -120.0, 0.0), // move to struct with a start_position field
@@ -21,7 +41,7 @@ pub fn initialize_npc(
             },
             NPC {
                 level: LevelState::TrainPlatform,
-                texture_file: String::from("images/npc/librarian.png"),
+                texture_file: String::from("librarian.png"),
                 level_initial_position: Vec3::new(-100.0, -120.0, 0.0),
             },
             DialogableNPC {
@@ -29,7 +49,7 @@ pub fn initialize_npc(
                 start_node: String::from("Librarian1PlayerConversationIntro"),
                 reset_node: String::from("Librarian1PlayerPossibleQuestions"),
             },
-        ));
+        ));*/
     });
 }
 
@@ -63,7 +83,7 @@ pub fn print_when_hovered_over_npc(
     mut commands: Commands,
     mut cursor_evr: EventReader<CursorMoved>,
     mut window_query: Query<&mut Window, With<PrimaryWindow>>,
-    level_query: Query<&Transform, (Without<Player>, With<TrainPlatformLevel>)>,
+    level_query: Query<&Transform, (Without<Player>, With<CurrentLevelSprite>)>,
     npc_query: Query<(Entity, &Transform), With<CanStartDialog>>,
 ) {
     let width_halved = 2688.0 / 2.0; // TODO
