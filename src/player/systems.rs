@@ -3,6 +3,7 @@ use bevy::window::PrimaryWindow;
 use crate::levels::components::{CurrentLevel, CurrentLevelSprite, LevelDescription};
 use crate::player::components::Player;
 use crate::movement::linear_movement::components::LinearMovementComponent;
+use crate::player::constants::PLAYER_SPEED;
 
 pub fn initialize_player(
     mut commands: Commands,
@@ -51,7 +52,7 @@ pub fn cursor_position(
                             transform.translation.y,
                             transform.translation.z,
                         ),
-                        velocity: Vec3::ONE * 128.0,
+                        velocity: Vec3::ONE * PLAYER_SPEED,
                     });
                 }
             }

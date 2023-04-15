@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::level_state::LevelState;
 
 pub mod components;
+mod constants;
 pub mod resource;
 pub mod systems;
 

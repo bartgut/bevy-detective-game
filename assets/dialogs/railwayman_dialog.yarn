@@ -1,0 +1,39 @@
+title: RailwaymanDialogIntro
+position: 156,-631
+---
+<<set $knows_about_marriage to false>>
+Player: Pan Andrzej jak mniemam?
+Railwayman: Zgadza sie 
+Player: Wedlug mojego raportu to Pan jako pierwszy znalazl nieboszczyka..
+Railwayman: Tak.. Odrazu zadzwonilem na policje, to byl paskudny widok.. tyle krwi..
+<<jump RailwaymanDialogPossibleQuestions>>
+===
+title: RailwaymanDialogPossibleQuestions
+position: 154,-189
+---
+-> Player: Co robil Pan tak wczesniej na terenie dworca? Z tego co wiem najblizszy pociag mial kursowac za 2 godziny?
+    <<jump RailwaymanWhySoEarly>>
+-> Player: Dlugo Pani tu pracuje?
+    <<jump RailwaymanWorking>>
+-> Player: To wszystko, dziekuje
+    <<jump RailwaymanOutro>>
+===
+title: RailwaymanWhySoEarly
+position: 707,49
+---
+Railwayman: Widzi Pan.. od smierci zony nie sypiam najlepiej, czesto przychodze wczesniej tutaj ogladac wschod slonca, tak latwiej.
+<<jump RailwaymanDialogPossibleQuestions>>
+===
+title: RailwaymanWorking
+position: -222,87
+---
+Player: Jak dlugo Pan tu pracuje?
+Railwayman: Cale zycie prosze Pana, odkad pamietam, moj ojciec byl rowniez kolejarzem.
+<<jump RailwaymanDialogPossibleQuestions>>
+===
+title: RailwaymanOutro
+position: 153,579
+---
+Player: To wszystko z mojej strony.
+Railwayman:: Dziekuje
+===

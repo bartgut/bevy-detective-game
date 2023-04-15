@@ -4,7 +4,7 @@ use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialogs::resource::*;
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
-use crate::npc::components::{CanStartDialog, HoveredOverNPC};
+use crate::npc::components::{CanStartDialog, DialogableNPC, HoveredOverNPC, NPCInDialog};
 
 pub fn build_dialog_ui_from_event(
     mut commands: &mut Commands,
@@ -215,19 +215,11 @@ pub fn build_dialog_ui(
 }
 
 pub fn interact_with_dialog_text(
-    mut button_query: Query<
-        (
-            &Interaction,
-            &mut BackgroundColor,
-            &mut Children,
-            &OptionUINode,
-        ),
-        Changed<Interaction>,
-    >,
+    mut button_query: Query<(&Interaction, &mut Children, &OptionUINode), Changed<Interaction>>,
     mut text_query: Query<&mut Text>,
     mut dialogs: ResMut<Dialogs>,
 ) {
-    for (interaction, mut background_color, mut children, mut node) in button_query.iter_mut() {
+    for (interaction, mut children, mut node) in button_query.iter_mut() {
         match *interaction {
             Interaction::Clicked => {
                 dialogs.runner.make_decision(node.node_title.clone());
@@ -251,15 +243,31 @@ pub fn interact_with_dialog_text(
 }
 
 pub fn start_dialog(
+    mut commands: Commands,
     mut game_state: ResMut<NextState<InGameState>>,
     npc_dialog: Query<Entity, With<HoveredOverNPC>>,
     buttons: Res<Input<MouseButton>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         if (!npc_dialog.is_empty()) {
+            commands
+                .entity(npc_dialog.get_single().unwrap())
+                .insert(NPCInDialog);
             game_state.set(InGameState::Dialog);
         }
     }
+}
+
+pub fn load_dialog(
+    mut commands: Commands,
+    npc_dialog: Query<&DialogableNPC, With<HoveredOverNPC>>,
+) {
+    let dialog_npc_config = npc_dialog.get_single().unwrap();
+    commands.remove_resource::<Dialogs>();
+    commands.insert_resource(Dialogs::load_from_file(
+        format!("assets/dialogs/{}.yarn", dialog_npc_config.dialog_file_name).as_str(),
+        dialog_npc_config.node(),
+    ));
 }
 
 pub fn mouse_button_input(
@@ -269,9 +277,10 @@ pub fn mouse_button_input(
     mut dialogs: ResMut<Dialogs>,
     dialog_query: Query<Entity, With<DialogUI>>,
     option_query: Query<Entity, With<OptionUI>>,
-    npc_dialog: Query<Entity, With<CanStartDialog>>,
+    mut npc_dialog: Query<(Entity, &mut DialogableNPC), With<NPCInDialog>>,
     mut game_state: ResMut<NextState<InGameState>>,
 ) {
+    let (entity, mut dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
     if buttons.just_pressed(MouseButton::Left) {
         let event = dialogs.runner.next_event();
         match event {
@@ -284,7 +293,11 @@ pub fn mouse_button_input(
                 if let Ok(option_entity) = option_query.get_single() {
                     commands.entity(option_entity).despawn_recursive();
                 }
-                dialogs.runner.reset_to("Librarian1PlayerPossibleQuestions")
+                dialog_npc_config.first_dialog = false;
+                commands.entity(entity).remove::<NPCInDialog>();
+                dialogs
+                    .runner
+                    .reset_to(dialog_npc_config.reset_node.as_str());
             }
             _ => {
                 if let Ok(dialog_entity) = dialog_query.get_single() {

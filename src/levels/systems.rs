@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use crate::game_state::GameState;
 use crate::level_state::LevelState;
+use crate::levels::constants::CAMERA_SPEED;
 use crate::levels::resource::LevelsResource;
 use super::components::*;
 
@@ -11,10 +12,8 @@ pub fn load_current_level(
     mut game_state: ResMut<NextState<GameState>>,
     levels: Res<LevelsResource>,
 ) {
-    println!("{:?}", current_level_state.0);
     match levels.levels.get(&current_level_state.0) {
         Some(level) => {
-            println!("Loading level");
             commands.spawn((
                 LevelDescription {
                     level_name: level.level_name.clone(),
@@ -25,9 +24,7 @@ pub fn load_current_level(
             ));
             game_state.set(GameState::LevelSpriteLoading);
         }
-        None => {
-            println!("no level found")
-        }
+        None => {}
     }
 }
 
@@ -75,10 +72,10 @@ pub fn keyboard_level_input(
         let mut translation = level_transform.translation;
         let time = time.delta_seconds();
         if keyboard_input.pressed(KeyCode::Left) {
-            translation.x += 256.0 * time;
+            translation.x += CAMERA_SPEED * time;
         }
         if keyboard_input.pressed(KeyCode::Right) {
-            translation.x -= 256.0 * time;
+            translation.x -= CAMERA_SPEED * time;
         }
         level_transform.translation = translation;
     }

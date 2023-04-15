@@ -30,26 +30,10 @@ pub fn initialize_npcs(
                     dialog_file_name: dialogable_npc.dialog_file_name.clone(),
                     start_node: dialogable_npc.start_node.clone(),
                     reset_node: dialogable_npc.reset_node.clone(),
+                    first_dialog: dialogable_npc.first_dialog,
                 },
             ));
         }
-        /*parent.spawn((
-            SpriteBundle {
-                texture: asset_server.load("images/npc/librarian.png"),
-                transform: Transform::from_xyz(-100.0, -120.0, 0.0), // move to struct with a start_position field
-                ..default()
-            },
-            NPC {
-                level: LevelState::TrainPlatform,
-                texture_file: String::from("librarian.png"),
-                level_initial_position: Vec3::new(-100.0, -120.0, 0.0),
-            },
-            DialogableNPC {
-                dialog_file_name: String::from("first_dialog"),
-                start_node: String::from("Librarian1PlayerConversationIntro"),
-                reset_node: String::from("Librarian1PlayerPossibleQuestions"),
-            },
-        ));*/
     });
 }
 

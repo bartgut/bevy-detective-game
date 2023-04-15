@@ -13,6 +13,7 @@ fn train_level_npc_1() -> (NPC, DialogableNPC) {
             dialog_file_name: String::from("first_dialog"),
             start_node: String::from("Librarian1PlayerConversationIntro"),
             reset_node: String::from("Librarian1PlayerPossibleQuestions"),
+            first_dialog: true,
         },
     )
 }
@@ -24,9 +25,10 @@ fn train_level_npc_2() -> (NPC, DialogableNPC) {
             level_initial_position: Vec3::new(-100.0, -150.0, 1.0),
         },
         DialogableNPC {
-            dialog_file_name: String::from("first_dialog"),
-            start_node: String::from("Librarian1PlayerConversationIntro"),
-            reset_node: String::from("Librarian1PlayerPossibleQuestions"),
+            dialog_file_name: String::from("railwayman_dialog"),
+            start_node: String::from("RailwaymanDialogIntro"),
+            reset_node: String::from("RailwaymanDialogPossibleQuestions"),
+            first_dialog: true,
         },
     )
 }

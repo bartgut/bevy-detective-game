@@ -5,6 +5,7 @@ use crate::level_state::LevelState;
 use crate::player::systems::{cursor_position, despawn_player, initialize_player};
 
 pub mod components;
+mod constants;
 pub mod systems;
 
 pub struct PlayerPlugin;
