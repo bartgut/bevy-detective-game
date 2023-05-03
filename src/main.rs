@@ -10,6 +10,7 @@ pub mod movement;
 pub mod npc;
 pub mod parsing;
 pub mod player;
+pub mod text;
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
@@ -27,6 +28,7 @@ use crate::npc::NpcPlugin;
 use crate::npc::resource::NPCResource;
 use crate::player::PlayerPlugin;
 use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
+use crate::text::TypeWritingTextPlugin;
 
 extern crate pest;
 #[macro_use]
@@ -51,6 +53,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(MovementPlugin)
         .add_plugin(NpcPlugin)
+        .add_plugin(TypeWritingTextPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)
@@ -89,81 +92,6 @@ impl Default for AppearingTextSettings {
         }
     }
 }
-
-#[derive(Component)]
-struct TypeWritingTextSettings {
-    text: String,
-    every: f32,
-    cur_len: usize,
-}
-
-#[derive(Component)]
-struct TypeWritingTextTimer(Timer);
-
-#[derive(Bundle)]
-struct TypeWritingTextBundle {
-    settings: TypeWritingTextSettings,
-    timer: TypeWritingTextTimer,
-    text: TextBundle,
-}
-
-fn type_writing_text_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let my_string = String::from("Hello, world!\nSecond line, third world");
-    commands.spawn(create_type_writing_text(&my_string, 0.15, asset_server));
-}
-
-fn create_type_writing_text(
-    text_to_show: &String,
-    period: f32,
-    asset_server: Res<AssetServer>,
-) -> TypeWritingTextBundle {
-    return TypeWritingTextBundle {
-        timer: TypeWritingTextTimer(Timer::from_seconds(period, TimerMode::Repeating)),
-        text: TextBundle::from_section(
-            text_to_show,
-            TextStyle {
-                font: asset_server.load("fonts/Noir_regular.ttf"),
-                font_size: 50.0,
-                color: Color::WHITE.with_a(1.0),
-            },
-        )
-        .with_text_alignment(TextAlignment::Left)
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px(400.0),
-                right: Val::Px(600.0),
-                ..default()
-            },
-            ..default()
-        }),
-        settings: TypeWritingTextSettings {
-            text: text_to_show.clone(),
-            every: period,
-            cur_len: 0,
-        },
-    };
-}
-
-fn type_writing_len_update(
-    mut type_writing_query: Query<(&mut TypeWritingTextSettings, &mut TypeWritingTextTimer)>,
-    time: Res<Time>,
-) {
-    for (mut setting, mut timer) in type_writing_query.iter_mut() {
-        if timer.0.tick(time.delta()).just_finished() {
-            if setting.cur_len != setting.text.len() {
-                setting.cur_len += 1;
-            }
-        }
-    }
-}
-
-fn type_writing_text_update(mut query: Query<(&mut TypeWritingTextSettings, &mut Text)>) {
-    for (mut settings, mut text) in query.iter_mut() {
-        text.sections[0].value = settings.text.chars().take(settings.cur_len).collect()
-    }
-}
-
 /* Appearing text */
 #[derive(Component)]
 struct NotVisibleTimer(Timer);
@@ -303,30 +231,4 @@ fn intro_text_show(time: Res<Time>, mut query: Query<&mut Text, With<StartText>>
 
 fn camera_setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-}
-
-fn intro_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2dBundle::default());
-
-    commands.spawn((
-        TextBundle::from_section(
-            "My super text",
-            TextStyle {
-                font: asset_server.load("fonts/Noir_regular.ttf"),
-                font_size: 50.0,
-                color: Color::WHITE.with_a(0.0),
-            },
-        )
-        .with_text_alignment(TextAlignment::Center)
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px(5.0),
-                right: Val::Px(15.0),
-                ..default()
-            },
-            ..default()
-        }),
-        StartText,
-    ));
 }

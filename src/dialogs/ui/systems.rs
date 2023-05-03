@@ -5,6 +5,7 @@ use crate::dialogs::dialogs::resource::*;
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 use crate::npc::components::{CanStartDialog, DialogableNPC, HoveredOverNPC, NPCInDialog};
+use crate::text::typewriting::systems::create_type_writing_text;
 
 pub fn build_dialog_ui_from_event(
     mut commands: &mut Commands,
@@ -16,7 +17,7 @@ pub fn build_dialog_ui_from_event(
             build_dialog_ui(commands, asset_server, speaker, text);
         }
         DialogEvent::Options { speaker, options } => {
-            build_options_ui(commands, asset_server, speaker, options)
+            build_options_ui(commands, asset_server, options)
         }
         _ => {}
     }
@@ -25,7 +26,6 @@ pub fn build_dialog_ui_from_event(
 pub fn build_options_ui(
     mut commands: &mut Commands,
     asset_server: Res<AssetServer>,
-    speaker: &String,
     options: &Vec<(String, String)>,
 ) {
     commands
@@ -184,32 +184,34 @@ pub fn build_dialog_ui(
                     ..default()
                 })
                 .with_children(|parent| {
-                    parent.spawn((
-                        TextBundle {
-                            text: Text {
-                                sections: vec![TextSection {
-                                    value: text.to_string(),
-                                    style: TextStyle {
-                                        font: asset_server.load("fonts/Noir_regular.ttf"),
-                                        font_size: 20.0,
-                                        color: Color::WHITE,
-                                    },
-                                }],
-                                alignment: TextAlignment::Center,
+                    parent
+                        .spawn((
+                            TextBundle {
+                                text: Text {
+                                    sections: vec![TextSection {
+                                        value: "".to_string(),
+                                        style: TextStyle {
+                                            font: asset_server.load("fonts/Noir_regular.ttf"),
+                                            font_size: 20.0,
+                                            color: Color::WHITE,
+                                        },
+                                    }],
+                                    alignment: TextAlignment::Center,
+                                    ..default()
+                                },
+                                style: Style {
+                                    direction: Direction::RightToLeft,
+                                    justify_content: JustifyContent::Start,
+                                    align_content: AlignContent::Start,
+                                    align_items: AlignItems::Center,
+                                    flex_wrap: FlexWrap::Wrap,
+                                    ..default()
+                                },
                                 ..default()
                             },
-                            style: Style {
-                                direction: Direction::RightToLeft,
-                                justify_content: JustifyContent::Start,
-                                align_content: AlignContent::Start,
-                                align_items: AlignItems::Center,
-                                flex_wrap: FlexWrap::Wrap,
-                                ..default()
-                            },
-                            ..default()
-                        },
-                        DialogUIText,
-                    ));
+                            DialogUIText,
+                        ))
+                        .insert(create_type_writing_text(&text.to_string(), 0.07));
                 });
         });
 }
