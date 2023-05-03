@@ -142,11 +142,12 @@ pub fn build_dialog_ui(
                 style: Style {
                     size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
                     flex_direction: FlexDirection::Row,
-                    justify_content: JustifyContent::Center,
+                    justify_content: JustifyContent::Start,
                     align_items: AlignItems::Center,
-                    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                    gap: Size::new(Val::Px(20.0), Val::Px(20.0)),
                     position: UiRect {
                         top: Val::Percent(80.0),
+                        left: Val::Percent(15.0),
                         ..default()
                     },
                     ..default()
@@ -211,7 +212,7 @@ pub fn build_dialog_ui(
                             },
                             DialogUIText,
                         ))
-                        .insert(create_type_writing_text(&text.to_string(), 0.07));
+                        .insert(create_type_writing_text(&text.to_string(), 0.05));
                 });
         });
 }
