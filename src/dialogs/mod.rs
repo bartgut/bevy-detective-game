@@ -1,6 +1,6 @@
 mod dialog_runner;
 mod dialogs;
-mod ui;
+pub mod ui;
 
 use bevy::prelude::*;
 use crate::dialogs::dialogs::resource::Dialogs;

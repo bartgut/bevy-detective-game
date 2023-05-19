@@ -135,7 +135,7 @@ pub fn build_dialog_ui(
     asset_server: Res<AssetServer>,
     speaker: &String,
     text: &String,
-) {
+) -> Entity {
     commands
         .spawn((
             NodeBundle {
@@ -214,7 +214,8 @@ pub fn build_dialog_ui(
                         ))
                         .insert(create_type_writing_text(&text.to_string(), 0.05));
                 });
-        });
+        })
+        .id()
 }
 
 pub fn interact_with_dialog_text(

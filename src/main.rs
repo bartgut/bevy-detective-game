@@ -1,4 +1,6 @@
+pub mod clickable;
 pub mod dialogs;
+pub mod game_items;
 pub mod game_levels;
 pub mod game_npc;
 pub mod game_state;
@@ -14,7 +16,12 @@ pub mod text;
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use crate::clickable::ClickablePlugin;
+use crate::clickable::items::onesideitem::OneSideItem;
+use crate::clickable::items::resource::ClickableItemResource;
+use crate::clickable::items::twosideitem::TwoSideItem;
 use crate::dialogs::DialogsPlugin;
+use crate::game_items::{one_side_items_map, two_side_items_map};
 use crate::game_levels::level_map;
 use crate::game_npc::npc_map;
 use crate::game_state::GameState;
@@ -43,6 +50,12 @@ fn main() {
             levels: level_map(),
         })
         .insert_resource(NPCResource { npcs: npc_map() })
+        .insert_resource(ClickableItemResource::<OneSideItem> {
+            items: one_side_items_map(),
+        })
+        .insert_resource(ClickableItemResource::<TwoSideItem> {
+            items: two_side_items_map(),
+        })
         .add_state::<GameState>()
         .add_state::<InGameState>()
         .add_state::<LevelState>()
@@ -54,6 +67,7 @@ fn main() {
         .add_plugin(MovementPlugin)
         .add_plugin(NpcPlugin)
         .add_plugin(TypeWritingTextPlugin)
+        .add_plugin(ClickablePlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)

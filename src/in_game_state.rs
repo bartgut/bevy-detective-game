@@ -4,5 +4,6 @@ use bevy::prelude::*;
 pub enum InGameState {
     #[default]
     InGame,
+    LookingAtItem,
     Dialog,
 }
