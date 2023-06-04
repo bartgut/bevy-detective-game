@@ -10,13 +10,12 @@ use crate::npc::components::{DialogableNPC, NPC};
 
 fn letter_from_a_young_lover() -> ClickableItem<TwoSideItem> {
     ClickableItem::<TwoSideItem> {
-        item: TwoSideItem {
-            texture_front_file: "letter/young_lover_letter_front.png".to_string(),
-            texture_back_file: "letter/young_lover_letter_back.png".to_string(),
-            current_texture_sprite: None,
-            current_texture_site: TextureSide::Front,
-            dialog_entity: None,
-        },
+        item: TwoSideItem::new_with_dialog(
+            "letter/young_lover_letter_front.png".to_string(),
+            "letter/young_lover_letter_back.png".to_string(),
+            "Player".to_string(),
+            "Wydaje sie troche za mloda jak na zone nieboszczyka".to_string(),
+        ),
         clickable: Clickable {
             clickable_texture: "letter/young_lover_mini.png".to_string(),
             level_initial_position: Vec3::new(-800.0, -120.0, 1.0),

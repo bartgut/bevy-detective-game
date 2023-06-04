@@ -1,4 +1,4 @@
-use bevy::ecs::query::ReadOnlyWorldQuery;
+use bevy::ecs::query::{QueryEntityError, ReadOnlyWorldQuery};
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
@@ -10,6 +10,40 @@ use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
 use crate::player::components::Player;
 use super::components;
+
+pub fn gray_out_all(
+    mut commands: Commands,
+    mut level_query: Query<(Entity, &mut Sprite, &Children), With<CurrentLevelSprite>>,
+    mut sprites: Query<&mut Sprite, Without<CurrentLevelSprite>>,
+) {
+    let (entity, mut level_sprite, children) = level_query.get_single_mut().unwrap();
+    level_sprite.color = Color::rgb(0.4, 0.4, 0.4);
+    for &child in children.iter() {
+        let mut sprite = sprites.get_mut(child);
+        match sprite {
+            Ok(mut existing) => {
+                existing.color = Color::rgb(0.4, 0.4, 0.4);
+            }
+            Err(_) => {}
+        }
+    }
+}
+
+pub fn return_to_normal_colors(
+    mut commands: Commands,
+    mut level_query: Query<(Entity, &mut Sprite, &Children), With<CurrentLevelSprite>>,
+    mut sprites: Query<&mut Sprite, Without<CurrentLevelSprite>>,
+) {
+    let (entity, mut level_sprite, children) = level_query.get_single_mut().unwrap();
+    level_sprite.color = Color::default();
+    for &child in children.iter() {
+        let mut sprite = sprites.get_mut(child);
+        match sprite {
+            Ok(mut existing) => existing.color = Color::default(),
+            Err(_) => {}
+        }
+    }
+}
 
 pub fn initialize_clickable<T: ClickableBehaviour + Component + Clone>(
     mut commands: Commands,
@@ -99,7 +133,7 @@ pub fn clickable_first_click<T: ClickableBehaviour + Component>(
     asset_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<InGameState>>,
     mut clickable: Query<(Entity, &mut T), With<HoveredOverClickable>>,
-    buttons: Res<Input<MouseButton>>,
+    mut buttons: Res<Input<MouseButton>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         if (!clickable.is_empty()) {

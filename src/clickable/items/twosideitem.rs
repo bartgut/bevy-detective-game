@@ -12,9 +12,48 @@ pub enum TextureSide {
 pub struct TwoSideItem {
     pub texture_front_file: String,
     pub texture_back_file: String,
-    pub current_texture_sprite: Option<Entity>,
-    pub current_texture_site: TextureSide,
-    pub dialog_entity: Option<Entity>,
+    pub additional_dialog: Option<(String, String)>,
+    current_texture_sprite: Option<Entity>,
+    current_texture_site: TextureSide,
+    dialog_entity: Option<Entity>,
+}
+
+impl TwoSideItem {
+    pub fn new_no_dialog(texture_front_file: String, texture_back_file: String) -> Self {
+        TwoSideItem {
+            texture_front_file: texture_front_file,
+            texture_back_file: texture_back_file,
+            additional_dialog: None,
+            current_texture_sprite: None,
+            current_texture_site: TextureSide::Front,
+            dialog_entity: None,
+        }
+    }
+
+    pub fn new_with_dialog(
+        texture_front_file: String,
+        texture_back_file: String,
+        additional_dialog_subject: String,
+        additional_dialog_text: String,
+    ) -> Self {
+        TwoSideItem {
+            texture_front_file: texture_front_file,
+            texture_back_file: texture_back_file,
+            additional_dialog: Some((additional_dialog_subject, additional_dialog_text)),
+            current_texture_sprite: None,
+            current_texture_site: TextureSide::Front,
+            dialog_entity: None,
+        }
+    }
+
+    fn show_dialog_if_needed(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
+        match &self.additional_dialog {
+            Some((subject, text)) => {
+                self.dialog_entity = Some(build_dialog_ui(commands, asset_server, &subject, &text));
+            }
+            None => {}
+        }
+    }
 }
 
 impl ClickableBehaviour for TwoSideItem {
@@ -36,12 +75,7 @@ impl ClickableBehaviour for TwoSideItem {
             }),
         );
         self.current_texture_sprite = Some(x.id());
-        self.dialog_entity = Some(build_dialog_ui(
-            commands,
-            asset_server,
-            &"Player".to_string(),
-            &"Troche za mloda jak na zone".to_string(),
-        ));
+        self.show_dialog_if_needed(commands, asset_server);
     }
 
     fn on_click(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
@@ -74,11 +108,11 @@ impl ClickableBehaviour for TwoSideItem {
     }
 
     fn on_close(&mut self, commands: &mut Commands) {
-        commands
-            .entity(self.current_texture_sprite.unwrap())
-            .despawn();
-        commands
-            .entity(self.dialog_entity.unwrap())
-            .despawn_recursive();
+        if let Some(dialog_entity) = self.dialog_entity {
+            commands.entity(dialog_entity).despawn_recursive();
+        }
+        if let Some(current_texture_sprite) = self.current_texture_sprite {
+            commands.entity(current_texture_sprite).despawn();
+        }
     }
 }
