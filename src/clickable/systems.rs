@@ -12,11 +12,10 @@ use crate::player::components::Player;
 use super::components;
 
 pub fn gray_out_all(
-    mut commands: Commands,
-    mut level_query: Query<(Entity, &mut Sprite, &Children), With<CurrentLevelSprite>>,
+    mut level_query: Query<(&mut Sprite, &Children), With<CurrentLevelSprite>>,
     mut sprites: Query<&mut Sprite, Without<CurrentLevelSprite>>,
 ) {
-    let (entity, mut level_sprite, children) = level_query.get_single_mut().unwrap();
+    let (mut level_sprite, children) = level_query.get_single_mut().unwrap();
     level_sprite.color = Color::rgb(0.4, 0.4, 0.4);
     for &child in children.iter() {
         let mut sprite = sprites.get_mut(child);
@@ -30,11 +29,10 @@ pub fn gray_out_all(
 }
 
 pub fn return_to_normal_colors(
-    mut commands: Commands,
-    mut level_query: Query<(Entity, &mut Sprite, &Children), With<CurrentLevelSprite>>,
+    mut level_query: Query<(&mut Sprite, &Children), With<CurrentLevelSprite>>,
     mut sprites: Query<&mut Sprite, Without<CurrentLevelSprite>>,
 ) {
-    let (entity, mut level_sprite, children) = level_query.get_single_mut().unwrap();
+    let (mut level_sprite, children) = level_query.get_single_mut().unwrap();
     level_sprite.color = Color::default();
     for &child in children.iter() {
         let mut sprite = sprites.get_mut(child);

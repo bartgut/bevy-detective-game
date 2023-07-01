@@ -9,6 +9,7 @@ pub struct TypeWritingTextPlugin;
 impl Plugin for TypeWritingTextPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(type_writing_len_update)
-            .add_system(type_writing_text_update);
+            .add_system(type_writing_text_update)
+            .add_system(type_writing_with_pauses_update);
     }
 }

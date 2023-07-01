@@ -42,7 +42,7 @@ pub fn new_game_button_click(
         match *interaction {
             Interaction::Clicked => {
                 level_state.set(LevelState::TrainPlatform);
-                game_state.set(GameState::LevelLoading);
+                game_state.set(GameState::Intro);
             }
             Interaction::Hovered => {
                 for mut text in text_query.iter_mut() {

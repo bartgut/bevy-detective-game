@@ -212,7 +212,7 @@ pub fn build_dialog_ui(
                             },
                             DialogUIText,
                         ))
-                        .insert(create_type_writing_text(&text.to_string(), 0.05));
+                        .insert(create_type_writing_text(&text.to_string(), 0.05, None));
                 });
         })
         .id()

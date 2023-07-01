@@ -1,10 +1,12 @@
 pub mod clickable;
+pub mod comics;
 pub mod dialogs;
 pub mod game_items;
 pub mod game_levels;
 pub mod game_npc;
 pub mod game_state;
 pub mod in_game_state;
+pub mod intro;
 pub mod level_state;
 pub mod levels;
 pub mod main_menu;
@@ -12,8 +14,9 @@ pub mod movement;
 pub mod npc;
 pub mod parsing;
 pub mod player;
+pub mod sound;
 pub mod text;
-
+pub mod ui;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use crate::clickable::ClickablePlugin;
@@ -26,6 +29,7 @@ use crate::game_levels::level_map;
 use crate::game_npc::npc_map;
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
+use crate::intro::IntroPlugin;
 use crate::level_state::LevelState;
 use crate::levels::LevelPlugin;
 use crate::levels::resource::LevelsResource;
@@ -61,6 +65,7 @@ fn main() {
         .add_state::<LevelState>()
         .add_plugin(DialogsPlugin)
         .add_plugin(MainMenuPlugin)
+        .add_plugin(IntroPlugin)
         .add_plugin(LevelPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugins(DefaultPlugins)
