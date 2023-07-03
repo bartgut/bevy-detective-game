@@ -3,7 +3,7 @@ use crate::text::typewriting::components::TextWithPause;
 use crate::text::typewriting::systems::{
     create_type_writing_text, create_type_writing_text_with_pauses,
 };
-use crate::ui::components::FullScreenText;
+use crate::ui::components::{FullScreenText, InvisibleToVisibleTransition};
 
 pub fn full_screen_text(
     mut command: &mut Commands,
@@ -38,4 +38,27 @@ pub fn full_screen_text(
             FullScreenText,
         ))
         .insert(create_type_writing_text_with_pauses(text));
+}
+
+pub fn invisible_to_visible_transition(
+    mut commands: Commands,
+    mut query: Query<(
+        Entity,
+        &mut BackgroundColor,
+        &mut InvisibleToVisibleTransition,
+    )>,
+    timer: Res<Time>,
+) {
+    for (entity, mut background_color, mut transitionSettings) in query.iter_mut() {
+        if (transitionSettings.0.tick(timer.delta()).just_finished()) {
+            background_color.0.set_a(1.0);
+            commands
+                .entity(entity)
+                .remove::<InvisibleToVisibleTransition>();
+        } else {
+            background_color.0.set_a(
+                transitionSettings.0.elapsed_secs() / transitionSettings.0.duration().as_secs_f32(),
+            );
+        }
+    }
 }

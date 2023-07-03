@@ -1,12 +1,17 @@
 use bevy::app::AppLabel;
 use bevy::prelude::*;
+use crate::comics::components::SinglePageComicsBundle;
+use crate::comics::systems::ComicsSequence;
+use crate::comics::vertical2images::components::Vertical2Images;
+use crate::comics_state::ComicsState;
 use crate::game_state::GameState;
+use crate::intro_state::IntroState;
 use crate::text::typewriting::components::{TextWithPause, TypeWritingTextSettings};
 use crate::ui::components::FullScreenText;
 use crate::ui::systems::full_screen_text;
 
 pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
-    audio.play(asset_server.load("sound/background/intro.ogg"));
+    //audio.play(asset_server.load("sound/background/intro.ogg"));
     full_screen_text(
         &mut commands,
         asset_server,
@@ -47,7 +52,7 @@ pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>, audio
     );
 }
 
-pub fn intro_cleanup(
+pub fn full_text_typewriting_cleanup(
     mut commands: Commands,
     intro_text_query: Query<Entity, With<FullScreenText>>,
 ) {
@@ -59,8 +64,35 @@ pub fn intro_cleanup(
 pub fn mouse_interaction(
     mouse_buttons: Res<Input<MouseButton>>,
     mut game_state: ResMut<NextState<GameState>>,
+    intro_state: ResMut<State<IntroState>>,
+    mut intro_state_mutator: ResMut<NextState<IntroState>>,
+    comics_state: Res<State<ComicsState>>,
 ) {
     if mouse_buttons.just_pressed(MouseButton::Left) {
-        game_state.set(GameState::LevelLoading);
+        match intro_state.0 {
+            IntroState::TypewritingReport => {
+                intro_state_mutator.set(IntroState::Comics1);
+            }
+            IntroState::Comics1 => {
+                if (comics_state.0 == ComicsState::END) {
+                    intro_state_mutator.set(IntroState::End);
+                }
+            }
+            IntroState::End => {
+                game_state.set(GameState::LevelLoading);
+            }
+        }
     }
+}
+
+pub fn comics_start(mut commands: Commands) {
+    commands.spawn(SinglePageComicsBundle {
+        sequence: Vertical2Images::new(
+            "images/comics/intro/1/1.png".to_string(),
+            "images/comics/intro/1/2.png".to_string(),
+            Some("sound/background/rain_inside_the_car_1min.ogg".to_string()),
+            Some("sound/intro/car_approaching.ogg".to_string()),
+            Some("sound/intro/on_place.ogg".to_string()),
+        ),
+    });
 }

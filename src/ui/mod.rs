@@ -1,11 +1,13 @@
 use bevy::prelude::*;
+use crate::ui::systems::invisible_to_visible_transition;
+
 pub mod components;
 pub mod systems;
 
-pub struct FullScreenTextPlugin;
+pub struct UIUtilsPlugin;
 
-impl Plugin for FullScreenTextPlugin {
+impl Plugin for UIUtilsPlugin {
     fn build(&self, app: &mut App) {
-        todo!()
+        app.add_system(invisible_to_visible_transition);
     }
 }

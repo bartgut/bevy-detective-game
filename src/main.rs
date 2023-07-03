@@ -1,5 +1,6 @@
 pub mod clickable;
 pub mod comics;
+pub mod comics_state;
 pub mod dialogs;
 pub mod game_items;
 pub mod game_levels;
@@ -7,6 +8,7 @@ pub mod game_npc;
 pub mod game_state;
 pub mod in_game_state;
 pub mod intro;
+pub mod intro_state;
 pub mod level_state;
 pub mod levels;
 pub mod main_menu;
@@ -17,12 +19,15 @@ pub mod player;
 pub mod sound;
 pub mod text;
 pub mod ui;
+
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::onesideitem::OneSideItem;
 use crate::clickable::items::resource::ClickableItemResource;
 use crate::clickable::items::twosideitem::TwoSideItem;
+use crate::comics::ComicsPlugin;
+use crate::comics_state::ComicsState;
 use crate::dialogs::DialogsPlugin;
 use crate::game_items::{one_side_items_map, two_side_items_map};
 use crate::game_levels::level_map;
@@ -30,6 +35,7 @@ use crate::game_npc::npc_map;
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 use crate::intro::IntroPlugin;
+use crate::intro_state::IntroState;
 use crate::level_state::LevelState;
 use crate::levels::LevelPlugin;
 use crate::levels::resource::LevelsResource;
@@ -40,6 +46,7 @@ use crate::npc::resource::NPCResource;
 use crate::player::PlayerPlugin;
 use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
 use crate::text::TypeWritingTextPlugin;
+use crate::ui::UIUtilsPlugin;
 
 extern crate pest;
 #[macro_use]
@@ -60,9 +67,11 @@ fn main() {
         .insert_resource(ClickableItemResource::<TwoSideItem> {
             items: two_side_items_map(),
         })
+        .add_state::<IntroState>()
         .add_state::<GameState>()
         .add_state::<InGameState>()
         .add_state::<LevelState>()
+        .add_state::<ComicsState>()
         .add_plugin(DialogsPlugin)
         .add_plugin(MainMenuPlugin)
         .add_plugin(IntroPlugin)
@@ -73,6 +82,8 @@ fn main() {
         .add_plugin(NpcPlugin)
         .add_plugin(TypeWritingTextPlugin)
         .add_plugin(ClickablePlugin)
+        .add_plugin(ComicsPlugin)
+        .add_plugin(UIUtilsPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)
