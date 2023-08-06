@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct Vertical2Images {
     pub top_image_path: String,
     pub bottom_image_path: String,

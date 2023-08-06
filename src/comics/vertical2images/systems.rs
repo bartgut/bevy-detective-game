@@ -95,9 +95,7 @@ impl ComicsSequence for Vertical2Images {
         self.sequence_finished
     }
 
-    fn end_sequence(&mut self) {
-        println!("end sequence");
-    }
+    fn end_sequence(&mut self) {}
 }
 
 fn create_vertical2images_frame() -> NodeBundle {

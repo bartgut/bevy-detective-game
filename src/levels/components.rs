@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use crate::level_state::LevelState;
 
 #[derive(Component)]
 pub struct LevelDescription {

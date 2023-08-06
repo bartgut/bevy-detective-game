@@ -7,3 +7,11 @@ pub enum ComicsState {
     ONGOING,
     END,
 }
+
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum MultiPageComicsState {
+    #[default]
+    IDLE,
+    ONGOING,
+    END,
+}

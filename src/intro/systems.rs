@@ -1,9 +1,7 @@
-use bevy::app::AppLabel;
 use bevy::prelude::*;
-use crate::comics::components::SinglePageComicsBundle;
-use crate::comics::systems::ComicsSequence;
+use crate::comics::components::{ComicsPages, MultiPageComicsBundle, SinglePageComicsBundle};
 use crate::comics::vertical2images::components::Vertical2Images;
-use crate::comics_state::ComicsState;
+use crate::comics_state::MultiPageComicsState;
 use crate::game_state::GameState;
 use crate::intro_state::IntroState;
 use crate::text::typewriting::components::{TextWithPause, TypeWritingTextSettings};
@@ -66,7 +64,7 @@ pub fn mouse_interaction(
     mut game_state: ResMut<NextState<GameState>>,
     intro_state: ResMut<State<IntroState>>,
     mut intro_state_mutator: ResMut<NextState<IntroState>>,
-    comics_state: Res<State<ComicsState>>,
+    comics_state: Res<State<MultiPageComicsState>>,
 ) {
     if mouse_buttons.just_pressed(MouseButton::Left) {
         match intro_state.0 {
@@ -74,7 +72,7 @@ pub fn mouse_interaction(
                 intro_state_mutator.set(IntroState::Comics1);
             }
             IntroState::Comics1 => {
-                if (comics_state.0 == ComicsState::END) {
+                if (comics_state.0 == MultiPageComicsState::END) {
                     intro_state_mutator.set(IntroState::End);
                 }
             }
@@ -86,13 +84,29 @@ pub fn mouse_interaction(
 }
 
 pub fn comics_start(mut commands: Commands) {
-    commands.spawn(SinglePageComicsBundle {
-        sequence: Vertical2Images::new(
-            "images/comics/intro/1/1.png".to_string(),
-            "images/comics/intro/1/2.png".to_string(),
-            Some("sound/background/rain_inside_the_car_1min.ogg".to_string()),
-            Some("sound/intro/car_approaching.ogg".to_string()),
-            Some("sound/intro/on_place.ogg".to_string()),
-        ),
+    commands.spawn(MultiPageComicsBundle {
+        pages: ComicsPages {
+            pages: vec![
+                SinglePageComicsBundle {
+                    sequence: Vertical2Images::new(
+                        "images/comics/intro/1/1.png".to_string(),
+                        "images/comics/intro/1/2.png".to_string(),
+                        Some("sound/background/rain_inside_the_car_1min.ogg".to_string()),
+                        Some("sound/intro/car_approaching.ogg".to_string()),
+                        Some("sound/intro/on_place.ogg".to_string()),
+                    ),
+                },
+                SinglePageComicsBundle {
+                    sequence: Vertical2Images::new(
+                        "images/comics/intro/2/1.png".to_string(),
+                        "images/comics/intro/2/2.png".to_string(),
+                        Some("sound/background/rain_inside_the_car_1min.ogg".to_string()),
+                        Some("sound/intro/car_approaching.ogg".to_string()),
+                        Some("sound/intro/on_place.ogg".to_string()),
+                    ),
+                },
+            ],
+            current_page: 0,
+        },
     });
 }

@@ -27,7 +27,7 @@ use crate::clickable::items::onesideitem::OneSideItem;
 use crate::clickable::items::resource::ClickableItemResource;
 use crate::clickable::items::twosideitem::TwoSideItem;
 use crate::comics::ComicsPlugin;
-use crate::comics_state::ComicsState;
+use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::dialogs::DialogsPlugin;
 use crate::game_items::{one_side_items_map, two_side_items_map};
 use crate::game_levels::level_map;
@@ -72,6 +72,7 @@ fn main() {
         .add_state::<InGameState>()
         .add_state::<LevelState>()
         .add_state::<ComicsState>()
+        .add_state::<MultiPageComicsState>()
         .add_plugin(DialogsPlugin)
         .add_plugin(MainMenuPlugin)
         .add_plugin(IntroPlugin)
