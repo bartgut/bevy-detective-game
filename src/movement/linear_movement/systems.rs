@@ -1,4 +1,4 @@
-use bevy::math::{vec3, Vec3Swizzles};
+use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use crate::movement::linear_movement::components::LinearMovementComponent;
 

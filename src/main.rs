@@ -1,3 +1,4 @@
+pub mod animation;
 pub mod clickable;
 pub mod comics;
 pub mod comics_state;
@@ -22,6 +23,7 @@ pub mod ui;
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use crate::animation::SpriteAnimationPlugin;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::onesideitem::OneSideItem;
 use crate::clickable::items::resource::ClickableItemResource;
@@ -78,13 +80,14 @@ fn main() {
         .add_plugin(IntroPlugin)
         .add_plugin(LevelPlugin)
         .add_plugin(PlayerPlugin)
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugin(MovementPlugin)
         .add_plugin(NpcPlugin)
         .add_plugin(TypeWritingTextPlugin)
         .add_plugin(ClickablePlugin)
         .add_plugin(ComicsPlugin)
         .add_plugin(UIUtilsPlugin)
+        .add_plugin(SpriteAnimationPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)

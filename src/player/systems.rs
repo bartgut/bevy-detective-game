@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
+use crate::animation::components::WalkingSettings;
 use crate::levels::components::{CurrentLevel, CurrentLevelSprite, LevelDescription};
 use crate::player::components::Player;
 use crate::movement::linear_movement::components::LinearMovementComponent;
@@ -21,6 +22,11 @@ pub fn initialize_player(
                 ..default()
             },
             Player,
+            WalkingSettings {
+                walking_sprite_texture: "images/player/animation/detective_walking.png".to_string(),
+                first: 0,
+                last: 25,
+            },
         ));
     });
 }
