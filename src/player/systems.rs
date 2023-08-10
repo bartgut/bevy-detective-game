@@ -1,9 +1,11 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use crate::animation::components::WalkingSettings;
+use crate::animation::components::{AnimationEnabled};
 use crate::levels::components::{CurrentLevel, CurrentLevelSprite, LevelDescription};
-use crate::player::components::Player;
+use crate::player::components::{Player};
 use crate::movement::linear_movement::components::LinearMovementComponent;
+use crate::player::animation::idle_animation::IdleAnimation;
+use crate::player::animation::walking_animation::WalkingAnimation;
 use crate::player::constants::PLAYER_SPEED;
 
 pub fn initialize_player(
@@ -22,11 +24,9 @@ pub fn initialize_player(
                 ..default()
             },
             Player,
-            WalkingSettings {
-                walking_sprite_texture: "images/player/animation/detective_walking.png".to_string(),
-                first: 0,
-                last: 25,
-            },
+            WalkingAnimation,
+            IdleAnimation,
+            AnimationEnabled,
         ));
     });
 }
