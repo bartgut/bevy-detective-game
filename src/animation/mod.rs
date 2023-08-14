@@ -2,8 +2,7 @@ use bevy::prelude::*;
 use crate::animation::systems::{
     animation_executor, animation_on_added_component, animation_on_removed_component,
 };
-use crate::in_game_state::InGameState;
-use crate::movement::linear_movement::components::LinearMovementComponent;
+use crate::movement::linear_movement::components::Linear2DMovementComponent;
 use crate::player::animation::idle_animation::IdleAnimation;
 use crate::player::animation::walking_animation::WalkingAnimation;
 use crate::player::components::{Player};
@@ -16,15 +15,12 @@ pub struct SpriteAnimationPlugin;
 impl Plugin for SpriteAnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
-            animation_on_added_component::<Player, WalkingAnimation, LinearMovementComponent>
-                .run_if(in_state(InGameState::InGame)),
+            animation_on_added_component::<Player, WalkingAnimation, Linear2DMovementComponent>,
         )
+        .add_system(animation_on_added_component::<Player, IdleAnimation, Player>)
+        .add_system(animation_executor::<Player, WalkingAnimation>)
         .add_system(
-            animation_executor::<Player, WalkingAnimation>.run_if(in_state(InGameState::InGame)),
-        )
-        .add_system(
-            animation_on_removed_component::<Player, IdleAnimation, LinearMovementComponent>
-                .run_if(in_state(InGameState::InGame)),
+            animation_on_removed_component::<Player, IdleAnimation, Linear2DMovementComponent>,
         );
     }
 }

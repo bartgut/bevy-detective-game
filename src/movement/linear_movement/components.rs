@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-pub struct LinearMovementComponent {
-    pub to: Vec3,
-    pub velocity: Vec3,
+pub struct Linear2DMovementComponent {
+    pub to: Vec2,
+    pub velocity: Vec2,
 }

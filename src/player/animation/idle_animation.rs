@@ -18,8 +18,8 @@ impl SpriteAnimationSettings for IdleAnimation {
             file_path: "images/player/animation/idle.png".to_string(),
             rows: 1,
             columns: 26,
-            tile_size: Vec2::new(64.0, 114.0),
-            tile_scale: Vec3::new(1.5, 1.5, 1.0),
+            tile_size: Vec2::new(69.0, 130.0),
+            tile_scale: Vec3::new(1.4, 1.4, 1.0),
         }
     }
 }

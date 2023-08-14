@@ -3,7 +3,7 @@ use bevy::window::PrimaryWindow;
 use crate::animation::components::{AnimationEnabled};
 use crate::levels::components::{CurrentLevel, CurrentLevelSprite, LevelDescription};
 use crate::player::components::{Player};
-use crate::movement::linear_movement::components::LinearMovementComponent;
+use crate::movement::linear_movement::components::Linear2DMovementComponent;
 use crate::player::animation::idle_animation::IdleAnimation;
 use crate::player::animation::walking_animation::WalkingAnimation;
 use crate::player::constants::PLAYER_SPEED;
@@ -52,13 +52,9 @@ pub fn cursor_position(
                 if mouse_input.just_pressed(MouseButton::Left) {
                     let new_level_position = (width_halved - level_transform.translation.x)
                         + (position.x - window.resolution.width() / 2.0);
-                    commands.entity(entity).insert(LinearMovementComponent {
-                        to: Vec3::new(
-                            -width_halved + new_level_position,
-                            transform.translation.y,
-                            transform.translation.z,
-                        ),
-                        velocity: Vec3::ONE * PLAYER_SPEED,
+                    commands.entity(entity).insert(Linear2DMovementComponent {
+                        to: Vec2::new(-width_halved + new_level_position, transform.translation.y),
+                        velocity: Vec2::ONE * PLAYER_SPEED,
                     });
                 }
             }

@@ -4,7 +4,7 @@ use bevy::prelude::TimerMode::Repeating;
 use crate::animation::components::{AnimationEnabled, AnimationTimer, SpriteAnimationSettings};
 
 pub fn animation_on_added_component<
-    WHO: Component,
+    Who: Component,
     AnimationSettings: SpriteAnimationSettings + Component,
     Trigger: Component,
 >(
@@ -13,7 +13,7 @@ pub fn animation_on_added_component<
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut query: Query<
         (Entity, &mut Transform, &AnimationSettings),
-        (With<WHO>, With<AnimationEnabled>, Added<Trigger>),
+        (With<Who>, With<AnimationEnabled>, Added<Trigger>),
     >,
 ) {
     for (entity, transform, animation_settings) in query.iter_mut() {
@@ -25,6 +25,59 @@ pub fn animation_on_added_component<
             &transform,
             animation_settings,
         )
+    }
+}
+
+pub fn animation_on_removed_component<
+    Who: Component,
+    AnimationSettings: SpriteAnimationSettings + Component,
+    Trigger: Component,
+>(
+    mut commands: Commands,
+    mut asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut removed: RemovedComponents<Trigger>,
+    query: Query<(Entity, &Transform, &AnimationSettings), With<Who>>,
+) {
+    for removed_entity in &mut removed {
+        for (entity, &transform, animation_settings) in &query {
+            if entity == removed_entity {
+                create_animation(
+                    &mut commands,
+                    &mut asset_server,
+                    &mut texture_atlases,
+                    entity,
+                    &transform,
+                    animation_settings,
+                )
+            }
+        }
+    }
+}
+
+pub fn animation_executor<
+    Who: Component,
+    AnimationSettings: SpriteAnimationSettings + Component,
+>(
+    time: Res<Time>,
+    mut query: Query<
+        (
+            &AnimationSettings,
+            &mut AnimationTimer,
+            &mut TextureAtlasSprite,
+        ),
+        With<Who>,
+    >,
+) {
+    for (settings, mut timer, mut sprite) in &mut query {
+        timer.0.tick(time.delta());
+        if timer.0.just_finished() {
+            sprite.index = if sprite.index == settings.get_last() {
+                settings.get_first()
+            } else {
+                sprite.index + 1
+            };
+        }
     }
 }
 
@@ -55,57 +108,4 @@ fn create_animation(
         },
         AnimationTimer(Timer::from_seconds(0.03, Repeating)),
     ));
-}
-
-pub fn animation_executor<
-    WHO: Component,
-    AnimationSettings: SpriteAnimationSettings + Component,
->(
-    time: Res<Time>,
-    mut query: Query<
-        (
-            &AnimationSettings,
-            &mut AnimationTimer,
-            &mut TextureAtlasSprite,
-        ),
-        With<WHO>,
-    >,
-) {
-    for (settings, mut timer, mut sprite) in &mut query {
-        timer.0.tick(time.delta());
-        if timer.0.just_finished() {
-            sprite.index = if sprite.index == settings.get_last() {
-                settings.get_first()
-            } else {
-                sprite.index + 1
-            };
-        }
-    }
-}
-
-pub fn animation_on_removed_component<
-    WHO: Component,
-    AnimationSettings: SpriteAnimationSettings + Component,
-    Trigger: Component,
->(
-    mut commands: Commands,
-    mut asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    mut removed: RemovedComponents<Trigger>,
-    query: Query<(Entity, &Transform, &AnimationSettings), With<WHO>>,
-) {
-    for removed_entity in &mut removed {
-        for (entity, &transform, animation_settings) in &query {
-            if entity == removed_entity {
-                create_animation(
-                    &mut commands,
-                    &mut asset_server,
-                    &mut texture_atlases,
-                    entity,
-                    &transform,
-                    animation_settings,
-                )
-            }
-        }
-    }
 }
