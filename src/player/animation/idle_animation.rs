@@ -17,7 +17,7 @@ impl SpriteAnimationSettings for IdleAnimation {
         GridInfo {
             file_path: "images/player/animation/idle.png".to_string(),
             rows: 1,
-            columns: 26,
+            columns: 30,
             tile_size: Vec2::new(69.0, 130.0),
             tile_scale: Vec3::new(1.4, 1.4, 1.0),
         }
