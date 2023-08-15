@@ -18,55 +18,58 @@ impl ComicsSequence for Vertical2Images {
         if let Some(sound) = &self.top_image_sound {
             audio.play(asset_server.load(sound));
         }
-        commands
-            .spawn(create_vertical2images_frame())
-            .insert(Vertical2ImagesFrame)
-            .with_children(|parent| {
-                parent.spawn(NodeBundle {
-                    style: Style {
-                        size: Size::new(Val::Percent(100.0), Val::Percent(5.0)),
-                        flex_direction: FlexDirection::Column,
-                        justify_content: JustifyContent::Center,
-                        align_items: AlignItems::Center,
+        self.frame = Some(
+            commands
+                .spawn(create_vertical2images_frame())
+                .insert(Vertical2ImagesFrame)
+                .with_children(|parent| {
+                    parent.spawn(NodeBundle {
+                        style: Style {
+                            size: Size::new(Val::Percent(100.0), Val::Percent(5.0)),
+                            flex_direction: FlexDirection::Column,
+                            justify_content: JustifyContent::Center,
+                            align_items: AlignItems::Center,
+                            ..default()
+                        },
+                        background_color: Color::BLACK.into(),
                         ..default()
-                    },
-                    background_color: Color::BLACK.into(),
-                    ..default()
-                });
-                self.loaded_top_image = Some(
-                    parent
-                        .spawn(add_image_to_frame(
-                            self.top_image_path.clone(),
-                            &asset_server,
-                        ))
-                        .insert(Vertical2ImagesTop)
-                        .insert(InvisibleToVisibleTransition(Timer::from_seconds(
-                            10.0,
-                            TimerMode::Once,
-                        )))
-                        .id(),
-                );
-                self.loaded_bottom_image = Some(
-                    parent
-                        .spawn(add_image_to_frame(
-                            self.bottom_image_path.clone(),
-                            &asset_server,
-                        ))
-                        .insert(Vertical2ImagesDown)
-                        .id(),
-                );
-                parent.spawn(NodeBundle {
-                    style: Style {
-                        size: Size::new(Val::Percent(100.0), Val::Percent(5.0)),
-                        flex_direction: FlexDirection::Column,
-                        justify_content: JustifyContent::Center,
-                        align_items: AlignItems::Center,
+                    });
+                    self.loaded_top_image = Some(
+                        parent
+                            .spawn(add_image_to_frame(
+                                self.top_image_path.clone(),
+                                &asset_server,
+                            ))
+                            .insert(Vertical2ImagesTop)
+                            .insert(InvisibleToVisibleTransition(Timer::from_seconds(
+                                10.0,
+                                TimerMode::Once,
+                            )))
+                            .id(),
+                    );
+                    self.loaded_bottom_image = Some(
+                        parent
+                            .spawn(add_image_to_frame(
+                                self.bottom_image_path.clone(),
+                                &asset_server,
+                            ))
+                            .insert(Vertical2ImagesDown)
+                            .id(),
+                    );
+                    parent.spawn(NodeBundle {
+                        style: Style {
+                            size: Size::new(Val::Percent(100.0), Val::Percent(5.0)),
+                            flex_direction: FlexDirection::Column,
+                            justify_content: JustifyContent::Center,
+                            align_items: AlignItems::Center,
+                            ..default()
+                        },
+                        background_color: Color::BLACK.into(),
                         ..default()
-                    },
-                    background_color: Color::BLACK.into(),
-                    ..default()
-                });
-            });
+                    });
+                })
+                .id(),
+        )
     }
 
     fn next_frame(
@@ -95,7 +98,11 @@ impl ComicsSequence for Vertical2Images {
         self.sequence_finished
     }
 
-    fn end_sequence(&mut self) {}
+    fn end_sequence(&mut self, commands: &mut Commands) {
+        if let Some(frame) = self.frame {
+            commands.entity(frame).despawn_recursive();
+        }
+    }
 }
 
 fn create_vertical2images_frame() -> NodeBundle {

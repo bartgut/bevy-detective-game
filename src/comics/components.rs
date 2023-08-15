@@ -1,33 +1,24 @@
 use bevy::prelude::*;
-use crate::comics::systems::ComicsSequence;
-
-#[derive(Bundle, Copy, Clone)]
-pub struct SinglePageComicsBundle<T: ComicsSequence + Component + Clone> {
-    pub sequence: T,
-}
+use crate::comics::systems::{ComicsSequence};
 
 #[derive(Bundle)]
-pub struct MultiPageComicsBundle<T: ComicsSequence + Component + Clone> {
-    pub pages: ComicsPages<T>,
+pub struct MultiPageComicsBundle {
+    pub pages: ComicsPages,
 }
 
 #[derive(Component)]
-pub struct ComicsPages<T: ComicsSequence + Component + Clone> {
-    pub pages: Vec<SinglePageComicsBundle<T>>,
+pub struct ComicsPages {
+    pub pages: Vec<Box<dyn ComicsSequence + Send + Sync>>,
     pub current_page: usize,
 }
 
-impl<T: ComicsSequence + Component + Clone> ComicsPages<T> {
-    pub fn get_current_page(&self) -> SinglePageComicsBundle<T> {
-        self.pages[self.current_page].clone()
+impl ComicsPages {
+    pub fn get_current_page(&mut self) -> &mut Box<dyn ComicsSequence + Send + Sync> {
+        &mut self.pages[self.current_page]
     }
 
-    pub fn next_page(&mut self) -> Option<SinglePageComicsBundle<T>> {
+    pub fn next_page(&mut self) -> Option<&mut Box<dyn ComicsSequence + Send + Sync>> {
         self.current_page += 1;
-        if self.current_page >= self.pages.len() {
-            None
-        } else {
-            Some(self.pages[self.current_page].clone())
-        }
+        self.pages.get_mut(self.current_page)
     }
 }

@@ -10,7 +10,7 @@ impl SpriteAnimationSettings for WalkingAnimation {
     }
 
     fn get_last(&self) -> usize {
-        25
+        29
     }
 
     fn get_grid_info(&self) -> GridInfo {
