@@ -13,6 +13,10 @@ impl SpriteAnimationSettings for IdleAnimation {
         29
     }
 
+    fn animation_pace(&self) -> f32 {
+        0.03
+    }
+
     fn get_grid_info(&self) -> GridInfo {
         GridInfo {
             file_path: "images/player/animation/idle.png".to_string(),

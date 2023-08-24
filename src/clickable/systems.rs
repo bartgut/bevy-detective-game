@@ -4,7 +4,7 @@ use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
 use crate::clickable::components::{CanBeClicked, Clickable, Clicked, HoveredOverClickable};
 use crate::clickable::items::behaviour::ClickableBehaviour;
-use crate::clickable::items::resource::ClickableItemResource;
+use crate::clickable::items::resource::ItemResource;
 use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
@@ -43,38 +43,20 @@ pub fn return_to_normal_colors(
     }
 }
 
-pub fn initialize_clickable<T: ClickableBehaviour + Component + Clone>(
+pub fn initialize_items(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     level_query: Query<Entity, With<CurrentLevelSprite>>,
-    items_in_levels: Res<ClickableItemResource<T>>,
+    items_in_levels: Res<ItemResource>,
 ) {
     let level = level_query.get_single().unwrap();
-    commands.entity(level).with_children(|parent| {
-        for item_bundle in items_in_levels
-            .items
-            .get(&LevelState::TrainPlatform)
-            .unwrap_or(&vec![])
-        {
-            parent.spawn((
-                SpriteBundle {
-                    texture: asset_server.load(format!(
-                        "images/items/{}",
-                        item_bundle.clickable.clickable_texture
-                    )),
-                    transform: Transform::from_translation(
-                        item_bundle.clickable.level_initial_position,
-                    ),
-                    ..default()
-                },
-                Clickable {
-                    clickable_texture: item_bundle.clickable.clickable_texture.clone(),
-                    level_initial_position: item_bundle.clickable.level_initial_position,
-                },
-                item_bundle.item.clone(),
-            ));
-        }
-    });
+    for item in items_in_levels
+        .items
+        .get(&LevelState::TrainPlatform)
+        .unwrap()
+    {
+        item.spawn(&mut commands.entity(level), &asset_server)
+    }
 }
 
 pub fn print_when_hovered_clickable(

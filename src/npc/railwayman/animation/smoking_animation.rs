@@ -2,28 +2,28 @@ use bevy::prelude::*;
 use crate::animation::components::{GridInfo, SpriteAnimationSettings};
 
 #[derive(Component)]
-pub struct WalkingAnimation;
+pub struct SmokingAnimation;
 
-impl SpriteAnimationSettings for WalkingAnimation {
+impl SpriteAnimationSettings for SmokingAnimation {
     fn get_first(&self) -> usize {
         0
     }
 
     fn get_last(&self) -> usize {
-        29
+        74
     }
 
     fn animation_pace(&self) -> f32 {
-        0.03
+        0.06
     }
 
     fn get_grid_info(&self) -> GridInfo {
         GridInfo {
-            file_path: "images/player/animation/walking.png".to_string(),
+            file_path: "images/npc/railwayman/smoking.png".to_string(),
             rows: 1,
-            columns: 30,
-            tile_size: Vec2::new(69.0, 109.0),
-            tile_scale: Vec3::new(1.55, 1.55, 1.0),
+            columns: 75,
+            tile_size: Vec2::new(68.0, 120.0),
+            tile_scale: Vec3::new(1.4, 1.4, 1.0),
         }
     }
 }

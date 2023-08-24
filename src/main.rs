@@ -18,20 +18,18 @@ pub mod npc;
 pub mod parsing;
 pub mod player;
 pub mod sound;
+pub mod spawnable;
 pub mod text;
 pub mod ui;
 
 use bevy::prelude::*;
-use bevy::utils::HashMap;
 use crate::animation::SpriteAnimationPlugin;
 use crate::clickable::ClickablePlugin;
-use crate::clickable::items::onesideitem::OneSideItem;
-use crate::clickable::items::resource::ClickableItemResource;
-use crate::clickable::items::twosideitem::TwoSideItem;
+use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
 use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::dialogs::DialogsPlugin;
-use crate::game_items::{one_side_items_map, two_side_items_map};
+use crate::game_items::items_map;
 use crate::game_levels::level_map;
 use crate::game_npc::npc_map;
 use crate::game_state::GameState;
@@ -63,12 +61,7 @@ fn main() {
             levels: level_map(),
         })
         .insert_resource(NPCResource { npcs: npc_map() })
-        .insert_resource(ClickableItemResource::<OneSideItem> {
-            items: one_side_items_map(),
-        })
-        .insert_resource(ClickableItemResource::<TwoSideItem> {
-            items: two_side_items_map(),
-        })
+        .insert_resource(ItemResource { items: items_map() })
         .add_state::<IntroState>()
         .add_state::<GameState>()
         .add_state::<InGameState>()

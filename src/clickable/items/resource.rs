@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use crate::clickable::items::behaviour::ClickableBehaviour;
-use crate::clickable::items::ClickableItem;
 use crate::level_state::LevelState;
+use crate::spawnable::components::Spawnable;
 
 #[derive(Resource)]
-pub struct ClickableItemResource<T: ClickableBehaviour + Component> {
-    pub items: HashMap<LevelState, Vec<ClickableItem<T>>>,
+pub struct ItemResource {
+    pub items: HashMap<LevelState, Vec<Box<dyn Spawnable + Send + Sync>>>,
 }

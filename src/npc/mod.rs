@@ -1,11 +1,12 @@
 use bevy::prelude::*;
 use crate::game_state::GameState;
-use crate::level_state::LevelState;
 use crate::npc::systems::{
     dialogable_npc_can_start_dialog, initialize_npcs, print_when_hovered_over_npc,
 };
 
 pub mod components;
+pub mod librarian;
+pub mod railwayman;
 pub mod resource;
 pub mod systems;
 

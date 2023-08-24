@@ -30,5 +30,6 @@ pub struct AnimationTimer(pub Timer);
 pub trait SpriteAnimationSettings {
     fn get_first(&self) -> usize;
     fn get_last(&self) -> usize;
+    fn animation_pace(&self) -> f32;
     fn get_grid_info(&self) -> GridInfo;
 }

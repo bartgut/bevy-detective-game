@@ -106,6 +106,9 @@ fn create_animation(
                 .with_scale(animation_settings.get_grid_info().tile_scale),
             ..Default::default()
         },
-        AnimationTimer(Timer::from_seconds(0.03, Repeating)),
+        AnimationTimer(Timer::from_seconds(
+            animation_settings.animation_pace(),
+            Repeating,
+        )),
     ));
 }

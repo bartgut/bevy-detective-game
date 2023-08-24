@@ -1,8 +1,10 @@
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
+use crate::animation::components::AnimationEnabled;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
+use crate::npc::railwayman::animation::smoking_animation::SmokingAnimation;
 use crate::npc::resource::NPCResource;
 use crate::player::components::Player;
 use super::components::*;
@@ -14,27 +16,9 @@ pub fn initialize_npcs(
     levels: Res<NPCResource>,
 ) {
     let level = level_query.get_single().unwrap();
-    commands.entity(level).with_children(|parent| {
-        for (npc, dialogable_npc) in levels.npcs.get(&LevelState::TrainPlatform).unwrap() {
-            parent.spawn((
-                SpriteBundle {
-                    texture: asset_server.load(format!("images/npc/{}", npc.texture_file)),
-                    transform: Transform::from_translation(npc.level_initial_position),
-                    ..default()
-                },
-                NPC {
-                    texture_file: npc.texture_file.clone(),
-                    level_initial_position: npc.level_initial_position,
-                },
-                DialogableNPC {
-                    dialog_file_name: dialogable_npc.dialog_file_name.clone(),
-                    start_node: dialogable_npc.start_node.clone(),
-                    reset_node: dialogable_npc.reset_node.clone(),
-                    first_dialog: dialogable_npc.first_dialog,
-                },
-            ));
-        }
-    });
+    for npc in levels.npcs.get(&LevelState::TrainPlatform).unwrap() {
+        npc.spawn(&mut commands.entity(level), &asset_server)
+    }
 }
 
 pub fn despawn_npc(mut commands: Commands, query: Query<Entity, With<NPC>>) {

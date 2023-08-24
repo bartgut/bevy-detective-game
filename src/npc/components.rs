@@ -1,5 +1,6 @@
+use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use crate::level_state::LevelState;
+use crate::spawnable::components::Spawnable;
 
 #[derive(Component)]
 pub struct NPC {
@@ -33,3 +34,7 @@ pub struct HoveredOverNPC;
 
 #[derive(Component)]
 pub struct NPCInDialog;
+
+pub trait SpawnableNPC {
+    fn spawn(&self, level: &mut EntityCommands, asset_server: &Res<AssetServer>);
+}
