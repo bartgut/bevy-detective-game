@@ -3,6 +3,7 @@ pub mod clickable;
 pub mod comics;
 pub mod comics_state;
 pub mod dialogs;
+pub mod game;
 pub mod game_items;
 pub mod game_levels;
 pub mod game_npc;
