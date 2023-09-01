@@ -21,6 +21,8 @@ impl Plugin for LevelPlugin {
                 initialize_current_level.in_schedule(OnEnter(GameState::LevelSpriteLoading)),
             )
             .add_system(despawn_current_level.in_schedule(OnExit(GameState::InGame)))
+            .add_system(level_change_trigger_handler.in_set(OnUpdate(GameState::InGame)))
+            .add_system(on_level_state_change.in_set(OnUpdate(GameState::InGame)))
             .add_systems(
                 (
                     keyboard_level_input.in_set(LevelCameraInteractions),

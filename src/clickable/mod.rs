@@ -3,10 +3,12 @@ use crate::clickable::items::onesideitem::OneSideItem;
 use crate::clickable::items::twosideitem::TwoSideItem;
 use crate::clickable::systems::{
     clickable_can_be_clicked, clickable_click, clickable_first_click, gray_out_all,
-    initialize_items, print_when_hovered_clickable, return_to_normal_colors,
+    initialize_items, print_when_hovered_clickable, print_when_hovered_clickable_global,
+    return_to_normal_colors,
 };
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
+use crate::levels::components::LevelTeleport;
 
 pub mod components;
 pub mod constants;
@@ -21,10 +23,12 @@ impl Plugin for ClickablePlugin {
             .add_system(gray_out_all.in_schedule(OnEnter(InGameState::LookingAtItem)))
             .add_system(return_to_normal_colors.in_schedule(OnExit(InGameState::LookingAtItem)))
             .add_system(print_when_hovered_clickable)
+            .add_system(print_when_hovered_clickable_global)
             .add_system(clickable_can_be_clicked)
             .add_system(clickable_first_click::<OneSideItem>)
             .add_system(clickable_first_click::<TwoSideItem>)
             .add_system(clickable_click::<OneSideItem>)
-            .add_system(clickable_click::<TwoSideItem>);
+            .add_system(clickable_click::<TwoSideItem>)
+            .add_system(clickable_first_click::<LevelTeleport>);
     }
 }

@@ -5,5 +5,6 @@ pub enum InGameState {
     #[default]
     InGame,
     LookingAtItem,
+    Map,
     Dialog,
 }

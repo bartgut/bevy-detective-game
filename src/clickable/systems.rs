@@ -1,4 +1,3 @@
-use bevy::ecs::query::{QueryEntityError, ReadOnlyWorldQuery};
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
@@ -9,7 +8,6 @@ use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
 use crate::player::components::Player;
-use super::components;
 
 pub fn gray_out_all(
     mut level_query: Query<(&mut Sprite, &Children), With<CurrentLevelSprite>>,
@@ -32,13 +30,14 @@ pub fn return_to_normal_colors(
     mut level_query: Query<(&mut Sprite, &Children), With<CurrentLevelSprite>>,
     mut sprites: Query<&mut Sprite, Without<CurrentLevelSprite>>,
 ) {
-    let (mut level_sprite, children) = level_query.get_single_mut().unwrap();
-    level_sprite.color = Color::default();
-    for &child in children.iter() {
-        let mut sprite = sprites.get_mut(child);
-        match sprite {
-            Ok(mut existing) => existing.color = Color::default(),
-            Err(_) => {}
+    for (mut level_sprite, children) in level_query.iter_mut() {
+        level_sprite.color = Color::default();
+        for &child in children.iter() {
+            let mut sprite = sprites.get_mut(child);
+            match sprite {
+                Ok(mut existing) => existing.color = Color::default(),
+                Err(_) => {}
+            }
         }
     }
 }
@@ -47,15 +46,39 @@ pub fn initialize_items(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     level_query: Query<Entity, With<CurrentLevelSprite>>,
+    level_state: Res<State<LevelState>>,
     items_in_levels: Res<ItemResource>,
 ) {
     let level = level_query.get_single().unwrap();
-    for item in items_in_levels
-        .items
-        .get(&LevelState::TrainPlatform)
-        .unwrap()
-    {
-        item.spawn(&mut commands.entity(level), &asset_server)
+    for item in items_in_levels.items.get(&level_state.0).unwrap_or(&vec![]) {
+        item.spawn_child(&mut commands.entity(level), &asset_server)
+    }
+}
+
+// TODO proper calculations for object not in the level
+pub fn print_when_hovered_clickable_global(
+    mut commands: Commands,
+    mut cursor_evr: EventReader<CursorMoved>,
+    mut window_query: Query<&mut Window, With<PrimaryWindow>>,
+    clickable_query: Query<(Entity, &Transform), With<CanBeClicked>>,
+) {
+    let mut window = window_query.get_single_mut().unwrap();
+    for ev in cursor_evr.iter() {
+        for (entity, clickable_transform) in clickable_query.iter() {
+            let global_position = ev.position.x - window.resolution.width() / 2.0;
+            let clickable_position = clickable_transform.translation.xy();
+            println!("Clickable position: {:?}", clickable_position);
+            println!("Global position: {:?}", global_position);
+            if Vec2::new(global_position, 0.0).distance(Vec2::new(clickable_position.x, 0.0)) < 30.0
+            {
+                println!("HERE");
+                window.cursor.icon = CursorIcon::Hand;
+                commands.entity(entity).insert(HoveredOverClickable);
+            } else {
+                window.cursor.icon = CursorIcon::Default;
+                commands.entity(entity).remove::<HoveredOverClickable>();
+            }
+        }
     }
 }
 
@@ -91,14 +114,14 @@ pub fn print_when_hovered_clickable(
 pub fn clickable_can_be_clicked(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,
-    clickable_query: Query<(Entity, &Transform), With<Clickable>>,
+    clickable_query: Query<(Entity, &Transform, &Clickable)>,
 ) {
     for player_transform in player_query.iter() {
-        for (entity, clickable_transform) in clickable_query.iter() {
+        for (entity, clickable_transform, clickable) in clickable_query.iter() {
             if player_transform
                 .translation
                 .distance(clickable_transform.translation)
-                < 150.0
+                < clickable.required_distance
             {
                 commands.entity(entity).insert(CanBeClicked);
             } else {
@@ -116,7 +139,7 @@ pub fn clickable_first_click<T: ClickableBehaviour + Component>(
     mut buttons: Res<Input<MouseButton>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        if (!clickable.is_empty()) {
+        if !clickable.is_empty() {
             let (entity, mut behaviour) = clickable.get_single_mut().unwrap();
             game_state.set(InGameState::LookingAtItem);
             commands.entity(entity).insert(Clicked);
@@ -133,12 +156,12 @@ pub fn clickable_click<T: ClickableBehaviour + Component>(
     keyboard_buttons: Res<Input<KeyCode>>,
     mut clickable: Query<(Entity, &mut T), With<Clicked>>,
 ) {
-    if (!clickable.is_empty()) {
+    if !clickable.is_empty() {
         let (entity, mut behaviour) = clickable.get_single_mut().unwrap();
-        if (mouse_buttons.just_pressed(MouseButton::Left)) {
+        if mouse_buttons.just_pressed(MouseButton::Left) {
             behaviour.on_click(&mut commands, asset_server)
         }
-        if (keyboard_buttons.just_pressed(KeyCode::Escape)) {
+        if keyboard_buttons.just_pressed(KeyCode::Escape) {
             game_state.set(InGameState::InGame);
             commands.entity(entity).remove::<Clicked>();
             behaviour.on_close(&mut commands)

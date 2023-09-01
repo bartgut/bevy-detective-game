@@ -1,7 +1,7 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use crate::animation::components::{AnimationEnabled, GridInfo, SpriteAnimationSettings};
-use crate::spawnable::components::Spawnable;
+use crate::spawnable::components::{Spawnable, SpawnableChild};
 
 #[derive(Component)]
 pub struct TrainSmoke;
@@ -33,8 +33,8 @@ impl SpriteAnimationSettings for TrainSmokeAnimation {
     }
 }
 
-impl Spawnable for TrainSmoke {
-    fn spawn(&self, level: &mut EntityCommands, _: &Res<AssetServer>) {
+impl SpawnableChild for TrainSmoke {
+    fn spawn_child(&self, level: &mut EntityCommands, _: &Res<AssetServer>) {
         level.with_children(|parent| {
             parent.spawn((
                 TrainSmoke,

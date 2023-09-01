@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use crate::game_state::GameState;
+use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 use crate::levels::constants::CAMERA_SPEED;
 use crate::levels::resource::LevelsResource;
@@ -97,5 +98,27 @@ pub fn keyboard_camera_move_blocked_when_border_reached(
                 tranform.translation.x = res_x_halved - width_halved;
             }
         }
+    }
+}
+
+pub fn on_level_state_change(
+    mut level_state: ResMut<NextState<LevelState>>,
+    mut game_state: ResMut<NextState<GameState>>,
+    mut in_game_state: ResMut<NextState<InGameState>>,
+) {
+    if level_state.is_changed() {
+        game_state.set(GameState::LevelLoading);
+        in_game_state.set(InGameState::InGame);
+    }
+}
+
+pub fn level_change_trigger_handler(
+    mut commands: Commands,
+    mut level_change_trigger_query: Query<(Entity, &LevelChangeTrigger)>,
+    mut level_state: ResMut<NextState<LevelState>>,
+) {
+    if let Ok((entity, destination)) = level_change_trigger_query.get_single_mut() {
+        commands.entity(entity).despawn_recursive();
+        level_state.set(destination.level_state);
     }
 }

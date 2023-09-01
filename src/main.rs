@@ -30,6 +30,7 @@ use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
 use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::dialogs::DialogsPlugin;
+use crate::game::world_map::WorldMapPlugin;
 use crate::game_items::items_map;
 use crate::game_levels::level_map;
 use crate::game_npc::npc_map;
@@ -82,6 +83,7 @@ fn main() {
         .add_plugin(ComicsPlugin)
         .add_plugin(UIUtilsPlugin)
         .add_plugin(SpriteAnimationPlugin)
+        .add_plugin(WorldMapPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)

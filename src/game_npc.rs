@@ -10,10 +10,6 @@ use crate::npc::railwayman::components::Railwayman;
 pub fn npc_map() -> HashMap<LevelState, Vec<Box<dyn SpawnableNPC + Send + Sync>>> {
     let mut map = HashMap::<LevelState, Vec<Box<dyn SpawnableNPC + Send + Sync>>>::new();
     map.entry(LevelState::TrainPlatform)
-        .or_insert(vec![])
-        .push(Box::new(Railwayman));
-    map.entry(LevelState::TrainPlatform)
-        .or_insert(vec![])
-        .push(Box::new(Librarian));
+        .or_insert(vec![Box::new(Railwayman), Box::new(Librarian)]);
     map
 }

@@ -2,8 +2,8 @@ use bevy::prelude::*;
 
 #[derive(Component)]
 pub struct Clickable {
-    pub clickable_texture: String,
     pub level_initial_position: Vec3,
+    pub required_distance: f32,
 }
 
 #[derive(Component)]

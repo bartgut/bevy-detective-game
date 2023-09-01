@@ -1,17 +1,19 @@
-use bevy::prelude::*;
 use bevy::utils::HashMap;
-use crate::clickable::items::loverphoto::components::LoverPhoto;
 use crate::game::effects::train_smoke::TrainSmoke;
+use crate::game::items::carinpark::components::CarInPark;
+use crate::game::items::librarydoor::components::LibraryDoor;
+use crate::game::items::loverphoto::components::LoverPhoto;
 use crate::level_state::LevelState;
-use crate::spawnable::components::Spawnable;
+use crate::spawnable::components::SpawnableChild;
 
-pub fn items_map() -> HashMap<LevelState, Vec<Box<dyn Spawnable + Sync + Send>>> {
-    let mut map = HashMap::<LevelState, Vec<Box<dyn Spawnable + Sync + Send>>>::new();
-    map.entry(LevelState::TrainPlatform)
-        .or_insert(vec![])
-        .push(Box::new(LoverPhoto));
-    map.entry(LevelState::TrainPlatform)
-        .or_insert(vec![])
-        .push(Box::new(TrainSmoke));
+pub fn items_map() -> HashMap<LevelState, Vec<Box<dyn SpawnableChild + Sync + Send>>> {
+    let mut map = HashMap::<LevelState, Vec<Box<dyn SpawnableChild + Sync + Send>>>::new();
+    map.entry(LevelState::TrainPlatform).or_insert(vec![
+        Box::new(LoverPhoto),
+        Box::new(TrainSmoke),
+        Box::new(LibraryDoor),
+    ]);
+    map.entry(LevelState::CityPark)
+        .or_insert(vec![Box::new(CarInPark)]);
     map
 }
