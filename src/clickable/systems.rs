@@ -67,11 +67,8 @@ pub fn print_when_hovered_clickable_global(
         for (entity, clickable_transform) in clickable_query.iter() {
             let global_position = ev.position.x - window.resolution.width() / 2.0;
             let clickable_position = clickable_transform.translation.xy();
-            println!("Clickable position: {:?}", clickable_position);
-            println!("Global position: {:?}", global_position);
             if Vec2::new(global_position, 0.0).distance(Vec2::new(clickable_position.x, 0.0)) < 30.0
             {
-                println!("HERE");
                 window.cursor.icon = CursorIcon::Hand;
                 commands.entity(entity).insert(HoveredOverClickable);
             } else {
