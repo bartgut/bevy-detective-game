@@ -4,6 +4,7 @@ use bevy::math::Vec3Swizzles;
 use crate::clickable::components::{CanBeClicked, Clickable, Clicked, HoveredOverClickable};
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::clickable::items::resource::ItemResource;
+use crate::game::world_map::world_map::WorldMap;
 use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
@@ -60,20 +61,24 @@ pub fn print_when_hovered_clickable_global(
     mut commands: Commands,
     mut cursor_evr: EventReader<CursorMoved>,
     mut window_query: Query<&mut Window, With<PrimaryWindow>>,
+    mut map_query: Query<&mut Transform, (With<WorldMap>, Without<CanBeClicked>)>,
     clickable_query: Query<(Entity, &Transform), With<CanBeClicked>>,
 ) {
-    let mut window = window_query.get_single_mut().unwrap();
-    for ev in cursor_evr.iter() {
-        for (entity, clickable_transform) in clickable_query.iter() {
-            let global_position = ev.position.x - window.resolution.width() / 2.0;
-            let clickable_position = clickable_transform.translation.xy();
-            if Vec2::new(global_position, 0.0).distance(Vec2::new(clickable_position.x, 0.0)) < 30.0
-            {
-                window.cursor.icon = CursorIcon::Hand;
-                commands.entity(entity).insert(HoveredOverClickable);
-            } else {
-                window.cursor.icon = CursorIcon::Default;
-                commands.entity(entity).remove::<HoveredOverClickable>();
+    for map in map_query.iter() {
+        let mut window = window_query.get_single_mut().unwrap();
+        for ev in cursor_evr.iter() {
+            for (entity, clickable_transform) in clickable_query.iter() {
+                let global_position = ev.position.x - window.resolution.width() / 2.0;
+                let clickable_position = clickable_transform.translation.xy() * map.scale.xy();
+                if Vec2::new(global_position, 0.0).distance(Vec2::new(clickable_position.x, 0.0))
+                    < 30.0
+                {
+                    window.cursor.icon = CursorIcon::Hand;
+                    commands.entity(entity).insert(HoveredOverClickable);
+                } else {
+                    window.cursor.icon = CursorIcon::Default;
+                    commands.entity(entity).remove::<HoveredOverClickable>();
+                }
             }
         }
     }
@@ -93,7 +98,8 @@ pub fn print_when_hovered_clickable(
             for level_transform in level_query.iter() {
                 let new_level_position = (width_halved - level_transform.translation.x)
                     + (ev.position.x - window.resolution.width() / 2.0);
-                let npc_position_2d = width_halved + clickable_transform.translation.xy();
+                let npc_position_2d = width_halved
+                    + clickable_transform.translation.xy() * level_transform.scale.xy();
                 if Vec2::new(new_level_position, 0.0).distance(Vec2::new(npc_position_2d.x, 0.0))
                     < 30.0
                 {

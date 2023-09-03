@@ -47,7 +47,7 @@ impl Spawnable for WorldMap {
                 SpriteBundle {
                     texture: asset_server.load("images/map/world_map.png").into(),
                     transform: Transform::from_xyz(0.0, 0.0, 2.0)
-                        .with_scale(Vec3::new(1.0, 1.0, 1.0)),
+                        .with_scale(Vec3::new(0.7, 0.7, 0.7)),
                     ..Default::default()
                 },
                 WorldMap,
