@@ -15,14 +15,7 @@ pub fn load_current_level(
 ) {
     match levels.levels.get(&current_level_state.0) {
         Some(level) => {
-            commands.spawn((
-                LevelDescription {
-                    level_name: level.level_name.clone(),
-                    level_initial_position: level.level_initial_position,
-                    player_initial_position: level.player_initial_position,
-                },
-                CurrentLevel,
-            ));
+            commands.spawn(level.clone()).insert(CurrentLevel);
             game_state.set(GameState::LevelSpriteLoading);
         }
         None => {}
@@ -32,15 +25,15 @@ pub fn load_current_level(
 pub fn initialize_current_level(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    current_level_query: Query<&LevelDescription, With<CurrentLevel>>,
+    current_level_query: Query<(&LevelDescription, &Transform), With<CurrentLevel>>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
     match current_level_query.get_single() {
-        Ok(level) => {
+        Ok((level, transform)) => {
             commands.spawn((
                 SpriteBundle {
                     texture: asset_server.load(format!("images/levels/{}.png", level.level_name)),
-                    transform: Transform::from_translation(level.level_initial_position),
+                    transform: transform.clone(),
                     ..default()
                 },
                 CurrentLevelSprite,

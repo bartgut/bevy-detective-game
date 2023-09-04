@@ -20,7 +20,7 @@ pub fn initialize_player(
         parent.spawn((
             SpriteBundle {
                 texture: asset_server.load("images/player/main.png"),
-                transform: Transform::from_translation(level_description.player_initial_position),
+                transform: level_description.player_initial_position.clone(),
                 ..default()
             },
             Player,

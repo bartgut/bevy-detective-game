@@ -1,13 +1,17 @@
 use bevy::prelude::*;
 use crate::clickable::items::behaviour::ClickableBehaviour;
-use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 
-#[derive(Component)]
+#[derive(Bundle, Clone)]
+pub struct LevelBundle {
+    pub level_description: LevelDescription,
+    pub transform: Transform,
+}
+
+#[derive(Component, Clone)]
 pub struct LevelDescription {
     pub level_name: String,
-    pub level_initial_position: Vec3,
-    pub player_initial_position: Vec3,
+    pub player_initial_position: Transform,
 }
 
 #[derive(Component)]
