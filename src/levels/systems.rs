@@ -108,10 +108,17 @@ pub fn on_level_state_change(
 pub fn level_change_trigger_handler(
     mut commands: Commands,
     mut level_change_trigger_query: Query<(Entity, &LevelChangeTrigger)>,
+    mut current_level_state: Res<State<LevelState>>,
     mut level_state: ResMut<NextState<LevelState>>,
+    mut in_game_state: ResMut<NextState<InGameState>>,
 ) {
     if let Ok((entity, destination)) = level_change_trigger_query.get_single_mut() {
         commands.entity(entity).despawn_recursive();
-        level_state.set(destination.level_state);
+        if destination.level_state == current_level_state.0 {
+            in_game_state.set(InGameState::InGame);
+            return; // Cannot travel to the same location
+        } else {
+            level_state.set(destination.level_state);
+        }
     }
 }
