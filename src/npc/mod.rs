@@ -5,8 +5,6 @@ use crate::npc::systems::{
 };
 
 pub mod components;
-pub mod librarian;
-pub mod railwayman;
 pub mod resource;
 pub mod systems;
 

@@ -8,4 +8,5 @@ pub enum LevelState {
     CityPark,
     Hospital,
     LibraryInternals,
+    Morgue,
 }

@@ -3,9 +3,9 @@ use crate::animation::systems::{
     animation_executor, animation_on_added_component, animation_on_removed_component,
 };
 use crate::game::effects::train_smoke::{TrainSmoke, TrainSmokeAnimation};
+use crate::game::npc::railwayman::animation::smoking_animation::SmokingAnimation;
 use crate::movement::linear_movement::components::Linear2DMovementComponent;
 use crate::npc::components::NPC;
-use crate::npc::railwayman::animation::smoking_animation::SmokingAnimation;
 use crate::player::animation::idle_animation::IdleAnimation;
 use crate::player::animation::walking_animation::WalkingAnimation;
 use crate::player::components::{Player};

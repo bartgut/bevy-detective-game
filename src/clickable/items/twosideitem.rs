@@ -57,6 +57,8 @@ impl TwoSideItem {
 }
 
 impl ClickableBehaviour for TwoSideItem {
+    fn on_hover_entry(&mut self, commands: &mut Commands) {}
+
     fn on_start(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
         let what_texture = match self.current_texture_site {
             TextureSide::Front => &self.texture_front_file,

@@ -1,3 +1,4 @@
+use std::ops::Add;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
@@ -56,16 +57,17 @@ pub fn initialize_items(
     }
 }
 
-// TODO proper calculations for object not in the level
 pub fn print_when_hovered_clickable_global(
     mut commands: Commands,
     mut cursor_evr: EventReader<CursorMoved>,
     mut window_query: Query<&mut Window, With<PrimaryWindow>>,
     mut map_query: Query<&mut Transform, (With<WorldMap>, Without<CanBeClicked>)>,
     clickable_query: Query<(Entity, &Transform), With<CanBeClicked>>,
+    clickable_query_already_hovered: Query<(Entity, &HoveredOverClickable)>,
 ) {
     for map in map_query.iter() {
         let mut window = window_query.get_single_mut().unwrap();
+
         for ev in cursor_evr.iter() {
             for (entity, clickable_transform) in clickable_query.iter() {
                 let global_position = ev.position.x - window.resolution.width() / 2.0;
@@ -74,7 +76,9 @@ pub fn print_when_hovered_clickable_global(
                     < 30.0
                 {
                     window.cursor.icon = CursorIcon::Hand;
-                    commands.entity(entity).insert(HoveredOverClickable);
+                    if !clickable_query_already_hovered.contains(entity) {
+                        commands.entity(entity).insert(HoveredOverClickable);
+                    }
                 } else {
                     window.cursor.icon = CursorIcon::Default;
                     commands.entity(entity).remove::<HoveredOverClickable>();
@@ -90,6 +94,7 @@ pub fn print_when_hovered_clickable(
     mut window_query: Query<&mut Window, With<PrimaryWindow>>,
     level_query: Query<&Transform, (Without<Player>, With<CurrentLevelSprite>)>,
     clickable_query: Query<(Entity, &Transform), With<CanBeClicked>>,
+    clickable_query_already_hovered: Query<(Entity, With<HoveredOverClickable>)>,
 ) {
     let width_halved = 2688.0 / 2.0; // TODO
     let mut window = window_query.get_single_mut().unwrap();
@@ -104,13 +109,24 @@ pub fn print_when_hovered_clickable(
                     < 30.0
                 {
                     window.cursor.icon = CursorIcon::Hand;
-                    commands.entity(entity).insert(HoveredOverClickable);
+                    if !clickable_query_already_hovered.contains(entity) {
+                        commands.entity(entity).insert(HoveredOverClickable);
+                    }
                 } else {
                     window.cursor.icon = CursorIcon::Default;
                     commands.entity(entity).remove::<HoveredOverClickable>();
                 }
             }
         }
+    }
+}
+
+pub fn hover_entry<T: Component + ClickableBehaviour>(
+    mut commands: Commands,
+    mut query: Query<&mut T, Added<HoveredOverClickable>>,
+) {
+    for mut hovered in query.iter_mut() {
+        hovered.on_hover_entry(&mut commands);
     }
 }
 
@@ -145,7 +161,10 @@ pub fn clickable_first_click<T: ClickableBehaviour + Component>(
         if !clickable.is_empty() {
             let (entity, mut behaviour) = clickable.get_single_mut().unwrap();
             game_state.set(InGameState::LookingAtItem);
-            commands.entity(entity).insert(Clicked);
+            commands
+                .entity(entity)
+                .insert(Clicked)
+                .remove::<HoveredOverClickable>();
             behaviour.on_start(&mut commands, asset_server);
         }
     }

@@ -4,6 +4,7 @@ use bevy::prelude::OnExit;
 use crate::game::world_map::system::{delete_map, show_map};
 use crate::in_game_state::InGameState;
 
+mod pins;
 pub mod system;
 pub mod world_map;
 

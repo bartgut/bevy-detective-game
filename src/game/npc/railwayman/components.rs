@@ -1,8 +1,8 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use crate::animation::components::AnimationEnabled;
+use crate::game::npc::railwayman::animation::smoking_animation::SmokingAnimation;
 use crate::npc::components::{DialogableNPC, NPC, SpawnableNPC};
-use crate::npc::railwayman::animation::smoking_animation::SmokingAnimation;
 
 #[derive(Component)]
 pub struct Railwayman;

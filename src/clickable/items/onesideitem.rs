@@ -8,6 +8,8 @@ pub struct OneSideItem {
 }
 
 impl ClickableBehaviour for OneSideItem {
+    fn on_hover_entry(&mut self, commands: &mut Commands) {}
+
     fn on_start(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
         let x = commands.spawn(
             (SpriteBundle {

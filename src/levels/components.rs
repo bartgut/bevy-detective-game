@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::level_state::LevelState;
+use crate::sound::typewriting::components::AudioPlayable;
 
 #[derive(Bundle, Clone)]
 pub struct LevelBundle {
@@ -30,18 +31,38 @@ pub struct LevelTeleport {
     pub level_state: LevelState,
 }
 
+#[derive(Component)]
+pub struct LevelTeleportClickedAudio;
+impl AudioPlayable for LevelTeleportClickedAudio {
+    fn play(&self, asset_server: &Res<AssetServer>, audio: &Res<Audio>) {
+        audio.play(asset_server.load("sound/world_map/level_teleport_clicked.ogg"));
+    }
+}
+
+#[derive(Component)]
+pub struct LevelTeleportHoveredAudio;
+
+impl AudioPlayable for LevelTeleportHoveredAudio {
+    fn play(&self, asset_server: &Res<AssetServer>, audio: &Res<Audio>) {
+        audio.play(asset_server.load("sound/world_map/level_teleport_hover.ogg"));
+    }
+}
+
 impl ClickableBehaviour for LevelTeleport {
+    fn on_hover_entry(&mut self, commands: &mut Commands) {
+        commands.spawn(LevelTeleportHoveredAudio);
+    }
+
     fn on_start(&mut self, commands: &mut Commands, _: Res<AssetServer>) {
-        commands.spawn(LevelChangeTrigger {
-            level_state: self.level_state.clone(),
-        });
+        commands.spawn((
+            LevelChangeTrigger {
+                level_state: self.level_state.clone(),
+            },
+            LevelTeleportClickedAudio,
+        ));
     }
 
-    fn on_click(&mut self, _: &mut Commands, _: Res<AssetServer>) {
-        todo!()
-    }
+    fn on_click(&mut self, _: &mut Commands, _: Res<AssetServer>) {}
 
-    fn on_close(&mut self, _: &mut Commands) {
-        todo!()
-    }
+    fn on_close(&mut self, _: &mut Commands) {}
 }

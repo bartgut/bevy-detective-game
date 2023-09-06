@@ -1,9 +1,8 @@
 use bevy::prelude::*;
-use pest::pratt_parser::Op;
 use super::components::*;
 use super::bundles::*;
 use rand::prelude::*;
-use crate::sound::typewriting::systems::typewriting_sound;
+use crate::sound::systems::typewriting_sound;
 
 pub fn create_type_writing_text(
     text_to_show: &String,

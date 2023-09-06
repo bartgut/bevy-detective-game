@@ -46,6 +46,7 @@ use crate::movement::MovementPlugin;
 use crate::npc::NpcPlugin;
 use crate::npc::resource::NPCResource;
 use crate::player::PlayerPlugin;
+use crate::sound::SoundPlugin;
 use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
 use crate::text::TypeWritingTextPlugin;
 use crate::ui::UIUtilsPlugin;
@@ -84,6 +85,7 @@ fn main() {
         .add_plugin(UIUtilsPlugin)
         .add_plugin(SpriteAnimationPlugin)
         .add_plugin(WorldMapPlugin)
+        .add_plugin(SoundPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)

@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use crate::game::npc::librarian::components::Librarian;
+use crate::game::npc::railwayman::components::Railwayman;
 use crate::level_state::LevelState;
 use crate::npc::components::SpawnableNPC;
-use crate::npc::librarian::components::Librarian;
-use crate::npc::railwayman::components::Railwayman;
 
 // ALL NPCS FOR ALL LEVELS
 

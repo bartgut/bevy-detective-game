@@ -1,5 +1,8 @@
 use bevy::prelude::*;
-use crate::game::world_map::world_map::{CityParkPin, WorldMap};
+use crate::game::world_map::pins::city_park::CityParkPin;
+use crate::game::world_map::pins::hospital::HospitalPin;
+use crate::game::world_map::pins::library::LibraryPin;
+use crate::game::world_map::world_map::{WorldMap};
 use crate::in_game_state::InGameState;
 use crate::spawnable::components::{Spawnable, SpawnableChild};
 
@@ -20,6 +23,8 @@ pub fn show_map(
                 game_state.set(InGameState::Map);
                 let map_id = WorldMap.spawn(&mut commands, &asset_server);
                 CityParkPin.spawn_child(&mut commands.entity(map_id), &asset_server);
+                HospitalPin.spawn_child(&mut commands.entity(map_id), &asset_server);
+                LibraryPin.spawn_child(&mut commands.entity(map_id), &asset_server);
             }
         }
     }
