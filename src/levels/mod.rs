@@ -11,25 +11,29 @@ use crate::game_state::GameState;
 
 pub struct LevelPlugin;
 
-#[derive(SystemSet, Debug, Clone, Eq, PartialEq, Hash)]
-pub struct LevelCameraInteractions;
-
 impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(load_current_level.in_schedule(OnEnter(GameState::LevelLoading)))
-            .add_system(
-                initialize_current_level.in_schedule(OnEnter(GameState::LevelSpriteLoading)),
-            )
-            .add_system(despawn_current_level.in_schedule(OnExit(GameState::InGame)))
-            .add_system(level_change_trigger_handler.in_set(OnUpdate(GameState::InGame)))
-            .add_system(on_level_state_change.in_set(OnUpdate(GameState::InGame)))
+        app.add_systems(OnEnter(GameState::LevelLoading), load_current_level)
             .add_systems(
+                OnEnter(GameState::LevelSpriteLoading),
+                initialize_current_level,
+            )
+            .add_systems(OnExit(GameState::InGame), despawn_current_level)
+            .add_systems(
+                Update,
+                level_change_trigger_handler.run_if(in_state(GameState::InGame)),
+            )
+            .add_systems(
+                Update,
+                on_level_state_change.run_if(in_state(GameState::InGame)),
+            )
+            .add_systems(
+                Update,
                 (
-                    keyboard_level_input.in_set(LevelCameraInteractions),
-                    keyboard_camera_move_blocked_when_border_reached
-                        .in_set(LevelCameraInteractions),
+                    keyboard_level_input,
+                    keyboard_camera_move_blocked_when_border_reached,
                 )
-                    .in_set(OnUpdate(GameState::InGame)),
+                    .run_if(in_state(GameState::InGame)),
             );
     }
 }

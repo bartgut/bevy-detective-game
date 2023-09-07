@@ -8,7 +8,7 @@ use crate::text::typewriting::components::{TextWithPause, TypeWritingTextSetting
 use crate::ui::components::FullScreenText;
 use crate::ui::systems::full_screen_text;
 
-pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
+pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>) {
     //audio.play(asset_server.load("sound/background/intro.ogg"));
     full_screen_text(
         &mut commands,
@@ -67,12 +67,12 @@ pub fn mouse_interaction(
     comics_state: Res<State<MultiPageComicsState>>,
 ) {
     if mouse_buttons.just_pressed(MouseButton::Left) {
-        match intro_state.0 {
+        match intro_state.get() {
             IntroState::TypewritingReport => {
                 intro_state_mutator.set(IntroState::Comics1);
             }
             IntroState::Comics1 => {
-                if (comics_state.0 == MultiPageComicsState::END) {
+                if comics_state.get() == &MultiPageComicsState::END {
                     intro_state_mutator.set(IntroState::End);
                 }
             }

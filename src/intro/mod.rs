@@ -10,20 +10,14 @@ use crate::intro_state::IntroState;
 
 pub struct IntroPlugin;
 
-#[derive(SystemSet, Debug, Clone, Eq, PartialEq, Hash)]
-pub struct IntroInteractions;
-
 impl Plugin for IntroPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(start_intro.in_schedule(OnEnter(GameState::Intro)))
-            .add_system(
-                full_text_typewriting_cleanup.in_schedule(OnExit(IntroState::TypewritingReport)),
+        app.add_systems(OnEnter(GameState::Intro), start_intro)
+            .add_systems(
+                OnExit(IntroState::TypewritingReport),
+                full_text_typewriting_cleanup,
             )
-            .add_system(comics_start.in_schedule(OnEnter(IntroState::Comics1)))
-            .add_system(
-                mouse_interaction
-                    .in_set(IntroInteractions)
-                    .in_set(OnUpdate(GameState::Intro)),
-            );
+            .add_systems(OnEnter(IntroState::Comics1), comics_start)
+            .add_systems(Update, mouse_interaction.run_if(in_state(GameState::Intro)));
     }
 }

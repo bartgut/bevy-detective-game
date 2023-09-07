@@ -19,17 +19,25 @@ pub struct ClickablePlugin;
 
 impl Plugin for ClickablePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(initialize_items.in_schedule(OnEnter(GameState::InGame)))
-            .add_system(gray_out_all.in_schedule(OnEnter(InGameState::LookingAtItem)))
-            .add_system(return_to_normal_colors.in_schedule(OnExit(InGameState::LookingAtItem)))
-            .add_system(print_when_hovered_clickable.in_set(OnUpdate(InGameState::InGame)))
-            .add_system(print_when_hovered_clickable_global.in_set(OnUpdate(InGameState::Map)))
-            .add_system(clickable_can_be_clicked)
-            .add_system(hover_entry::<LevelTeleport>)
-            .add_system(clickable_first_click::<OneSideItem>)
-            .add_system(clickable_first_click::<TwoSideItem>)
-            .add_system(clickable_click::<OneSideItem>)
-            .add_system(clickable_click::<TwoSideItem>)
-            .add_system(clickable_first_click::<LevelTeleport>);
+        app.add_systems(OnEnter(GameState::InGame), initialize_items)
+            .add_systems(OnEnter(InGameState::LookingAtItem), gray_out_all)
+            .add_systems(OnExit(InGameState::LookingAtItem), return_to_normal_colors)
+            .add_systems(
+                Update,
+                print_when_hovered_clickable.run_if(in_state(InGameState::InGame)),
+            )
+            //.add_system(print_when_hovered_clickable.in_set(Update(InGameState::InGame)))
+            .add_systems(
+                Update,
+                print_when_hovered_clickable_global.run_if(in_state(InGameState::Map)),
+            )
+            //.add_system(print_when_hovered_clickable_global.in_set(Update(InGameState::Map)))
+            .add_systems(Update, clickable_can_be_clicked)
+            .add_systems(Update, hover_entry::<LevelTeleport>)
+            .add_systems(Update, clickable_first_click::<OneSideItem>)
+            .add_systems(Update, clickable_first_click::<TwoSideItem>)
+            .add_systems(Update, clickable_click::<OneSideItem>)
+            .add_systems(Update, clickable_click::<TwoSideItem>)
+            .add_systems(Update, clickable_first_click::<LevelTeleport>);
     }
 }

@@ -25,6 +25,7 @@ pub mod text;
 pub mod ui;
 
 use bevy::prelude::*;
+use bevy::prelude::KeyCode::V;
 use crate::animation::SpriteAnimationPlugin;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::resource::ItemResource;
@@ -61,6 +62,8 @@ extern crate pest_derive;
 
 fn main() {
     App::new()
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_systems(PreStartup, camera_setup)
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(LevelsResource {
             levels: level_map(),
@@ -73,34 +76,21 @@ fn main() {
         .add_state::<LevelState>()
         .add_state::<ComicsState>()
         .add_state::<MultiPageComicsState>()
-        .add_plugin(DialogsPlugin)
-        .add_plugin(MainMenuPlugin)
-        .add_plugin(IntroPlugin)
-        .add_plugin(LevelPlugin)
-        .add_plugin(PlayerPlugin)
-        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_plugin(MovementPlugin)
-        .add_plugin(NpcPlugin)
-        .add_plugin(TypeWritingTextPlugin)
-        .add_plugin(ClickablePlugin)
-        .add_plugin(ComicsPlugin)
-        .add_plugin(UIUtilsPlugin)
-        .add_plugin(SpriteAnimationPlugin)
-        .add_plugin(WorldMapPlugin)
-        .add_plugin(SoundPlugin)
-        .add_plugin(KeyboardPlugin)
-        .add_startup_system(camera_setup)
-        /*.add_startup_system(appearing_text_setup)
-        .add_startup_system(type_writing_text_setup)
-        .add_system(not_visible_setup)
-        .add_system(appearing_setup)
-        .add_system(visible_setup)
-        .add_system(disappearing_setup)
-        .add_system(type_writing_len_update)
-        .add_system(type_writing_text_update)*/
-        //        .add_system(test_dialog_func)
-        //.add_startup_system(intro_setup)
-        //.add_system(intro_text_show)
+        .add_plugins(DialogsPlugin)
+        .add_plugins(MainMenuPlugin)
+        .add_plugins(IntroPlugin)
+        .add_plugins(LevelPlugin)
+        .add_plugins(PlayerPlugin)
+        .add_plugins(MovementPlugin)
+        .add_plugins(NpcPlugin)
+        .add_plugins(TypeWritingTextPlugin)
+        .add_plugins(ClickablePlugin)
+        .add_plugins(ComicsPlugin)
+        .add_plugins(UIUtilsPlugin)
+        .add_plugins(SpriteAnimationPlugin)
+        .add_plugins(WorldMapPlugin)
+        .add_plugins(SoundPlugin)
+        .add_plugins(KeyboardPlugin)
         .run()
 }
 
@@ -178,11 +168,8 @@ fn appearing_text_setup(mut commands: Commands, asset_server: Res<AssetServer>) 
         .with_text_alignment(TextAlignment::Center)
         .with_style(Style {
             position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px(5.0),
-                right: Val::Px(15.0),
-                ..default()
-            },
+            bottom: Val::Px(5.0),
+            right: Val::Px(15.0),
             ..default()
         }),
     };

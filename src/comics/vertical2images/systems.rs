@@ -1,3 +1,4 @@
+use bevy::audio::PlaybackMode::Despawn;
 use bevy::prelude::*;
 use crate::comics::systems::ComicsSequence;
 use crate::comics::vertical2images::components::{
@@ -6,17 +7,30 @@ use crate::comics::vertical2images::components::{
 use crate::ui::components::InvisibleToVisibleTransition;
 
 impl ComicsSequence for Vertical2Images {
-    fn start_sequence(
-        &mut self,
-        commands: &mut Commands,
-        asset_server: &Res<AssetServer>,
-        audio: &Res<Audio>,
-    ) {
+    fn start_sequence(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
         if let Some(sound) = &self.comic_page_sound {
-            audio.play(asset_server.load(sound));
+            commands.spawn({
+                AudioBundle {
+                    source: asset_server.load(sound),
+                    settings: PlaybackSettings {
+                        mode: Despawn,
+                        ..default()
+                    },
+                    ..default()
+                }
+            });
         }
         if let Some(sound) = &self.top_image_sound {
-            audio.play(asset_server.load(sound));
+            commands.spawn({
+                AudioBundle {
+                    source: asset_server.load(sound),
+                    settings: PlaybackSettings {
+                        mode: Despawn,
+                        ..default()
+                    },
+                    ..default()
+                }
+            });
         }
         self.frame = Some(
             commands
@@ -25,7 +39,8 @@ impl ComicsSequence for Vertical2Images {
                 .with_children(|parent| {
                     parent.spawn(NodeBundle {
                         style: Style {
-                            size: Size::new(Val::Percent(100.0), Val::Percent(5.0)),
+                            width: Val::Percent(100.0),
+                            height: Val::Percent(5.0),
                             flex_direction: FlexDirection::Column,
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
@@ -58,7 +73,8 @@ impl ComicsSequence for Vertical2Images {
                     );
                     parent.spawn(NodeBundle {
                         style: Style {
-                            size: Size::new(Val::Percent(100.0), Val::Percent(5.0)),
+                            width: Val::Percent(100.0),
+                            height: Val::Percent(5.0),
                             flex_direction: FlexDirection::Column,
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
@@ -72,14 +88,18 @@ impl ComicsSequence for Vertical2Images {
         )
     }
 
-    fn next_frame(
-        &mut self,
-        commands: &mut Commands,
-        asset_server: &Res<AssetServer>,
-        audio: &Res<Audio>,
-    ) {
+    fn next_frame(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
         if let Some(sound) = &self.down_image_sound {
-            audio.play(asset_server.load(sound));
+            commands.spawn({
+                AudioBundle {
+                    source: asset_server.load(sound),
+                    settings: PlaybackSettings {
+                        mode: Despawn,
+                        ..default()
+                    },
+                    ..default()
+                }
+            });
         }
 
         if let Some(bottom_image) = self.loaded_bottom_image {
@@ -108,11 +128,13 @@ impl ComicsSequence for Vertical2Images {
 fn create_vertical2images_frame() -> NodeBundle {
     NodeBundle {
         style: Style {
-            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
             flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            gap: Size::new(Val::Percent(5.0), Val::Percent(5.0)),
+            row_gap: Val::Percent(5.0),
+            column_gap: Val::Percent(5.0),
             ..default()
         },
         background_color: Color::NONE.into(),
@@ -123,7 +145,8 @@ fn create_vertical2images_frame() -> NodeBundle {
 fn add_image_to_frame(image_path: String, asset_server: &Res<AssetServer>) -> ImageBundle {
     ImageBundle {
         style: Style {
-            size: Size::new(Val::Percent(50.0), Val::Percent(45.0)),
+            width: Val::Percent(50.0),
+            height: Val::Percent(45.0),
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             ..default()

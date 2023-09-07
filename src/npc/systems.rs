@@ -15,7 +15,7 @@ pub fn initialize_npcs(
     levels: Res<NPCResource>,
 ) {
     let level = level_query.get_single().unwrap();
-    for npc in levels.npcs.get(&level_state.0).unwrap_or(&vec![]) {
+    for npc in levels.npcs.get(level_state.get()).unwrap_or(&vec![]) {
         npc.spawn(&mut commands.entity(level), &asset_server)
     }
 }

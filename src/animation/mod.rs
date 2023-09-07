@@ -17,19 +17,24 @@ pub struct SpriteAnimationPlugin;
 
 macro_rules! add_animation {
     ($app:expr, $comp:ty, $anim:ty) => {
-        $app.add_system(animation_on_added_component::<$comp, $anim, $comp>)
-            .add_system(animation_executor::<$comp, $anim>)
+        $app.add_systems(Update, animation_on_added_component::<$comp, $anim, $comp>)
+            .add_systems(Update, animation_executor::<$comp, $anim>)
     };
 }
 
 impl Plugin for SpriteAnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
+        app.add_systems(
+            Update,
             animation_on_added_component::<Player, WalkingAnimation, Linear2DMovementComponent>,
         )
-        .add_system(animation_on_added_component::<Player, IdleAnimation, Player>)
-        .add_system(animation_executor::<Player, WalkingAnimation>)
-        .add_system(
+        .add_systems(
+            Update,
+            animation_on_added_component::<Player, IdleAnimation, Player>,
+        )
+        .add_systems(Update, animation_executor::<Player, WalkingAnimation>)
+        .add_systems(
+            Update,
             animation_on_removed_component::<Player, IdleAnimation, Linear2DMovementComponent>,
         );
         add_animation!(app, TrainSmoke, TrainSmokeAnimation);

@@ -13,7 +13,7 @@ pub struct WorldMapPlugin;
 
 impl Plugin for WorldMapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(show_map.in_schedule(OnEnter(InGameState::Map)))
-            .add_system(close_map.in_schedule(OnExit(InGameState::Map)));
+        app.add_systems(OnEnter(InGameState::Map), show_map)
+            .add_systems(OnExit(InGameState::Map), close_map);
     }
 }

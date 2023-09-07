@@ -29,17 +29,12 @@ pub fn type_writing_len_update(
     )>,
     time: Res<Time>,
     asset_server: Res<AssetServer>,
-    audio: Res<Audio>,
 ) {
     for (entity, mut setting, mut timer) in type_writing_query.iter_mut() {
         if timer.0.tick(time.delta()).just_finished() {
             if setting.cur_len != setting.text.len() {
                 setting.cur_len += 1;
-                typewriting_sound(
-                    &asset_server,
-                    &audio,
-                    setting.text.chars().nth(setting.cur_len - 1),
-                );
+                typewriting_sound(&mut commands, setting.text.chars().nth(setting.cur_len - 1));
                 commands
                     .entity(entity)
                     .insert(TypeWritingTextTimer(Timer::from_seconds(

@@ -40,7 +40,7 @@ pub fn new_game_button_click(
 ) {
     for interaction in button_query.iter_mut() {
         match *interaction {
-            Interaction::Clicked => {
+            Interaction::Pressed => {
                 level_state.set(LevelState::TrainPlatform);
                 game_state.set(GameState::Intro);
             }
@@ -65,7 +65,7 @@ pub fn quit_game_button_interaction(
 ) {
     for interaction in button_query.iter_mut() {
         match *interaction {
-            Interaction::Clicked => {
+            Interaction::Pressed => {
                 exit.send(AppExit);
             }
             Interaction::Hovered => {
@@ -85,11 +85,13 @@ pub fn quit_game_button_interaction(
 fn main_menu_bundle() -> NodeBundle {
     NodeBundle {
         style: Style {
-            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
             flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
-            gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+            row_gap: Val::Px(8.0),
+            column_gap: Val::Px(8.0),
             ..default()
         },
         background_color: Color::NONE.into(),
@@ -100,7 +102,8 @@ fn main_menu_bundle() -> NodeBundle {
 fn main_menu_image(asset_server: &Res<AssetServer>) -> ImageBundle {
     ImageBundle {
         style: Style {
-            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             flex_direction: FlexDirection::Column,
@@ -114,7 +117,8 @@ fn main_menu_image(asset_server: &Res<AssetServer>) -> ImageBundle {
 fn new_game_button() -> ButtonBundle {
     ButtonBundle {
         style: Style {
-            size: Size::new(Val::Auto, Val::Auto),
+            width: Val::Auto,
+            height: Val::Auto,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             ..default()
@@ -127,7 +131,8 @@ fn new_game_button() -> ButtonBundle {
 fn new_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
     TextBundle {
         style: Style {
-            size: Size::new(Val::Auto, Val::Auto),
+            width: Val::Auto,
+            height: Val::Auto,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             ..default()
@@ -151,7 +156,8 @@ fn new_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
 fn quit_game_button() -> ButtonBundle {
     ButtonBundle {
         style: Style {
-            size: Size::new(Val::Auto, Val::Auto),
+            width: Val::Auto,
+            height: Val::Auto,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             ..default()
@@ -164,7 +170,8 @@ fn quit_game_button() -> ButtonBundle {
 fn quit_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
     TextBundle {
         style: Style {
-            size: Size::new(Val::Auto, Val::Auto),
+            width: Val::Auto,
+            height: Val::Auto,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             ..default()

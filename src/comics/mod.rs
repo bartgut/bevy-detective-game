@@ -10,7 +10,10 @@ pub struct ComicsPlugin;
 
 impl Plugin for ComicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(comics_next_frame.in_set(OnUpdate(MultiPageComicsState::ONGOING)))
-            .add_system(multi_page_comics_inserted);
+        app.add_systems(
+            Update,
+            comics_next_frame.run_if(in_state(MultiPageComicsState::ONGOING)),
+        )
+        .add_systems(Update, multi_page_comics_inserted);
     }
 }

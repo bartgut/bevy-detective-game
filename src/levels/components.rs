@@ -1,7 +1,8 @@
+use bevy::audio::PlaybackMode::Despawn;
 use bevy::prelude::*;
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::level_state::LevelState;
-use crate::sound::typewriting::components::AudioPlayable;
+use crate::sound::components::AudioPlayable;
 
 #[derive(Bundle, Clone)]
 pub struct LevelBundle {
@@ -34,8 +35,17 @@ pub struct LevelTeleport {
 #[derive(Component)]
 pub struct LevelTeleportClickedAudio;
 impl AudioPlayable for LevelTeleportClickedAudio {
-    fn play(&self, asset_server: &Res<AssetServer>, audio: &Res<Audio>) {
-        audio.play(asset_server.load("sound/world_map/level_teleport_clicked.ogg"));
+    fn play(&self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+        commands.spawn({
+            AudioBundle {
+                source: asset_server.load("sound/world_map/level_teleport_clicked.ogg"),
+                settings: PlaybackSettings {
+                    mode: Despawn,
+                    ..default()
+                },
+                ..default()
+            }
+        });
     }
 }
 
@@ -43,8 +53,17 @@ impl AudioPlayable for LevelTeleportClickedAudio {
 pub struct LevelTeleportHoveredAudio;
 
 impl AudioPlayable for LevelTeleportHoveredAudio {
-    fn play(&self, asset_server: &Res<AssetServer>, audio: &Res<Audio>) {
-        audio.play(asset_server.load("sound/world_map/level_teleport_hover.ogg"));
+    fn play(&self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+        commands.spawn({
+            AudioBundle {
+                source: asset_server.load("sound/world_map/level_teleport_hover.ogg"),
+                settings: PlaybackSettings {
+                    mode: Despawn,
+                    ..default()
+                },
+                ..default()
+            }
+        });
     }
 }
 

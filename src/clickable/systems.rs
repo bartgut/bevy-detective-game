@@ -51,7 +51,11 @@ pub fn initialize_items(
     items_in_levels: Res<ItemResource>,
 ) {
     let level = level_query.get_single().unwrap();
-    for item in items_in_levels.items.get(&level_state.0).unwrap_or(&vec![]) {
+    for item in items_in_levels
+        .items
+        .get(level_state.get())
+        .unwrap_or(&vec![])
+    {
         item.spawn_child(&mut commands.entity(level), &asset_server)
     }
 }

@@ -13,7 +13,7 @@ pub fn load_current_level(
     mut game_state: ResMut<NextState<GameState>>,
     levels: Res<LevelsResource>,
 ) {
-    match levels.levels.get(&current_level_state.0) {
+    match levels.levels.get(current_level_state.get()) {
         Some(level) => {
             commands.spawn(level.clone()).insert(CurrentLevel);
             game_state.set(GameState::LevelSpriteLoading);
@@ -114,7 +114,7 @@ pub fn level_change_trigger_handler(
 ) {
     if let Ok((entity, destination)) = level_change_trigger_query.get_single_mut() {
         commands.entity(entity).despawn_recursive();
-        if destination.level_state == current_level_state.0 {
+        if &destination.level_state == current_level_state.get() {
             in_game_state.set(InGameState::InGame);
             return; // Cannot travel to the same location
         } else {

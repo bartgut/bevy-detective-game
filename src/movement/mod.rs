@@ -7,7 +7,7 @@ pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(linear_2d_movement_added)
-            .add_system(linear_2d_movement_executor);
+        app.add_systems(Update, linear_2d_movement_added)
+            .add_systems(Update, linear_2d_movement_executor);
     }
 }

@@ -32,15 +32,18 @@ pub fn build_options_ui(
         .spawn((
             NodeBundle {
                 style: Style {
-                    size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(20.0),
                     flex_direction: FlexDirection::Row,
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
-                    position: UiRect {
+                    row_gap: Val::Px(8.0),
+                    column_gap: Val::Px(8.0),
+                    top: Val::Percent(80.0),
+                    /*position: UiRect {
                         top: Val::Percent(80.0),
                         ..default()
-                    },
+                    },*/
                     ..default()
                 },
                 background_color: Color::BLACK.into(),
@@ -52,7 +55,8 @@ pub fn build_options_ui(
             parent.spawn((
                 ImageBundle {
                     style: Style {
-                        size: Size::new(Val::Px(160.0), Val::Px(160.0)),
+                        width: Val::Px(160.0),
+                        height: Val::Px(160.0),
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         ..default()
@@ -66,11 +70,13 @@ pub fn build_options_ui(
                 .spawn((
                     NodeBundle {
                         style: Style {
-                            size: Size::new(Val::Auto, Val::Auto),
+                            width: Val::Auto,
+                            height: Val::Auto,
                             flex_direction: FlexDirection::Column,
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
-                            gap: Size::new(Val::Px(8.0), Val::Px(8.0)),
+                            row_gap: Val::Px(8.0),
+                            column_gap: Val::Px(8.0),
                             ..default()
                         },
                         background_color: Color::BLACK.into(),
@@ -84,7 +90,8 @@ pub fn build_options_ui(
                             .spawn((
                                 ButtonBundle {
                                     style: Style {
-                                        size: Size::new(Val::Auto, Val::Auto),
+                                        width: Val::Auto,
+                                        height: Val::Auto,
                                         justify_content: JustifyContent::Center,
                                         align_items: AlignItems::Center,
                                         ..default()
@@ -140,16 +147,20 @@ pub fn build_dialog_ui(
         .spawn((
             NodeBundle {
                 style: Style {
-                    size: Size::new(Val::Percent(100.0), Val::Percent(20.0)),
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(20.0),
                     flex_direction: FlexDirection::Row,
                     justify_content: JustifyContent::Start,
                     align_items: AlignItems::Center,
-                    gap: Size::new(Val::Px(20.0), Val::Px(20.0)),
-                    position: UiRect {
+                    row_gap: Val::Px(20.0),
+                    column_gap: Val::Px(20.0),
+                    top: Val::Percent(80.0),
+                    left: Val::Percent(15.0),
+                    /*position: UiRect {
                         top: Val::Percent(80.0),
                         left: Val::Percent(15.0),
                         ..default()
-                    },
+                    },*/
                     ..default()
                 },
                 background_color: Color::BLACK.into(),
@@ -161,7 +172,8 @@ pub fn build_dialog_ui(
             parent.spawn((
                 ImageBundle {
                     style: Style {
-                        size: Size::new(Val::Px(160.0), Val::Px(160.0)),
+                        width: Val::Percent(160.0),
+                        height: Val::Percent(160.0),
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         ..default()
@@ -176,7 +188,8 @@ pub fn build_dialog_ui(
             parent
                 .spawn(ButtonBundle {
                     style: Style {
-                        size: Size::new(Val::Auto, Val::Auto),
+                        width: Val::Auto,
+                        height: Val::Auto,
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         ..default()
@@ -225,7 +238,7 @@ pub fn interact_with_dialog_text(
 ) {
     for (interaction, mut children, mut node) in button_query.iter_mut() {
         match *interaction {
-            Interaction::Clicked => {
+            Interaction::Pressed => {
                 dialogs.runner.make_decision(node.node_title.clone());
             }
             Interaction::Hovered => {

@@ -8,6 +8,6 @@ pub struct UIUtilsPlugin;
 
 impl Plugin for UIUtilsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(invisible_to_visible_transition);
+        app.add_systems(Update, invisible_to_visible_transition);
     }
 }
