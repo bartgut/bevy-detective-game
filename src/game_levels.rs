@@ -27,7 +27,7 @@ fn city_park_level() -> (LevelState, LevelBundle) {
             level_description: LevelDescription {
                 level_name: String::from("city_park"),
                 player_initial_position: Transform::from_translation(Vec3::new(
-                    -600.0, -125.0, 0.0,
+                    -600.0, -140.0, 0.0,
                 )),
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
@@ -55,7 +55,10 @@ fn morgue() -> (LevelState, LevelBundle) {
         LevelBundle {
             level_description: LevelDescription {
                 level_name: String::from("morgue"),
-                player_initial_position: Transform::from_translation(Vec3::new(600.0, -125.0, 0.0)),
+                player_initial_position: Transform::from_translation(Vec3::new(
+                    -600.0, -125.0, 0.0,
+                ))
+                .with_scale(Vec3::new(1.5, 1.5, 1.5)), // TODO make it work with animations
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
         },

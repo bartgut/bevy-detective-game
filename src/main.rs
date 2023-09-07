@@ -11,6 +11,7 @@ pub mod game_state;
 pub mod in_game_state;
 pub mod intro;
 pub mod intro_state;
+pub mod keyboard;
 pub mod level_state;
 pub mod levels;
 pub mod main_menu;
@@ -38,6 +39,7 @@ use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 use crate::intro::IntroPlugin;
 use crate::intro_state::IntroState;
+use crate::keyboard::KeyboardPlugin;
 use crate::level_state::LevelState;
 use crate::levels::LevelPlugin;
 use crate::levels::resource::LevelsResource;
@@ -86,6 +88,7 @@ fn main() {
         .add_plugin(SpriteAnimationPlugin)
         .add_plugin(WorldMapPlugin)
         .add_plugin(SoundPlugin)
+        .add_plugin(KeyboardPlugin)
         .add_startup_system(camera_setup)
         /*.add_startup_system(appearing_text_setup)
         .add_startup_system(type_writing_text_setup)
