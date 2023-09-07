@@ -26,7 +26,7 @@ pub struct TypeWritingWithPauseFinished;
 /// Typewriting with pauses
 
 pub struct TextWithPause {
-    pub textSettings: TypeWritingTextSettings,
+    pub text_settings: TypeWritingTextSettings,
     pub pause: f32,
 }
 

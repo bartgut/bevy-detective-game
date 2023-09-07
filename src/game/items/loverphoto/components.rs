@@ -2,7 +2,7 @@ use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use crate::clickable::components::Clickable;
 use crate::clickable::items::twosideitem::TwoSideItem;
-use crate::spawnable::components::{Spawnable, SpawnableChild};
+use crate::spawnable::components::SpawnableChild;
 
 #[derive(Component)]
 pub struct LoverPhoto;

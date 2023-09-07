@@ -1,6 +1,5 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use crate::spawnable::components::Spawnable;
 
 #[derive(Component)]
 pub struct NPC {

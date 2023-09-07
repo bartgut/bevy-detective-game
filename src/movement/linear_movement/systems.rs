@@ -2,25 +2,12 @@ use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use crate::movement::linear_movement::components::Linear2DMovementComponent;
 
-pub fn linear_2d_movement_added(
-    mut query: Query<
-        (&mut Transform, &Linear2DMovementComponent),
-        Changed<Linear2DMovementComponent>,
-    >,
-) {
-    // TODO check if this is really needed
-    /*for (mut transform, movement) in query.iter_mut() {
-        let direction_vector_norm = (movement.to - transform.translation).normalize();
-        rotate_depending_on_direction(&mut transform, &direction_vector_norm)
-    }*/
-}
-
 pub fn linear_2d_movement_executor(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &mut Linear2DMovementComponent)>,
     time: Res<Time>,
 ) {
-    for (entity, mut transform, mut movement) in query.iter_mut() {
+    for (entity, mut transform, movement) in query.iter_mut() {
         let delta = time.delta_seconds();
         let direction_vector_norm = (movement.to - transform.translation.xy()).normalize();
 

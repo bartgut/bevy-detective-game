@@ -95,7 +95,7 @@ pub fn keyboard_camera_move_blocked_when_border_reached(
 }
 
 pub fn on_level_state_change(
-    mut level_state: ResMut<NextState<LevelState>>,
+    level_state: ResMut<NextState<LevelState>>,
     mut game_state: ResMut<NextState<GameState>>,
     mut in_game_state: ResMut<NextState<InGameState>>,
 ) {
@@ -108,7 +108,7 @@ pub fn on_level_state_change(
 pub fn level_change_trigger_handler(
     mut commands: Commands,
     mut level_change_trigger_query: Query<(Entity, &LevelChangeTrigger)>,
-    mut current_level_state: Res<State<LevelState>>,
+    current_level_state: Res<State<LevelState>>,
     mut level_state: ResMut<NextState<LevelState>>,
     mut in_game_state: ResMut<NextState<InGameState>>,
 ) {

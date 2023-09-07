@@ -28,7 +28,6 @@ pub fn type_writing_len_update(
         &mut TypeWritingTextTimer,
     )>,
     time: Res<Time>,
-    asset_server: Res<AssetServer>,
 ) {
     for (entity, mut setting, mut timer) in type_writing_query.iter_mut() {
         if timer.0.tick(time.delta()).just_finished() {
@@ -51,7 +50,7 @@ pub fn type_writing_len_update(
 }
 
 pub fn type_writing_text_update(mut query: Query<(&mut TypeWritingTextSettings, &mut Text)>) {
-    for (mut settings, mut text) in query.iter_mut() {
+    for (settings, mut text) in query.iter_mut() {
         text.sections[0].value = settings.text.chars().take(settings.cur_len).collect()
     }
 }
@@ -101,12 +100,12 @@ pub fn type_writing_with_pauses_update(
                     //// Load next text
                     commands.entity(entity).remove::<TypeWritingPaused>();
                     let current_text_len = settings.full_text.len();
-                    let nextText = settings.text[settings.cur_text].textSettings.text.clone();
-                    let mut full_text = &mut settings.full_text;
-                    full_text.push_str(nextText.as_str());
+                    let next_text = settings.text[settings.cur_text].text_settings.text.clone();
+                    let full_text = &mut settings.full_text;
+                    full_text.push_str(next_text.as_str());
                     commands.entity(entity).insert(create_type_writing_text(
                         &settings.full_text,
-                        settings.text[settings.cur_text].textSettings.every,
+                        settings.text[settings.cur_text].text_settings.every,
                         Some(current_text_len),
                     ));
                     settings.cur_text += 1;

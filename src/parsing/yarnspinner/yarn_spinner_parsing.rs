@@ -54,7 +54,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                     Rule::dialog_line => {
                                         let mut speaker = "".to_string();
                                         let mut text = "".to_string();
-                                        let mut condition: Option<Condition> = None;
+                                        let condition: Option<Condition> = None;
                                         for dialog_line_field in content.into_inner() {
                                             match dialog_line_field.as_rule() {
                                                 Rule::speaker => {
@@ -75,9 +75,9 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                         });
                                     }
                                     Rule::option_lines => {
-                                        let mut optionPossiblitites: Vec<OptionPossibility> =
+                                        let mut option_possiblitites: Vec<OptionPossibility> =
                                             vec![];
-                                        let mut speaker = "".to_string();
+                                        let speaker = "".to_string();
                                         for option_lines_field in content.into_inner() {
                                             match option_lines_field.as_rule() {
                                                 Rule::option_line => {
@@ -157,7 +157,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                             _ => unreachable!(),
                                                         }
                                                     }
-                                                    optionPossiblitites.push(OptionPossibility {
+                                                    option_possiblitites.push(OptionPossibility {
                                                         text: text,
                                                         jump_to_node: node_title,
                                                         condition: condition,
@@ -168,7 +168,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                         }
                                         node.lines.push(LineType::OptionLine {
                                             speaker: speaker,
-                                            possibilites: optionPossiblitites,
+                                            possibilites: option_possiblitites,
                                         });
                                     }
                                     Rule::jump_line => {

@@ -3,7 +3,6 @@ pub enum DialogState {
     Start,
     Dialog,
     Waiting,
-    Ready,
     End,
 }
 

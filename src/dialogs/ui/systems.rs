@@ -2,13 +2,12 @@ use super::components::*;
 use bevy::prelude::*;
 use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialogs::resource::*;
-use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
-use crate::npc::components::{CanStartDialog, DialogableNPC, HoveredOverNPC, NPCInDialog};
+use crate::npc::components::{DialogableNPC, HoveredOverNPC, NPCInDialog};
 use crate::text::typewriting::systems::create_type_writing_text;
 
 pub fn build_dialog_ui_from_event(
-    mut commands: &mut Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     event: &DialogEvent,
 ) {
@@ -24,7 +23,7 @@ pub fn build_dialog_ui_from_event(
 }
 
 pub fn build_options_ui(
-    mut commands: &mut Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     options: &Vec<(String, String)>,
 ) {
@@ -138,7 +137,7 @@ pub fn build_options_ui(
 
 //image + text on the bottom of the screen
 pub fn build_dialog_ui(
-    mut commands: &mut Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     speaker: &String,
     text: &String,
@@ -172,8 +171,8 @@ pub fn build_dialog_ui(
             parent.spawn((
                 ImageBundle {
                     style: Style {
-                        width: Val::Percent(160.0),
-                        height: Val::Percent(160.0),
+                        width: Val::Px(160.0),
+                        height: Val::Px(160.0),
                         justify_content: JustifyContent::Center,
                         align_items: AlignItems::Center,
                         ..default()
@@ -236,7 +235,7 @@ pub fn interact_with_dialog_text(
     mut text_query: Query<&mut Text>,
     mut dialogs: ResMut<Dialogs>,
 ) {
-    for (interaction, mut children, mut node) in button_query.iter_mut() {
+    for (interaction, children, node) in button_query.iter_mut() {
         match *interaction {
             Interaction::Pressed => {
                 dialogs.runner.make_decision(node.node_title.clone());
@@ -266,7 +265,7 @@ pub fn start_dialog(
     buttons: Res<Input<MouseButton>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        if (!npc_dialog.is_empty()) {
+        if !npc_dialog.is_empty() {
             commands
                 .entity(npc_dialog.get_single().unwrap())
                 .insert(NPCInDialog);

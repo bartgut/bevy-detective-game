@@ -25,7 +25,6 @@ pub mod text;
 pub mod ui;
 
 use bevy::prelude::*;
-use bevy::prelude::KeyCode::V;
 use crate::animation::SpriteAnimationPlugin;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::resource::ItemResource;
@@ -50,7 +49,6 @@ use crate::npc::NpcPlugin;
 use crate::npc::resource::NPCResource;
 use crate::player::PlayerPlugin;
 use crate::sound::SoundPlugin;
-use crate::State::{APPEARING, DISAPPEARING, NOT_VISIBLE, VISIBLE};
 use crate::text::TypeWritingTextPlugin;
 use crate::ui::UIUtilsPlugin;
 
@@ -94,9 +92,13 @@ fn main() {
         .run()
 }
 
+fn camera_setup(mut commands: Commands) {
+    commands.spawn(Camera2dBundle::default());
+}
+
 //// To be moved later to separate files and add as a render type to the dialog runner
 
-#[derive(Component)]
+/*#[derive(Component)]
 struct StartText;
 
 #[derive(Component)]
@@ -151,7 +153,7 @@ enum State {
 ////////////////////////////
 
 fn appearing_text_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let appearingText = AppearingTextBundle {
+    let appearing_text = AppearingTextBundle {
         not_visible_timer: NotVisibleTimer(Timer::from_seconds(2.0, TimerMode::Once)),
         appearing_timer: AppearingTimer(Timer::from_seconds(3.0, TimerMode::Once)),
         visible_timer: VisibleTimer(Timer::from_seconds(5.0, TimerMode::Once)),
@@ -173,7 +175,7 @@ fn appearing_text_setup(mut commands: Commands, asset_server: Res<AssetServer>) 
             ..default()
         }),
     };
-    commands.spawn(appearingText);
+    commands.spawn(appearing_text);
 }
 
 fn not_visible_setup(time: Res<Time>, mut query: Query<(&mut State, &mut NotVisibleTimer)>) {
@@ -241,7 +243,7 @@ fn disappearing_setup(
 struct AppearingTextPlugin;
 
 impl Plugin for AppearingTextPlugin {
-    fn build(&self, app: &mut App) {}
+    fn build(&self, _: &mut App) {}
 }
 
 fn intro_text_show(time: Res<Time>, mut query: Query<&mut Text, With<StartText>>) {
@@ -250,7 +252,4 @@ fn intro_text_show(time: Res<Time>, mut query: Query<&mut Text, With<StartText>>
     intro_text.sections[0].style.color =
         Color::WHITE.with_a(intro_text.sections[0].style.color.a() + 0.005 * seconds)
 }
-
-fn camera_setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
-}
+*/

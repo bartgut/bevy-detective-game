@@ -2,7 +2,6 @@ use bevy::app::AppExit;
 use bevy::prelude::*;
 use crate::game_state::GameState;
 use crate::level_state::LevelState;
-use crate::levels::systems::load_current_level;
 use super::components::*;
 
 pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetServer>) {

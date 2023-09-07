@@ -57,7 +57,7 @@ impl TwoSideItem {
 }
 
 impl ClickableBehaviour for TwoSideItem {
-    fn on_hover_entry(&mut self, commands: &mut Commands) {}
+    fn on_hover_entry(&mut self, _: &mut Commands) {}
 
     fn on_start(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
         let what_texture = match self.current_texture_site {
@@ -65,17 +65,15 @@ impl ClickableBehaviour for TwoSideItem {
             TextureSide::Back => &self.texture_back_file,
         };
 
-        let x = commands.spawn(
-            (SpriteBundle {
-                texture: asset_server.load(format!("images/items/{}", what_texture)),
-                transform: Transform {
-                    translation: Vec3::new(0.0, 0.0, 999.0),
-                    scale: Vec3::new(0.3, 0.3, 0.3),
-                    ..Default::default()
-                },
-                ..default()
-            }),
-        );
+        let x = commands.spawn(SpriteBundle {
+            texture: asset_server.load(format!("images/items/{}", what_texture)),
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 999.0),
+                scale: Vec3::new(0.3, 0.3, 0.3),
+                ..Default::default()
+            },
+            ..default()
+        });
         self.current_texture_sprite = Some(x.id());
         self.show_dialog_if_needed(commands, asset_server);
     }
@@ -95,17 +93,15 @@ impl ClickableBehaviour for TwoSideItem {
             .entity(self.current_texture_sprite.unwrap())
             .despawn();
 
-        let x = commands.spawn(
-            (SpriteBundle {
-                texture: asset_server.load(format!("images/items/{}", what_texture)),
-                transform: Transform {
-                    translation: Vec3::new(0.0, 0.0, 999.0),
-                    scale: Vec3::new(0.3, 0.3, 0.3),
-                    ..Default::default()
-                },
-                ..default()
-            }),
-        );
+        let x = commands.spawn(SpriteBundle {
+            texture: asset_server.load(format!("images/items/{}", what_texture)),
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 999.0),
+                scale: Vec3::new(0.3, 0.3, 0.3),
+                ..Default::default()
+            },
+            ..default()
+        });
         self.current_texture_sprite = Some(x.id());
     }
 

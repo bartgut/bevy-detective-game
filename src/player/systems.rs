@@ -42,7 +42,7 @@ pub fn cursor_position(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mouse_input: Res<Input<MouseButton>>,
     level_query: Query<&Transform, (Without<Player>, With<CurrentLevelSprite>)>,
-    mut player_query: Query<(Entity, &Transform), With<Player>>,
+    player_query: Query<(Entity, &Transform), With<Player>>,
 ) {
     let width_halved = 2688.0 / 2.0; // TODO
     let window = window_query.get_single().unwrap();

@@ -3,9 +3,7 @@ mod dialogs;
 pub mod ui;
 
 use bevy::prelude::*;
-use crate::dialogs::dialogs::resource::Dialogs;
 use ui::systems::*;
-use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 
 pub struct DialogsPlugin;

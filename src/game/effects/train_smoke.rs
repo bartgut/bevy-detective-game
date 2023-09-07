@@ -1,7 +1,7 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use crate::animation::components::{AnimationEnabled, GridInfo, SpriteAnimationSettings};
-use crate::spawnable::components::{Spawnable, SpawnableChild};
+use crate::spawnable::components::SpawnableChild;
 
 #[derive(Component)]
 pub struct TrainSmoke;

@@ -46,7 +46,7 @@ pub fn comics_next_frame(
                         comics_state.set(MultiPageComicsState::END);
                         commands.entity(entity).despawn_recursive();
                     }
-                    Some(mut next_page) => next_page.start_sequence(&mut commands, &asset_server),
+                    Some(next_page) => next_page.start_sequence(&mut commands, &asset_server),
                 }
             }
         }

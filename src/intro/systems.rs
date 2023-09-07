@@ -8,14 +8,14 @@ use crate::text::typewriting::components::{TextWithPause, TypeWritingTextSetting
 use crate::ui::components::FullScreenText;
 use crate::ui::systems::full_screen_text;
 
-pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn start_intro(commands: Commands, asset_server: Res<AssetServer>) {
     //audio.play(asset_server.load("sound/background/intro.ogg"));
     full_screen_text(
-        &mut commands,
+        commands,
         asset_server,
         vec![
             TextWithPause {
-                textSettings: TypeWritingTextSettings {
+                text_settings: TypeWritingTextSettings {
                     text: "Komenda miejsca w miescie P.\n\
                            Mlodszy inspektor Michal Pawlak\n\n\n\n"
                         .to_string(),
@@ -26,7 +26,7 @@ pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>) {
                 pause: 0.0,
             },
             TextWithPause {
-                textSettings: TypeWritingTextSettings {
+                text_settings: TypeWritingTextSettings {
                     text: "15 grudnia 2023\n\n".to_string(),
                     every: 0.1,
                     randomizing: 0.02,
@@ -35,7 +35,7 @@ pub fn start_intro(mut commands: Commands, asset_server: Res<AssetServer>) {
                 pause: 1.5,
             },
             TextWithPause {
-                textSettings: TypeWritingTextSettings {
+                text_settings: TypeWritingTextSettings {
                     text: "W miescie P. nieznany sprawcy dokonal zabojstwa 41 letniego mezczyzny Lucjana Baranowskiego,\n\
                            zwloki denata zostaly znalezione na platformie kolejowej przed miejska biblioteka około godziny 9 wieczorem.\n\
                            Poki co nie zostalo ustalone czy jest to miejsce zbrodni czy tez zwloki zostaly tutaj przetransportowane.\n\

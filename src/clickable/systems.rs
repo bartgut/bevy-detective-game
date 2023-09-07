@@ -17,7 +17,7 @@ pub fn gray_out_all(
     let (mut level_sprite, children) = level_query.get_single_mut().unwrap();
     level_sprite.color = Color::rgb(0.4, 0.4, 0.4);
     for &child in children.iter() {
-        let mut sprite = sprites.get_mut(child);
+        let sprite = sprites.get_mut(child);
         match sprite {
             Ok(mut existing) => {
                 existing.color = Color::rgb(0.4, 0.4, 0.4);
@@ -34,7 +34,7 @@ pub fn return_to_normal_colors(
     for (mut level_sprite, children) in level_query.iter_mut() {
         level_sprite.color = Color::default();
         for &child in children.iter() {
-            let mut sprite = sprites.get_mut(child);
+            let sprite = sprites.get_mut(child);
             match sprite {
                 Ok(mut existing) => existing.color = Color::default(),
                 Err(_) => {}
@@ -64,7 +64,7 @@ pub fn print_when_hovered_clickable_global(
     mut commands: Commands,
     mut cursor_evr: EventReader<CursorMoved>,
     mut window_query: Query<&mut Window, With<PrimaryWindow>>,
-    mut map_query: Query<&mut Transform, (With<WorldMap>, Without<CanBeClicked>)>,
+    map_query: Query<&mut Transform, (With<WorldMap>, Without<CanBeClicked>)>,
     clickable_query: Query<(Entity, &Transform), With<CanBeClicked>>,
     clickable_query_already_hovered: Query<(Entity, &HoveredOverClickable)>,
 ) {
@@ -158,7 +158,7 @@ pub fn clickable_first_click<T: ClickableBehaviour + Component>(
     asset_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<InGameState>>,
     mut clickable: Query<(Entity, &mut T), With<HoveredOverClickable>>,
-    mut buttons: Res<Input<MouseButton>>,
+    buttons: Res<Input<MouseButton>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         if !clickable.is_empty() {
