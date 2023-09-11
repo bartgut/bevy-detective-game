@@ -1,3 +1,5 @@
+use crate::parsing::yarnspinner::components::Tag;
+
 #[derive(Clone, Debug)]
 pub enum DialogState {
     Start,
@@ -11,6 +13,7 @@ pub enum DialogEvent {
     Dialog {
         speaker: String,
         text: String,
+        tags: Vec<Tag>,
     },
     Options {
         speaker: String,

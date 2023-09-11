@@ -6,6 +6,12 @@ pub struct Condition {
 }
 
 #[derive(Clone, Debug)]
+pub struct Tag {
+    pub name: String,
+    pub value: String,
+}
+
+#[derive(Clone, Debug)]
 pub struct OptionPossibility {
     pub text: String,
     pub jump_to_node: String,
@@ -22,6 +28,7 @@ pub enum LineType {
         speaker: String,
         text: String,
         condition: Option<Condition>,
+        tags: Vec<Tag>,
     },
     JumpLine {
         node_title: String,

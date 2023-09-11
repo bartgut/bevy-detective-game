@@ -1,3 +1,4 @@
+use bevy::audio::PlaybackMode::{Despawn, Remove};
 use super::components::*;
 use bevy::prelude::*;
 use crate::dialogs::dialog_runner::components::DialogEvent;
@@ -12,8 +13,24 @@ pub fn build_dialog_ui_from_event(
     event: &DialogEvent,
 ) {
     match event {
-        DialogEvent::Dialog { speaker, text } => {
-            build_dialog_ui(commands, asset_server, speaker, text);
+        DialogEvent::Dialog {
+            speaker,
+            text,
+            tags,
+        } => {
+            let id = build_dialog_ui(commands, &asset_server, speaker, text);
+            for tag in tags.iter() {
+                if tag.name == "audio" {
+                    commands.entity(id).insert(AudioBundle {
+                        source: asset_server.load(format!("dialogs/audio/{}", tag.value.clone())),
+                        settings: PlaybackSettings {
+                            mode: Remove,
+                            ..default()
+                        },
+                        ..default()
+                    });
+                }
+            }
         }
         DialogEvent::Options { speaker, options } => {
             build_options_ui(commands, asset_server, options)
@@ -138,7 +155,7 @@ pub fn build_options_ui(
 //image + text on the bottom of the screen
 pub fn build_dialog_ui(
     commands: &mut Commands,
-    asset_server: Res<AssetServer>,
+    asset_server: &Res<AssetServer>,
     speaker: &String,
     text: &String,
 ) -> Entity {
@@ -155,11 +172,6 @@ pub fn build_dialog_ui(
                     column_gap: Val::Px(20.0),
                     top: Val::Percent(80.0),
                     left: Val::Percent(15.0),
-                    /*position: UiRect {
-                        top: Val::Percent(80.0),
-                        left: Val::Percent(15.0),
-                        ..default()
-                    },*/
                     ..default()
                 },
                 background_color: Color::BLACK.into(),

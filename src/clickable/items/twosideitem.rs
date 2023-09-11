@@ -49,7 +49,8 @@ impl TwoSideItem {
     fn show_dialog_if_needed(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
         match &self.additional_dialog {
             Some((subject, text)) => {
-                self.dialog_entity = Some(build_dialog_ui(commands, asset_server, &subject, &text));
+                self.dialog_entity =
+                    Some(build_dialog_ui(commands, &asset_server, &subject, &text));
             }
             None => {}
         }

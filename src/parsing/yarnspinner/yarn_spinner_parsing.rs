@@ -54,6 +54,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                     Rule::dialog_line => {
                                         let mut speaker = "".to_string();
                                         let mut text = "".to_string();
+                                        let mut tags: Vec<Tag> = vec![];
                                         let condition: Option<Condition> = None;
                                         for dialog_line_field in content.into_inner() {
                                             match dialog_line_field.as_rule() {
@@ -64,6 +65,28 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                 Rule::dialog => {
                                                     text = dialog_line_field.as_str().to_string();
                                                 }
+                                                Rule::tags => {
+                                                    let mut name = "".to_string();
+                                                    let mut value = "".to_string();
+                                                    for tag_field in dialog_line_field.into_inner()
+                                                    {
+                                                        match tag_field.as_rule() {
+                                                            Rule::tag_name => {
+                                                                name =
+                                                                    tag_field.as_str().to_string();
+                                                            }
+                                                            Rule::tag_value => {
+                                                                value =
+                                                                    tag_field.as_str().to_string();
+                                                            }
+                                                            _ => unreachable!(),
+                                                        }
+                                                    }
+                                                    tags.push(Tag {
+                                                        name: name,
+                                                        value: value,
+                                                    });
+                                                }
                                                 Rule::condition => {}
                                                 _ => unreachable!(),
                                             }
@@ -72,6 +95,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                             speaker: speaker,
                                             text: text,
                                             condition: condition,
+                                            tags: tags,
                                         });
                                     }
                                     Rule::option_lines => {

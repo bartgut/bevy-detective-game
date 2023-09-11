@@ -2,10 +2,10 @@ title: Librarian1PlayerConversationIntro
 position: 150,-475
 ---
 <<set $knows_about_marriage to false>>
-Player: Dzien dobry Pani..
-Librarian1: Julio
-Player: .. Pani Julio, mam kilka pytan jesli mozna..
-Librarian1: Alez oczywiscie
+Player: Dzien dobry Pani.. #audio:librarian1/player_1.ogg
+Librarian1: Julio #audio:librarian1/librarian_1.ogg
+Player: .. Pani Julio, mam kilka pytan jesli mozna.. #audio:librarian1/player_2.ogg
+Librarian1: Alez oczywiscie #audio:librarian1/librarian_2.ogg
 <<jump Librarian1PlayerPossibleQuestions>>
 ===
 title: Librarian1PlayerPossibleQuestions
@@ -23,30 +23,30 @@ position: 154,-189
 title: Librarian1PlayerKnows
 position: 696,138
 ---
-Librarian1: Znalam, to Pan Robert, przychodzil tu co tydzien poczytac gazety.
-Player: Wie Pani o nim cos wiecej?
-Librarian1: Nie za bardzo, duzo nie mowil. Wiem tylko ze byl zonaty
+Librarian1: Znalam, to Pan Robert, przychodzil tu co tydzien poczytac gazety. #audio:librarian1/librarian_3.ogg
+Player: Wie Pani o nim cos wiecej? #audio:librarian1/player_3.ogg
+Librarian1: Nie za bardzo, duzo nie mowil. Wiem tylko ze byl zonaty #audio:librarian1/librarian_4.ogg
 <<set $knows_about_marriage to true>>
 <<jump Librarian1PlayerPossibleQuestions>>
 ===
 title: Librarian1PlayerWorking
 position: -172,-4
 ---
-Player: Jak dlugo Pani tu pracuje?
-Librarian1: Juz od 2 lat
-Player: To nie tak dlugo.
-Librarian1: Jak dla kogo
+Player: Jak dlugo Pani tu pracuje? #audio:librarian1/player_4.ogg
+Librarian1: Juz od 2 lat #audio:librarian1/librarian_5.ogg
+Player: To nie tak dlugo. #audio:librarian1/player_5.ogg
+Librarian1: Jak dla kogo #audio:librarian1/librarian_6.ogg
 <<jump Librarian1PlayerPossibleQuestions>>
 ===
 title: Librarian1Marriage
 position: 501,217
 ---
-Librarian1: Nazywala sie X Y, rowniez czesto tutaj przychodzi po ksiazki dla dzieci
+Librarian1: Nazywala sie X Y, rowniez czesto tutaj przychodzi po ksiazki dla dzieci #audio:librarian1/librarian_7.ogg
 <<jump Librarian1PlayerPossibleQuestions>>
 ===
 title: Librarian1PlayerOutro
 position: -34,286
 ---
-Player: To wszystko z mojej strony.
-Librarian1: Dziekuje za rozmowe
+Player: To wszystko z mojej strony. #audio:librarian1/player_6.ogg
+Librarian1: Dziekuje za rozmowe. #audio:librarian1/librarian_8.ogg
 ===

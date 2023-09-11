@@ -35,9 +35,11 @@ impl<T: StateContext + Default> DialogRunner<T> {
                 speaker,
                 text,
                 condition,
+                tags,
             } => Some(DialogEvent::Dialog {
                 speaker: speaker.clone(),
                 text: text.clone(),
+                tags: tags.clone(),
             }),
             LineType::OptionLine {
                 speaker,
@@ -115,7 +117,11 @@ impl<T: StateContext + Default> DialogRunner<T> {
 
     fn event_to_dialog_state(event: &Option<DialogEvent>) -> DialogState {
         match event {
-            Some(DialogEvent::Dialog { speaker, text }) => DialogState::Dialog,
+            Some(DialogEvent::Dialog {
+                speaker,
+                text,
+                tags,
+            }) => DialogState::Dialog,
             Some(DialogEvent::Options { speaker, options }) => DialogState::Waiting,
             Some(DialogEvent::Waiting) => DialogState::Waiting,
             Some(DialogEvent::End) => DialogState::End,
