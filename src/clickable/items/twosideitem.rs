@@ -1,6 +1,7 @@
 use super::behaviour::ClickableBehaviour;
 use bevy::prelude::*;
 use crate::dialogs::ui::systems::build_dialog_ui;
+use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Clone)]
 pub enum TextureSide {
@@ -13,33 +14,26 @@ pub struct TwoSideItem {
     pub texture_front_file: String,
     pub texture_back_file: String,
     pub additional_dialog: Option<(String, String)>,
-    current_texture_sprite: Option<Entity>,
+    pub current_texture_sprite: Option<Entity>,
+    pub state_update: Option<(String, bool)>,
     current_texture_site: TextureSide,
     dialog_entity: Option<Entity>,
 }
 
+#[buildstructor::buildstructor]
 impl TwoSideItem {
-    pub fn new_no_dialog(texture_front_file: String, texture_back_file: String) -> Self {
-        TwoSideItem {
-            texture_front_file: texture_front_file,
-            texture_back_file: texture_back_file,
-            additional_dialog: None,
-            current_texture_sprite: None,
-            current_texture_site: TextureSide::Front,
-            dialog_entity: None,
-        }
-    }
-
-    pub fn new_with_dialog(
+    #[builder(visibility = "pub")]
+    fn new(
         texture_front_file: String,
         texture_back_file: String,
-        additional_dialog_subject: String,
-        additional_dialog_text: String,
+        with_dialog: Option<(String, String)>,
+        with_state_update: Option<(String, bool)>,
     ) -> Self {
         TwoSideItem {
             texture_front_file: texture_front_file,
             texture_back_file: texture_back_file,
-            additional_dialog: Some((additional_dialog_subject, additional_dialog_text)),
+            additional_dialog: with_dialog,
+            state_update: with_state_update,
             current_texture_sprite: None,
             current_texture_site: TextureSide::Front,
             dialog_entity: None,
@@ -76,6 +70,9 @@ impl ClickableBehaviour for TwoSideItem {
             ..default()
         });
         self.current_texture_sprite = Some(x.id());
+        self.state_update.clone().map(|(key, value)| {
+            commands.spawn(UpdateGlobalState(key.clone(), value));
+        });
         self.show_dialog_if_needed(commands, asset_server);
     }
 

@@ -1,7 +1,6 @@
 title: RailwaymanDialogIntro
 position: 156,-631
 ---
-<<set $knows_about_marriage to false>>
 Player: Pan Andrzej jak mniemam?
 Railwayman: Zgadza sie 
 Player: Wedlug mojego raportu to Pan jako pierwszy znalazl nieboszczyka..

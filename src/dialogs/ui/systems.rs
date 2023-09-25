@@ -1,8 +1,9 @@
-use bevy::audio::PlaybackMode::{Despawn, Remove};
+use bevy::audio::PlaybackMode::Remove;
 use super::components::*;
 use bevy::prelude::*;
 use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialogs::resource::*;
+use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
 use crate::npc::components::{DialogableNPC, HoveredOverNPC, NPCInDialog};
 use crate::text::typewriting::systems::create_type_writing_text;
@@ -32,9 +33,10 @@ pub fn build_dialog_ui_from_event(
                 }
             }
         }
-        DialogEvent::Options { speaker, options } => {
-            build_options_ui(commands, asset_server, options)
-        }
+        DialogEvent::Options {
+            speaker: _,
+            options,
+        } => build_options_ui(commands, asset_server, options),
         _ => {}
     }
 }
@@ -301,6 +303,7 @@ pub fn load_dialog(
 pub fn mouse_button_input(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    mut global_state: ResMut<GlobalState>,
     buttons: Res<Input<MouseButton>>,
     mut dialogs: ResMut<Dialogs>,
     dialog_query: Query<Entity, With<DialogUI>>,
@@ -310,7 +313,7 @@ pub fn mouse_button_input(
 ) {
     let (entity, mut dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
     if buttons.just_pressed(MouseButton::Left) {
-        let event = dialogs.runner.next_event();
+        let event = dialogs.runner.next_event(&mut global_state);
         match event {
             DialogEvent::Waiting => {}
             DialogEvent::End => {

@@ -113,19 +113,13 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                     {
                                                         match option_line_field.as_rule() {
                                                             Rule::dialog_line => {
-                                                                let mut speaker = "".to_string();
                                                                 for dialog_line_field in
                                                                     option_line_field.into_inner()
                                                                 {
                                                                     match dialog_line_field
                                                                         .as_rule()
                                                                     {
-                                                                        Rule::speaker => {
-                                                                            speaker =
-                                                                                dialog_line_field
-                                                                                    .as_str()
-                                                                                    .to_string();
-                                                                        }
+                                                                        Rule::speaker => {}
                                                                         Rule::dialog => {
                                                                             text =
                                                                                 dialog_line_field

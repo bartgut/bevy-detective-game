@@ -8,6 +8,7 @@ pub mod game_items;
 pub mod game_levels;
 pub mod game_npc;
 pub mod game_state;
+pub mod global_state;
 pub mod in_game_state;
 pub mod intro;
 pub mod intro_state;
@@ -36,6 +37,8 @@ use crate::game_items::items_map;
 use crate::game_levels::level_map;
 use crate::game_npc::npc_map;
 use crate::game_state::GameState;
+use crate::global_state::global_state::GlobalState;
+use crate::global_state::GlobalStatePlugin;
 use crate::in_game_state::InGameState;
 use crate::intro::IntroPlugin;
 use crate::intro_state::IntroState;
@@ -68,6 +71,7 @@ fn main() {
         })
         .insert_resource(NPCResource { npcs: npc_map() })
         .insert_resource(ItemResource { items: items_map() })
+        .insert_resource(GlobalState::default())
         .add_state::<IntroState>()
         .add_state::<GameState>()
         .add_state::<InGameState>()
@@ -89,6 +93,7 @@ fn main() {
         .add_plugins(WorldMapPlugin)
         .add_plugins(SoundPlugin)
         .add_plugins(KeyboardPlugin)
+        .add_plugins(GlobalStatePlugin)
         .run()
 }
 

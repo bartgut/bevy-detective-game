@@ -20,12 +20,15 @@ impl SpawnableChild for LoverPhoto {
                     level_initial_position: Vec3::new(-800.0, -120.0, 1.0),
                     required_distance: 150.0,
                 },
-                TwoSideItem::new_with_dialog(
-                    "letter/young_lover_letter_front.png".to_string(),
-                    "letter/young_lover_letter_back.png".to_string(),
-                    "Player".to_string(),
-                    "Wydaje sie troche za mloda jak na zone nieboszczyka".to_string(),
-                ),
+                TwoSideItem::builder()
+                    .texture_front_file("letter/young_lover_letter_front.png".to_string())
+                    .texture_back_file("letter/young_lover_letter_back.png".to_string())
+                    .with_dialog((
+                        "Player".to_string(),
+                        "Wydaje sie troche za mloda jak na zone nieboszczyka".to_string(),
+                    ))
+                    .with_state_update(("found_young_lover_photo".to_string(), true))
+                    .build(),
             ));
         });
     }

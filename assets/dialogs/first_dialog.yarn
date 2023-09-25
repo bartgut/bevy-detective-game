@@ -1,7 +1,6 @@
 title: Librarian1PlayerConversationIntro
 position: 150,-475
 ---
-<<set $knows_about_marriage to false>>
 Player: Dzien dobry Pani.. #audio:librarian1/player_1.ogg
 Librarian1: Julio #audio:librarian1/librarian_1.ogg
 Player: .. Pani Julio, mam kilka pytan jesli mozna.. #audio:librarian1/player_2.ogg

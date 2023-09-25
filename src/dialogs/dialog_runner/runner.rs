@@ -1,17 +1,18 @@
+use std::marker::PhantomData;
 use crate::dialogs::dialog_runner::context::StateContext;
 use super::components::*;
 use crate::parsing::yarnspinner::components::*;
 
-pub struct DialogRunner<T: StateContext + Default> {
+pub struct DialogRunner<T: StateContext> {
     nodes: Vec<Node>,
     current_node: Node,
     current_line: LineType,
     current_line_index: usize,
     dialog_state: DialogState,
-    context: T,
+    _phantom: PhantomData<T>,
 }
 
-impl<T: StateContext + Default> DialogRunner<T> {
+impl<T: StateContext> DialogRunner<T> {
     pub fn create_from_nodes(nodes: Vec<Node>, start_node: &str) -> Self {
         let current_node = nodes
             .iter()
@@ -25,16 +26,16 @@ impl<T: StateContext + Default> DialogRunner<T> {
             current_line,
             current_line_index: 0,
             dialog_state: DialogState::Start,
-            context: T::default(),
+            _phantom: PhantomData,
         }
     }
 
-    fn line_to_event(&self, line: &LineType) -> Option<DialogEvent> {
+    fn line_to_event(&self, line: &LineType, context: &T) -> Option<DialogEvent> {
         match line {
             LineType::DialogLine {
                 speaker,
                 text,
-                condition,
+                condition: _condition,
                 tags,
             } => Some(DialogEvent::Dialog {
                 speaker: speaker.clone(),
@@ -47,7 +48,7 @@ impl<T: StateContext + Default> DialogRunner<T> {
             } => {
                 let options = possibilites
                     .iter()
-                    .filter(|&x| self.passes_condition(x))
+                    .filter(|&x| self.passes_condition(x, context))
                     .map(|possibility| (possibility.text.clone(), possibility.jump_to_node.clone()))
                     .collect();
                 Some(DialogEvent::Options {
@@ -59,9 +60,9 @@ impl<T: StateContext + Default> DialogRunner<T> {
         }
     }
 
-    fn passes_condition(&self, possibility: &OptionPossibility) -> bool {
+    fn passes_condition(&self, possibility: &OptionPossibility, context: &T) -> bool {
         match &possibility.condition {
-            Some(condition) => match self.context.get_value(&condition.variable_name) {
+            Some(condition) => match context.get_value(&condition.variable_name) {
                 Some(value) => match condition.condition.as_str() {
                     "==" => value == &condition.value.parse::<bool>().unwrap(),
                     "!=" => value != &condition.value.parse::<bool>().unwrap(),
@@ -73,13 +74,13 @@ impl<T: StateContext + Default> DialogRunner<T> {
         }
     }
 
-    fn update_context(&mut self) {
+    fn update_context(&mut self, context: &mut T) {
         match &self.current_line {
             LineType::SetLine {
                 variable_name,
                 value,
             } => {
-                self.context.set_value(variable_name, value);
+                context.set_value(variable_name, value);
             }
             _ => {}
         }
@@ -118,46 +119,48 @@ impl<T: StateContext + Default> DialogRunner<T> {
     fn event_to_dialog_state(event: &Option<DialogEvent>) -> DialogState {
         match event {
             Some(DialogEvent::Dialog {
-                speaker,
-                text,
-                tags,
+                speaker: _speaker,
+                text: _text,
+                tags: _tags,
             }) => DialogState::Dialog,
-            Some(DialogEvent::Options { speaker, options }) => DialogState::Waiting,
+            Some(DialogEvent::Options {
+                speaker: _speaker,
+                options: _options,
+            }) => DialogState::Waiting,
             Some(DialogEvent::Waiting) => DialogState::Waiting,
             Some(DialogEvent::End) => DialogState::End,
             None => DialogState::Start, // TODO INNY StATE?
         }
     }
 
-    pub fn next_event(&mut self) -> DialogEvent {
+    pub fn next_event(&mut self, context: &mut T) -> DialogEvent {
         match self.dialog_state {
             DialogState::Start => {
-                self.update_context();
+                self.update_context(context);
                 self.perform_jump();
-                let event = self.line_to_event(&self.current_line);
+                let event = self.line_to_event(&self.current_line, context);
                 let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
                 match new_state {
-                    DialogState::Start => self.next_event(),
+                    DialogState::Start => self.next_event(context),
                     _ => event.unwrap(),
                 }
             }
             DialogState::Dialog => {
-                self.update_context();
+                self.update_context(context);
                 self.perform_jump();
-                let event = self.line_to_event(&self.current_line);
+                let event = self.line_to_event(&self.current_line, context);
                 let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
                 match new_state {
-                    DialogState::Start => self.next_event(),
+                    DialogState::Start => self.next_event(context),
                     _ => event.unwrap(),
                 }
             }
             DialogState::Waiting => DialogEvent::Waiting,
             DialogState::End => DialogEvent::End,
-            _ => DialogEvent::End,
         }
     }
 
