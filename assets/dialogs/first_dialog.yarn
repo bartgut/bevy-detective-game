@@ -48,4 +48,5 @@ position: -34,286
 ---
 Player: To wszystko z mojej strony. #audio:librarian1/player_6.ogg
 Librarian1: Dziekuje za rozmowe. #audio:librarian1/librarian_8.ogg
+<<set $librarian_already_talked to true>>
 ===

@@ -35,4 +35,5 @@ position: 153,579
 ---
 Player: To wszystko z mojej strony.
 Railwayman: Dziekuje
+<<set $railwayman_already_talked to true>>
 ===

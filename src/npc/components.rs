@@ -12,15 +12,14 @@ pub struct DialogableNPC {
     pub dialog_file_name: String,
     pub start_node: String,
     pub reset_node: String,
-    pub first_dialog: bool,
+    pub first_dialog_mark: String,
 }
 
 impl DialogableNPC {
-    pub fn node(&self) -> &str {
-        if self.first_dialog {
-            &self.start_node
-        } else {
-            &self.reset_node
+    pub fn node(&self, is_not_first_dialog: Option<&bool>) -> &str {
+        match is_not_first_dialog {
+            Some(true) => &self.reset_node,
+            _ => &self.start_node,
         }
     }
 }

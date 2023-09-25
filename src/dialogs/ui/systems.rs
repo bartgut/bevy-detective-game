@@ -2,6 +2,7 @@ use bevy::audio::PlaybackMode::Remove;
 use super::components::*;
 use bevy::prelude::*;
 use crate::dialogs::dialog_runner::components::DialogEvent;
+use crate::dialogs::dialog_runner::context::StateContext;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
@@ -291,12 +292,14 @@ pub fn start_dialog(
 pub fn load_dialog(
     mut commands: Commands,
     npc_dialog: Query<&DialogableNPC, With<HoveredOverNPC>>,
+    global_state: Res<GlobalState>,
 ) {
     let dialog_npc_config = npc_dialog.get_single().unwrap();
     commands.remove_resource::<Dialogs>();
     commands.insert_resource(Dialogs::load_from_file(
         format!("assets/dialogs/{}.yarn", dialog_npc_config.dialog_file_name).as_str(),
-        dialog_npc_config.node(),
+        dialog_npc_config
+            .node(global_state.get_value(dialog_npc_config.first_dialog_mark.as_str())),
     ));
 }
 
@@ -324,7 +327,6 @@ pub fn mouse_button_input(
                 if let Ok(option_entity) = option_query.get_single() {
                     commands.entity(option_entity).despawn_recursive();
                 }
-                dialog_npc_config.first_dialog = false;
                 commands.entity(entity).remove::<NPCInDialog>();
                 dialogs
                     .runner

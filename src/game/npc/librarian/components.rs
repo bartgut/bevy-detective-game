@@ -23,7 +23,7 @@ impl SpawnableNPC for Librarian {
                     dialog_file_name: String::from("first_dialog"),
                     start_node: String::from("Librarian1PlayerConversationIntro"),
                     reset_node: String::from("Librarian1PlayerPossibleQuestions"),
-                    first_dialog: true,
+                    first_dialog_mark: String::from("librarian_already_talked"),
                 },
                 AnimationEnabled,
                 Librarian,

@@ -24,7 +24,7 @@ impl SpawnableNPC for Railwayman {
                     dialog_file_name: String::from("railwayman_dialog"),
                     start_node: String::from("RailwaymanDialogIntro"),
                     reset_node: String::from("RailwaymanDialogPossibleQuestions"),
-                    first_dialog: true,
+                    first_dialog_mark: String::from("railwayman_already_talked"),
                 },
                 AnimationEnabled,
                 SmokingAnimation,
