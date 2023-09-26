@@ -1,3 +1,4 @@
+use bevy::audio::PlaybackMode::Remove;
 use super::behaviour::ClickableBehaviour;
 use bevy::prelude::*;
 use crate::dialogs::ui::systems::build_dialog_ui;
@@ -18,6 +19,7 @@ pub struct TwoSideItem {
     pub state_update: Option<(String, bool)>,
     current_texture_site: TextureSide,
     dialog_entity: Option<Entity>,
+    pub click_sound: Option<String>,
 }
 
 #[buildstructor::buildstructor]
@@ -28,6 +30,7 @@ impl TwoSideItem {
         texture_back_file: String,
         with_dialog: Option<(String, String)>,
         with_state_update: Option<(String, bool)>,
+        with_click_sound: Option<String>,
     ) -> Self {
         TwoSideItem {
             texture_front_file: texture_front_file,
@@ -37,10 +40,27 @@ impl TwoSideItem {
             current_texture_sprite: None,
             current_texture_site: TextureSide::Front,
             dialog_entity: None,
+            click_sound: with_click_sound,
         }
     }
 
-    fn show_dialog_if_needed(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {
+    fn play_sound_if_needed(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+        match &self.click_sound {
+            Some(sound) => {
+                commands.spawn(AudioBundle {
+                    source: asset_server.load(format!("sound/{}", sound)),
+                    settings: PlaybackSettings {
+                        mode: Remove,
+                        ..default()
+                    },
+                    ..default()
+                });
+            }
+            _ => {}
+        }
+    }
+
+    fn show_dialog_if_needed(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
         match &self.additional_dialog {
             Some((subject, text)) => {
                 self.dialog_entity =
@@ -60,20 +80,23 @@ impl ClickableBehaviour for TwoSideItem {
             TextureSide::Back => &self.texture_back_file,
         };
 
-        let x = commands.spawn(SpriteBundle {
-            texture: asset_server.load(format!("images/items/{}", what_texture)),
-            transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 999.0),
-                scale: Vec3::new(0.3, 0.3, 0.3),
-                ..Default::default()
-            },
-            ..default()
-        });
-        self.current_texture_sprite = Some(x.id());
+        let x = commands
+            .spawn(SpriteBundle {
+                texture: asset_server.load(format!("images/items/{}", what_texture)),
+                transform: Transform {
+                    translation: Vec3::new(0.0, 0.0, 999.0),
+                    scale: Vec3::new(0.3, 0.3, 0.3),
+                    ..Default::default()
+                },
+                ..default()
+            })
+            .id();
+        self.current_texture_sprite = Some(x);
         self.state_update.clone().map(|(key, value)| {
             commands.spawn(UpdateGlobalState(key.clone(), value));
         });
-        self.show_dialog_if_needed(commands, asset_server);
+        self.show_dialog_if_needed(commands, &asset_server);
+        self.play_sound_if_needed(commands, &asset_server);
     }
 
     fn on_click(&mut self, commands: &mut Commands, asset_server: Res<AssetServer>) {

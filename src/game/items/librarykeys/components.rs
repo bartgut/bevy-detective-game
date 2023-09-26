@@ -30,6 +30,7 @@ impl SpawnableChild for LibraryKeys {
                 OneSideItem {
                     texture_file: "librarykey/library_key.png".to_string(),
                     sprite_entity: None,
+                    click_sound: Some("items/key_grabbing.ogg".to_string()),
                 },
             ));
         });
