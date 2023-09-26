@@ -12,12 +12,12 @@ pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetSe
                 .spawn((main_menu_image(&asset_server), MainMenuImage))
                 .with_children(|parent| {
                     parent
-                        .spawn((new_game_button(), StartGameButton))
+                        .spawn((new_game_button(), StartGameButton, MainMenuButton))
                         .with_children(|parent| {
                             parent.spawn((new_game_text(&asset_server), StartGameText));
                         });
                     parent
-                        .spawn((quit_game_button(), QuitGameButton))
+                        .spawn((quit_game_button(), QuitGameButton, MainMenuButton))
                         .with_children(|parent| {
                             parent.spawn((quit_game_text(&asset_server), QuitGameText));
                         });

@@ -4,7 +4,9 @@ pub mod ui;
 
 use bevy::prelude::*;
 use ui::systems::*;
+use crate::dialogs::ui::components::OptionUINode;
 use crate::in_game_state::InGameState;
+use crate::main_menu::components::MainMenuButton;
 
 pub struct DialogsPlugin;
 
@@ -16,6 +18,8 @@ impl Plugin for DialogsPlugin {
                 interact_with_dialog_text.run_if(in_state(InGameState::Dialog)),
             )
             .add_systems(Update, start_dialog.run_if(in_state(InGameState::InGame)))
+            .add_systems(Update, interact_sound_effect::<OptionUINode>)
+            .add_systems(Update, interact_sound_effect::<MainMenuButton>)
             .add_systems(
                 Update,
                 mouse_button_input

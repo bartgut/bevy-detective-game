@@ -7,6 +7,7 @@ use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
 use crate::npc::components::{DialogableNPC, HoveredOverNPC, NPCInDialog};
+use crate::sound::components::{AudioPlayable, UIInteractionSoundEffect};
 use crate::text::typewriting::systems::create_type_writing_text;
 
 pub fn build_dialog_ui_from_event(
@@ -245,7 +246,27 @@ pub fn build_dialog_ui(
         .id()
 }
 
+pub fn interact_sound_effect<T: Component + UIInteractionSoundEffect>(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    ui_elements: Query<(&Interaction, &T), Changed<Interaction>>,
+) {
+    for (interaction, entity) in ui_elements.iter() {
+        match *interaction {
+            Interaction::Hovered => {
+                entity.on_hover(&mut commands, &asset_server);
+            }
+            Interaction::Pressed => {
+                entity.on_pressed(&mut commands, &asset_server);
+            }
+            _ => {}
+        }
+    }
+}
+
 pub fn interact_with_dialog_text(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
     mut button_query: Query<(&Interaction, &mut Children, &OptionUINode), Changed<Interaction>>,
     mut text_query: Query<&mut Text>,
     mut dialogs: ResMut<Dialogs>,
