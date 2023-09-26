@@ -2,6 +2,7 @@ use bevy::utils::HashMap;
 use crate::game::effects::train_smoke::TrainSmoke;
 use crate::game::items::carinpark::components::CarInPark;
 use crate::game::items::librarydoor::components::LibraryDoor;
+use crate::game::items::librarykeys::components::LibraryKeys;
 use crate::game::items::loverphoto::components::LoverPhoto;
 use crate::level_state::LevelState;
 use crate::spawnable::components::SpawnableChild;
@@ -12,6 +13,7 @@ pub fn items_map() -> HashMap<LevelState, Vec<Box<dyn SpawnableChild + Sync + Se
         Box::new(LoverPhoto),
         Box::new(TrainSmoke),
         Box::new(LibraryDoor),
+        Box::new(LibraryKeys),
     ]);
     map.entry(LevelState::CityPark)
         .or_insert(vec![Box::new(CarInPark)]);

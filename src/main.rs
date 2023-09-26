@@ -12,6 +12,7 @@ pub mod global_state;
 pub mod in_game_state;
 pub mod intro;
 pub mod intro_state;
+pub mod inventory;
 pub mod keyboard;
 pub mod level_state;
 pub mod levels;

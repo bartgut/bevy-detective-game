@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use crate::clickable::items::onesideitem::OneSideItem;
+use crate::clickable::items::systems::collectible_click;
 use crate::clickable::items::twosideitem::TwoSideItem;
 use crate::clickable::systems::{
     clickable_can_be_clicked, clickable_click, clickable_first_click, gray_out_all, hover_entry,
@@ -38,6 +39,7 @@ impl Plugin for ClickablePlugin {
             .add_systems(Update, clickable_first_click::<TwoSideItem>)
             .add_systems(Update, clickable_click::<OneSideItem>)
             .add_systems(Update, clickable_click::<TwoSideItem>)
-            .add_systems(Update, clickable_first_click::<LevelTeleport>);
+            .add_systems(Update, clickable_first_click::<LevelTeleport>)
+            .add_systems(Update, collectible_click);
     }
 }

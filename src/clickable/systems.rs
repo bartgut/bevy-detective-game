@@ -160,6 +160,7 @@ pub fn clickable_first_click<T: ClickableBehaviour + Component>(
     mut clickable: Query<(Entity, &mut T), With<HoveredOverClickable>>,
     buttons: Res<Input<MouseButton>>,
 ) {
+    /// TODO add check based on game global state
     if buttons.just_pressed(MouseButton::Left) {
         if !clickable.is_empty() {
             let (entity, mut behaviour) = clickable.get_single_mut().unwrap();
