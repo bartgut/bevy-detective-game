@@ -2,9 +2,9 @@ title: RailwaymanDialogIntro
 position: 156,-631
 ---
 Player: Pan Andrzej jak mniemam?
-Railwayman: Zgadza sie 
+Railwayman: Zgadza sie #audio:railwayman1/railwayman_1.ogg
 Player: Wedlug mojego raportu to Pan jako pierwszy znalazl nieboszczyka..
-Railwayman: Tak.. Odrazu zadzwonilem na policje, to byl paskudny widok.. tyle krwi..
+Railwayman: Tak.. Odrazu zadzwonilem na policje, to byl paskudny widok.. tyle krwi.. #audio:railwayman1/railwayman_2.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
 title: RailwaymanDialogPossibleQuestions
@@ -20,20 +20,20 @@ position: 154,-189
 title: RailwaymanWhySoEarly
 position: 707,49
 ---
-Railwayman: Widzi Pan.. od smierci zony nie sypiam najlepiej, czesto przychodze wczesniej tutaj ogladac wschod slonca, tak latwiej.
+Railwayman: Widzi Pan.. od smierci zony nie sypiam najlepiej, czesto przychodze wczesniej tutaj ogladac wschod slonca, tak latwiej. #audio:railwayman1/railwayman_3.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
 title: RailwaymanWorking
 position: -222,87
 ---
 Player: Jak dlugo Pan tu pracuje?
-Railwayman: Cale zycie prosze Pana, odkad pamietam, moj ojciec byl rowniez kolejarzem.
+Railwayman: Cale zycie prosze Pana, odkad pamietam, moj ojciec byl rowniez kolejarzem. #audio:railwayman1/railwayman_4.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
 title: RailwaymanOutro
 position: 153,579
 ---
 Player: To wszystko z mojej strony.
-Railwayman: Dziekuje
+Railwayman: Dziekuje #audio:railwayman1/railwayman_5.ogg
 <<set $railwayman_already_talked to true>>
 ===
