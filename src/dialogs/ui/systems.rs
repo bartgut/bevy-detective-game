@@ -7,7 +7,7 @@ use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
 use crate::npc::components::{DialogableNPC, HoveredOverNPC, NPCInDialog};
-use crate::sound::components::{AudioPlayable, UIInteractionSoundEffect};
+use crate::sound::components::UIInteractionSoundEffect;
 use crate::text::typewriting::systems::create_type_writing_text;
 
 pub fn build_dialog_ui_from_event(
@@ -265,8 +265,6 @@ pub fn interact_sound_effect<T: Component + UIInteractionSoundEffect>(
 }
 
 pub fn interact_with_dialog_text(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
     mut button_query: Query<(&Interaction, &mut Children, &OptionUINode), Changed<Interaction>>,
     mut text_query: Query<&mut Text>,
     mut dialogs: ResMut<Dialogs>,
@@ -335,7 +333,7 @@ pub fn mouse_button_input(
     mut npc_dialog: Query<(Entity, &mut DialogableNPC), With<NPCInDialog>>,
     mut game_state: ResMut<NextState<InGameState>>,
 ) {
-    let (entity, mut dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
+    let (entity, dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
     if buttons.just_pressed(MouseButton::Left) {
         let event = dialogs.runner.next_event(&mut global_state);
         match event {

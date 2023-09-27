@@ -153,24 +153,34 @@ pub fn clickable_can_be_clicked(
     }
 }
 
-pub fn clickable_first_click<T: ClickableBehaviour + Component>(
+pub fn clickable_first_click(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut game_state: ResMut<NextState<InGameState>>,
-    mut clickable: Query<(Entity, &mut T), With<HoveredOverClickable>>,
+    mut clickable: Query<Entity, With<HoveredOverClickable>>,
     buttons: Res<Input<MouseButton>>,
 ) {
-    /// TODO add check based on game global state
     if buttons.just_pressed(MouseButton::Left) {
         if !clickable.is_empty() {
-            let (entity, mut behaviour) = clickable.get_single_mut().unwrap();
-            game_state.set(InGameState::LookingAtItem);
+            let entity = clickable.get_single_mut().unwrap();
             commands
                 .entity(entity)
                 .insert(Clicked)
                 .remove::<HoveredOverClickable>();
+        }
+    }
+}
+
+pub fn clickable_clicked<T: ClickableBehaviour + Component>(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut game_state: ResMut<NextState<InGameState>>,
+    mut clickable: Query<&mut T, Added<Clicked>>,
+) {
+    match clickable.get_single_mut() {
+        Ok(mut behaviour) => {
+            game_state.set(InGameState::LookingAtItem);
             behaviour.on_start(&mut commands, asset_server);
         }
+        Err(_) => {}
     }
 }
 
