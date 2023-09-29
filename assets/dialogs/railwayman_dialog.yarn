@@ -1,9 +1,9 @@
 title: RailwaymanDialogIntro
 position: 156,-631
 ---
-Player: Pan Andrzej jak mniemam?
+Player: Pan Andrzej jak mniemam? #audio:railwayman1/player_1.ogg
 Railwayman: Zgadza sie #audio:railwayman1/railwayman_1.ogg
-Player: Wedlug mojego raportu to Pan jako pierwszy znalazl nieboszczyka..
+Player: Wedlug mojego raportu to Pan jako pierwszy znalazl nieboszczyka.. #audio:railwayman1/player_2.ogg
 Railwayman: Tak.. Odrazu zadzwonilem na policje, to byl paskudny widok.. tyle krwi.. #audio:railwayman1/railwayman_2.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
@@ -12,22 +12,34 @@ position: 154,-189
 ---
 -> Player: Co robil Pan tak wczesniej na terenie dworca? Z tego co wiem najblizszy pociag mial kursowac za 2 godziny?
     <<jump RailwaymanWhySoEarly>>
--> Player: Dlugo Pani tu pracuje?
+-> Player: Dlugo Pan tu pracuje?
     <<jump RailwaymanWorking>>
+-> Player: Pociag jest zamkniety, czy to Pan ma do niego klucze? <<if $train_keys_received == false>>
+    <<jump RailwaymanKeys>>
 -> Player: To wszystko, dziekuje
     <<jump RailwaymanOutro>>
 ===
 title: RailwaymanWhySoEarly
 position: 707,49
 ---
+Player: Co robil Pan tak wczesniej na terenie dworca? Z tego co wiem najblizszy pociag mial kursowac dopiero za 2 godziny. #audio:railwayman1/player_3.ogg
 Railwayman: Widzi Pan.. od smierci zony nie sypiam najlepiej, czesto przychodze wczesniej tutaj ogladac wschod slonca, tak latwiej. #audio:railwayman1/railwayman_3.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
 title: RailwaymanWorking
 position: -222,87
 ---
-Player: Jak dlugo Pan tu pracuje?
+Player: Jak dlugo Pan tu pracuje? #audio:railwayman1/player_4.ogg
 Railwayman: Cale zycie prosze Pana, odkad pamietam, moj ojciec byl rowniez kolejarzem. #audio:railwayman1/railwayman_4.ogg
+<<jump RailwaymanDialogPossibleQuestions>>
+===
+title: RailwaymanKeys
+---
+Player: Pociag jest zamkniety, czy to Pan ma do niego klucze? #audio:railwayman1/player_5.ogg
+<<addInventory train_key klucz>>
+<<set $train_keys_received to true>>
+Railwayman: Tak, prosze bardzo. #audio:railwayman1/railwayman_6.ogg
+Player: Dziekuje. #audio:railwayman1/player_6.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
 title: RailwaymanOutro
@@ -36,5 +48,4 @@ position: 153,579
 Player: To wszystko z mojej strony.
 Railwayman: Dziekuje #audio:railwayman1/railwayman_5.ogg
 <<set $railwayman_already_talked to true>>
-<<addInventory library_key klucz>>
 ===

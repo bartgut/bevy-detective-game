@@ -22,16 +22,15 @@ option_lines = { (option_line)+ }
 
 variable_name = @{ (ASCII_ALPHANUMERIC | "_")+ }
 function_name = @{ (ASCII_ALPHANUMERIC | "_")+ }
-arg          = @{ (ASCII_ALPHANUMERIC | "_")+ }
-args = { (arg)* }
+arg           = @{ (ASCII_ALPHANUMERIC | "_")+ }
+args          =  { (arg)* }
 boolean_value =  { "true" | "false" }
 set_line      =  { "<<set" ~ "$" ~ variable_name ~ "to" ~ boolean_value ~ ">>" ~ NEWLINE }
 command_line  =  { "<<" ~ function_name ~ args ~ ">>" ~ NEWLINE }
 
 section_content = { (dialog_line | option_lines | jump_line | set_line | command_line)+ }
 
-section  =  { title_header ~ position ~ section_start ~ (section_content) ~ section_end }
+section  =  { title_header ~ (position)? ~ section_start ~ (section_content) ~ section_end }
 sections = _{ (section)* }
 
 yarnspinner = _{ SOI ~ sections ~ EOI }
-
