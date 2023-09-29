@@ -36,4 +36,5 @@ position: 153,579
 Player: To wszystko z mojej strony.
 Railwayman: Dziekuje #audio:railwayman1/railwayman_5.ogg
 <<set $railwayman_already_talked to true>>
+<<addInventory library_key klucz>>
 ===

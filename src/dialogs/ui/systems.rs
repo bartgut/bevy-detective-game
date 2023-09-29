@@ -335,7 +335,7 @@ pub fn mouse_button_input(
 ) {
     let (entity, dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
     if buttons.just_pressed(MouseButton::Left) {
-        let event = dialogs.runner.next_event(&mut global_state);
+        let event = dialogs.runner.next_event(&mut global_state, &mut commands);
         match event {
             DialogEvent::Waiting => {}
             DialogEvent::End => {

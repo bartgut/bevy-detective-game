@@ -51,6 +51,39 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                             value: value,
                                         });
                                     }
+                                    Rule::command_line => {
+                                        let mut func_name = "".to_string();
+                                        let mut args: Vec<String> = vec![];
+                                        for command_line_field in content.into_inner() {
+                                            match command_line_field.as_rule() {
+                                                Rule::function_name => {
+                                                    func_name =
+                                                        command_line_field.as_str().to_string();
+                                                }
+                                                Rule::args => {
+                                                    for command_arg_field in
+                                                        command_line_field.into_inner()
+                                                    {
+                                                        match command_arg_field.as_rule() {
+                                                            Rule::arg => {
+                                                                args.push(
+                                                                    command_arg_field
+                                                                        .as_str()
+                                                                        .to_string(),
+                                                                );
+                                                            }
+                                                            _ => unreachable!(),
+                                                        }
+                                                    }
+                                                }
+                                                _ => unreachable!(),
+                                            }
+                                        }
+                                        node.lines.push(LineType::CommandLine {
+                                            func_name: func_name,
+                                            args: args,
+                                        });
+                                    }
                                     Rule::dialog_line => {
                                         let mut speaker = "".to_string();
                                         let mut text = "".to_string();

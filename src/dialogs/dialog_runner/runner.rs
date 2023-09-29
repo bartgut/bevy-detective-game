@@ -1,7 +1,19 @@
 use std::marker::PhantomData;
+use lazy_static::lazy_static;
 use crate::dialogs::dialog_runner::context::StateContext;
 use super::components::*;
 use crate::parsing::yarnspinner::components::*;
+use std::collections::HashMap;
+use std::sync::Mutex;
+use bevy::prelude::Commands;
+use bevy_detective_derive::yarn_command;
+use crate::clickable::items::components::Collectible;
+use crate::global_state::global_state::AddCollectibleToInventory;
+
+type CommandFn = Box<dyn Fn(&mut Commands, &mut dyn Iterator<Item = String>) + Send + Sync>;
+lazy_static! {
+    static ref COMMAND_REGISTRY: Mutex<HashMap<String, CommandFn>> = Mutex::new(HashMap::new());
+}
 
 pub struct DialogRunner<T: StateContext> {
     nodes: Vec<Node>,
@@ -13,6 +25,19 @@ pub struct DialogRunner<T: StateContext> {
 }
 
 impl<T: StateContext> DialogRunner<T> {
+    pub fn register(&self) {
+        #[yarn_command("addInventory")]
+        fn func_commands(commands: &mut Commands, item_name: String, item_description: String) {
+            commands.spawn(AddCollectibleToInventory {
+                0: Collectible {
+                    inventory_sprite: "test.png".to_string(),
+                    name: item_name,
+                    description: item_description,
+                },
+            });
+        }
+    }
+
     pub fn create_from_nodes(nodes: Vec<Node>, start_node: &str) -> Self {
         let current_node = nodes
             .iter()
@@ -20,14 +45,16 @@ impl<T: StateContext> DialogRunner<T> {
             .unwrap()
             .clone();
         let current_line = current_node.lines.first().unwrap().clone();
-        Self {
+        let x = Self {
             nodes,
             current_node,
             current_line,
             current_line_index: 0,
             dialog_state: DialogState::Start,
             _phantom: PhantomData,
-        }
+        };
+        x.register();
+        x
     }
 
     fn line_to_event(&self, line: &LineType, context: &T) -> Option<DialogEvent> {
@@ -102,6 +129,18 @@ impl<T: StateContext> DialogRunner<T> {
         }
     }
 
+    fn execute_command(&mut self, commands: &mut Commands) {
+        match &self.current_line {
+            LineType::CommandLine { func_name, args } => {
+                COMMAND_REGISTRY.lock().unwrap().get(func_name).unwrap()(
+                    commands,
+                    &mut args.clone().into_iter(),
+                );
+            }
+            _ => {}
+        }
+    }
+
     fn move_pointer(&mut self) {
         match self.dialog_state {
             DialogState::Waiting => {}
@@ -133,29 +172,31 @@ impl<T: StateContext> DialogRunner<T> {
         }
     }
 
-    pub fn next_event(&mut self, context: &mut T) -> DialogEvent {
+    pub fn next_event(&mut self, context: &mut T, commands: &mut Commands) -> DialogEvent {
         match self.dialog_state {
             DialogState::Start => {
                 self.update_context(context);
                 self.perform_jump();
+                self.execute_command(commands);
                 let event = self.line_to_event(&self.current_line, context);
                 let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
                 match new_state {
-                    DialogState::Start => self.next_event(context),
+                    DialogState::Start => self.next_event(context, commands),
                     _ => event.unwrap(),
                 }
             }
             DialogState::Dialog => {
                 self.update_context(context);
                 self.perform_jump();
+                self.execute_command(commands);
                 let event = self.line_to_event(&self.current_line, context);
                 let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
                 match new_state {
-                    DialogState::Start => self.next_event(context),
+                    DialogState::Start => self.next_event(context, commands),
                     _ => event.unwrap(),
                 }
             }

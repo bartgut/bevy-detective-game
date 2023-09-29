@@ -24,6 +24,10 @@ pub enum LineType {
         variable_name: String,
         value: bool,
     },
+    CommandLine {
+        func_name: String,
+        args: Vec<String>,
+    },
     DialogLine {
         speaker: String,
         text: String,
