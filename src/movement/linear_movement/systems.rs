@@ -32,6 +32,17 @@ pub fn linear_2d_movement_executor(
         }
     }
 }
+
+pub fn linear_2d_movement_stop(
+    mut commands: Commands,
+    query: Query<Entity, With<Linear2DMovementComponent>>,
+) {
+    for entity in query.iter() {
+        commands
+            .entity(entity)
+            .remove::<Linear2DMovementComponent>();
+    }
+}
 fn rotate_depending_on_direction(transform: &mut Transform, direction_vector_norm: &Vec2) {
     if direction_vector_norm.x > 0.0 {
         transform.rotation = Quat::from_rotation_y(0.0);
