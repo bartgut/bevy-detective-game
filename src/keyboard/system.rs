@@ -11,16 +11,31 @@ pub fn keyboard_event(
     mut game_state_mutator: ResMut<NextState<InGameState>>,
 ) {
     if keyboard_buttons.just_pressed(KeyCode::M) {
-        if current_game_state.get() == &InGameState::Map {
-            game_state_mutator.set(InGameState::InGame);
-        } else {
-            game_state_mutator.set(InGameState::Map);
-        }
+        world_map_handle(&current_game_state, &mut game_state_mutator);
     }
     if keyboard_buttons.just_pressed(KeyCode::I) {
-        println!("Inventory:");
-        inventory.get_all_items().iter().for_each(|item| {
-            println!("Item: {:?} - {:?}", item.name, item.description);
-        });
+        inventory_handle(&inventory);
     }
+}
+
+fn world_map_handle(
+    current_game_state: &Res<State<InGameState>>,
+    game_state_mutator: &mut ResMut<NextState<InGameState>>,
+) {
+    match current_game_state.get() {
+        InGameState::InGame => {
+            game_state_mutator.set(InGameState::Map);
+        }
+        InGameState::Map => {
+            game_state_mutator.set(InGameState::InGame);
+        }
+        _ => {}
+    }
+}
+
+fn inventory_handle(inventory: &GlobalState) {
+    println!("Inventory:");
+    inventory.get_all_items().iter().for_each(|item| {
+        println!("Item: {:?} - {:?}", item.name, item.description);
+    });
 }
