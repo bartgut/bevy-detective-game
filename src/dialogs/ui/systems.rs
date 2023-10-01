@@ -1,12 +1,13 @@
 use bevy::audio::PlaybackMode::Remove;
 use super::components::*;
 use bevy::prelude::*;
+use crate::clickable::components::Clicked;
 use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialog_runner::context::StateContext;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
-use crate::npc::components::{DialogableNPC, HoveredOverNPC, NPCInDialog};
+use crate::npc::components::{DialogableNPC, NPCInDialog};
 use crate::sound::components::UIInteractionSoundEffect;
 use crate::text::typewriting::systems::create_type_writing_text;
 
@@ -295,22 +296,20 @@ pub fn interact_with_dialog_text(
 pub fn start_dialog(
     mut commands: Commands,
     mut game_state: ResMut<NextState<InGameState>>,
-    npc_dialog: Query<Entity, With<HoveredOverNPC>>,
-    buttons: Res<Input<MouseButton>>,
+    npc_dialog: Query<Entity, (Added<Clicked>, With<DialogableNPC>)>,
 ) {
-    if buttons.just_pressed(MouseButton::Left) {
-        if !npc_dialog.is_empty() {
-            commands
-                .entity(npc_dialog.get_single().unwrap())
-                .insert(NPCInDialog);
-            game_state.set(InGameState::Dialog);
-        }
+    if !npc_dialog.is_empty() {
+        commands
+            .entity(npc_dialog.get_single().unwrap())
+            .insert(NPCInDialog)
+            .remove::<Clicked>();
+        game_state.set(InGameState::Dialog);
     }
 }
 
 pub fn load_dialog(
     mut commands: Commands,
-    npc_dialog: Query<&DialogableNPC, With<HoveredOverNPC>>,
+    npc_dialog: Query<&DialogableNPC, Added<NPCInDialog>>,
     global_state: Res<GlobalState>,
 ) {
     let dialog_npc_config = npc_dialog.get_single().unwrap();

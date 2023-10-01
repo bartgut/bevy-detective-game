@@ -1,7 +1,5 @@
 use bevy::prelude::*;
-use crate::dialogs::dialog_runner::context::StateContext;
 use crate::global_state::global_state::GlobalState;
-use crate::inventory::components::Inventory;
 
 #[derive(Component)]
 pub struct Clickable {

@@ -30,6 +30,10 @@ impl Plugin for ClickablePlugin {
             )
             .add_systems(
                 Update,
+                print_when_hovered_clickable.run_if(in_state(InGameState::Dialog)),
+            )
+            .add_systems(
+                Update,
                 print_when_hovered_clickable_global.run_if(in_state(InGameState::Map)),
             )
             .add_systems(Update, clickable_can_be_clicked)

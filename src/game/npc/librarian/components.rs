@@ -1,6 +1,7 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use crate::animation::components::AnimationEnabled;
+use crate::clickable::components::Clickable;
 use crate::npc::components::{DialogableNPC, NPC, SpawnableNPC};
 
 #[derive(Component)]
@@ -18,6 +19,10 @@ impl SpawnableNPC for Librarian {
                 NPC {
                     texture_file: String::from("librarian.png"),
                     level_initial_position: Vec3::new(-1000.0, -120.0, 1.0),
+                },
+                Clickable {
+                    level_initial_position: Vec3::new(-1000.0, -120.0, 1.0),
+                    required_distance: 150.0,
                 },
                 DialogableNPC {
                     dialog_file_name: String::from("first_dialog"),
