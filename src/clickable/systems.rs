@@ -2,16 +2,14 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
 use crate::clickable::components::{
-    CanBeClicked, Clickable, ClickCondition, ClickConditionCheck, ClickConditionInventory,
-    ClickConditions, ClickConditionState, Clicked, HoveredOverClickable,
+    CanBeClicked, Clickable, ClickCondition, ClickConditionCheck, ClickConditions, Clicked,
+    HoveredOverClickable,
 };
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::clickable::items::resource::ItemResource;
-use crate::dialogs::dialog_runner::context::StateContext;
 use crate::game::world_map::world_map::WorldMap;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
-use crate::inventory::components::Inventory;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
 use crate::player::components::Player;
@@ -167,10 +165,7 @@ pub fn clickable_first_click(
     if buttons.just_pressed(MouseButton::Left) {
         if !clickable.is_empty() {
             let entity = clickable.get_single_mut().unwrap();
-            commands
-                .entity(entity)
-                .insert(ClickConditionCheck)
-                .remove::<HoveredOverClickable>();
+            commands.entity(entity).insert(ClickConditionCheck);
         }
     }
 }
@@ -204,10 +199,7 @@ pub fn clickable_condition_check(
                 .insert(Clicked);
         } else {
             (conditions.failure)(&mut commands, &asset_server);
-            commands
-                .entity(entity)
-                .remove::<ClickConditionCheck>()
-                .insert(HoveredOverClickable);
+            commands.entity(entity).remove::<ClickConditionCheck>();
         }
     }
 }

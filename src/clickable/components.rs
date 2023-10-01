@@ -31,13 +31,3 @@ pub struct ClickConditions {
     pub condition: Vec<ClickCondition>,
     pub failure: fn(&mut Commands, &Res<AssetServer>),
 }
-
-#[derive(Component)]
-pub struct ClickConditionState<T: StateContext> {
-    pub condition: fn(&T) -> bool,
-}
-
-#[derive(Component)]
-pub struct ClickConditionInventory<I: Inventory> {
-    pub condition: fn(&I) -> bool,
-}
