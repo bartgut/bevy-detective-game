@@ -1,9 +1,12 @@
+use bevy::audio::PlaybackMode::Despawn;
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use crate::clickable::components::Clickable;
+use crate::clickable::components::{Clickable, ClickConditions};
+use crate::inventory::components::Inventory;
 use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
+use crate::clickable::components::ClickCondition::InventoryCondition;
 
 #[derive(Component)]
 pub struct LibraryDoor;
@@ -24,6 +27,21 @@ impl SpawnableChild for LibraryDoor {
                 Clickable {
                     level_initial_position: Vec3::new(-910.0, -120.0, 1.0),
                     required_distance: 150.0,
+                },
+                ClickConditions {
+                    condition: vec![InventoryCondition {
+                        0: |inventory| inventory.has_item("library_keys"),
+                    }],
+                    failure: |commands, asset_server| {
+                        commands.spawn(AudioBundle {
+                            source: asset_server.load(format!("sound/items/door_locked.ogg")),
+                            settings: PlaybackSettings {
+                                mode: Despawn,
+                                ..default()
+                            },
+                            ..default()
+                        });
+                    },
                 },
                 LevelTeleport {
                     level_state: LevelState::CityPark,

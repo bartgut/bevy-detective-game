@@ -1,11 +1,17 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
-use crate::clickable::components::{CanBeClicked, Clickable, Clicked, HoveredOverClickable};
+use crate::clickable::components::{
+    CanBeClicked, Clickable, ClickCondition, ClickConditionCheck, ClickConditionInventory,
+    ClickConditions, ClickConditionState, Clicked, HoveredOverClickable,
+};
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::clickable::items::resource::ItemResource;
+use crate::dialogs::dialog_runner::context::StateContext;
 use crate::game::world_map::world_map::WorldMap;
+use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
+use crate::inventory::components::Inventory;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
 use crate::player::components::Player;
@@ -163,9 +169,55 @@ pub fn clickable_first_click(
             let entity = clickable.get_single_mut().unwrap();
             commands
                 .entity(entity)
-                .insert(Clicked)
+                .insert(ClickConditionCheck)
                 .remove::<HoveredOverClickable>();
         }
+    }
+}
+
+pub fn clickable_condition_check(
+    mut commands: Commands,
+    state: Res<GlobalState>,
+    asset_server: Res<AssetServer>,
+    mut newly_clicked: Query<(Entity, &ClickConditions), Added<ClickConditionCheck>>,
+) {
+    for (entity, conditions) in newly_clicked.iter_mut() {
+        let mut all_conditions_met = true;
+        for condition in conditions.condition.iter() {
+            match condition {
+                ClickCondition::StateCondition(condition) => {
+                    if !condition(&state) {
+                        all_conditions_met = false;
+                    }
+                }
+                ClickCondition::InventoryCondition(condition) => {
+                    if !condition(&state) {
+                        all_conditions_met = false;
+                    }
+                }
+            }
+        }
+        if all_conditions_met {
+            commands
+                .entity(entity)
+                .remove::<ClickConditionCheck>()
+                .insert(Clicked);
+        } else {
+            (conditions.failure)(&mut commands, &asset_server);
+            commands
+                .entity(entity)
+                .remove::<ClickConditionCheck>()
+                .insert(HoveredOverClickable);
+        }
+    }
+}
+
+pub fn clickable_clicked_no_conditions(
+    mut commands: Commands,
+    newly_clicked: Query<Entity, (Added<ClickConditionCheck>, Without<ClickConditions>)>,
+) {
+    for entity in newly_clicked.iter() {
+        commands.entity(entity).insert(Clicked);
     }
 }
 
