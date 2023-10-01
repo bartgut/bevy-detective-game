@@ -209,7 +209,10 @@ pub fn clickable_clicked_no_conditions(
     newly_clicked: Query<Entity, (Added<ClickConditionCheck>, Without<ClickConditions>)>,
 ) {
     for entity in newly_clicked.iter() {
-        commands.entity(entity).insert(Clicked);
+        commands
+            .entity(entity)
+            .remove::<ClickConditionCheck>()
+            .insert(Clicked);
     }
 }
 
