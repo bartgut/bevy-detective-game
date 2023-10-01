@@ -52,10 +52,16 @@ pub fn cursor_position(
                 if mouse_input.just_pressed(MouseButton::Left) {
                     let new_level_position = (width_halved - level_transform.translation.x)
                         + (position.x - window.resolution.width() / 2.0);
-                    commands.entity(entity).insert(Linear2DMovementComponent {
-                        to: Vec2::new(-width_halved + new_level_position, transform.translation.y),
-                        velocity: Vec2::ONE * PLAYER_SPEED,
-                    });
+                    let diff = (-width_halved + new_level_position - transform.translation.x).abs();
+                    if diff > 10.0 {
+                        commands.entity(entity).insert(Linear2DMovementComponent {
+                            to: Vec2::new(
+                                -width_halved + new_level_position,
+                                transform.translation.y,
+                            ),
+                            velocity: Vec2::ONE * PLAYER_SPEED,
+                        });
+                    }
                 }
             }
         }
