@@ -4,8 +4,9 @@ use crate::clickable::items::systems::collectible_click;
 use crate::clickable::items::twosideitem::TwoSideItem;
 use crate::clickable::systems::{
     clickable_can_be_clicked, clickable_click, clickable_clicked, clickable_clicked_no_conditions,
-    clickable_condition_check, clickable_first_click, gray_out_all, hover_entry, initialize_items,
-    print_when_hovered_clickable, print_when_hovered_clickable_global, return_to_normal_colors,
+    clickable_condition_check, clickable_first_click, cursor_change_on_hover, gray_out_all,
+    hover_entry, initialize_items, print_when_hovered_clickable,
+    print_when_hovered_clickable_global, return_to_normal_colors,
 };
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
@@ -41,6 +42,7 @@ impl Plugin for ClickablePlugin {
             .add_systems(Update, collectible_click)
             .add_systems(Update, clickable_clicked::<OneSideItem>)
             .add_systems(Update, clickable_clicked::<TwoSideItem>)
-            .add_systems(Update, clickable_clicked::<LevelTeleport>);
+            .add_systems(Update, clickable_clicked::<LevelTeleport>)
+            .add_systems(Update, cursor_change_on_hover);
     }
 }

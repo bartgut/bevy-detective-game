@@ -115,16 +115,26 @@ pub fn print_when_hovered_clickable(
                 if Vec2::new(new_level_position, 0.0).distance(Vec2::new(npc_position_2d.x, 0.0))
                     < 30.0
                 {
-                    window.cursor.icon = CursorIcon::Hand;
                     if !clickable_query_already_hovered.contains(entity) {
                         commands.entity(entity).insert(HoveredOverClickable);
                     }
                 } else {
-                    window.cursor.icon = CursorIcon::Default;
                     commands.entity(entity).remove::<HoveredOverClickable>();
                 }
             }
         }
+    }
+}
+
+pub fn cursor_change_on_hover(
+    hovered_over_clickable_query: Query<Entity, With<HoveredOverClickable>>,
+    mut window_query: Query<&mut Window, With<PrimaryWindow>>,
+) {
+    let mut window = window_query.get_single_mut().unwrap();
+    if hovered_over_clickable_query.is_empty() {
+        window.cursor.icon = CursorIcon::Default;
+    } else {
+        window.cursor.icon = CursorIcon::Hand;
     }
 }
 
