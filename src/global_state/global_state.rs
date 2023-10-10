@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use crate::clickable::items::components::Collectible;
 use crate::dialogs::dialog_runner::context::StateContext;
+use crate::event_journal::components::{ComponentToEvent, JournalEventMessage};
 use crate::inventory::components::Inventory;
 
 #[derive(Component)]
@@ -11,6 +12,14 @@ pub struct UpdateGlobalState(pub String, pub bool);
 #[derive(Component)]
 #[component(storage = "SparseSet")]
 pub struct AddCollectibleToInventory(pub Collectible);
+
+impl ComponentToEvent for AddCollectibleToInventory {
+    fn to_event(&self) -> JournalEventMessage {
+        JournalEventMessage {
+            message: format!("You received a {}", self.0.name),
+        }
+    }
+}
 
 #[derive(Resource)]
 pub struct GlobalState {

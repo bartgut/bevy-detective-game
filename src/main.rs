@@ -3,6 +3,7 @@ pub mod clickable;
 pub mod comics;
 pub mod comics_state;
 pub mod dialogs;
+pub mod event_journal;
 pub mod game;
 pub mod game_items;
 pub mod game_levels;
@@ -33,6 +34,7 @@ use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
 use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::dialogs::DialogsPlugin;
+use crate::event_journal::EventJournalPlugin;
 use crate::game::world_map::WorldMapPlugin;
 use crate::game_items::items_map;
 use crate::game_levels::level_map;
@@ -95,6 +97,7 @@ fn main() {
         .add_plugins(SoundPlugin)
         .add_plugins(KeyboardPlugin)
         .add_plugins(GlobalStatePlugin)
+        .add_plugins(EventJournalPlugin)
         .run()
 }
 

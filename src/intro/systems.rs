@@ -4,6 +4,7 @@ use crate::comics::vertical2images::components::Vertical2Images;
 use crate::comics_state::MultiPageComicsState;
 use crate::game_state::GameState;
 use crate::intro_state::IntroState;
+use crate::level_state::LevelState;
 use crate::text::typewriting::components::{TextWithPause, TypeWritingTextSettings};
 use crate::ui::components::FullScreenText;
 use crate::ui::systems::full_screen_text;
