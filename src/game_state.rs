@@ -7,6 +7,7 @@ pub enum GameState {
     Intro,
     LevelLoading,
     LevelSpriteLoading,
+    InLevelSpritesLoading,
     InGame,
     GameOver,
 }

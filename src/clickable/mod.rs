@@ -21,7 +21,7 @@ pub struct ClickablePlugin;
 
 impl Plugin for ClickablePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::InGame), initialize_items)
+        app.add_systems(OnEnter(GameState::InLevelSpritesLoading), initialize_items)
             .add_systems(OnEnter(InGameState::LookingAtItem), gray_out_all)
             .add_systems(OnExit(InGameState::LookingAtItem), return_to_normal_colors)
             .add_systems(

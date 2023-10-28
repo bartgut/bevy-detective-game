@@ -1,7 +1,7 @@
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::prelude::TimerMode::Repeating;
-use crate::animation::components::{AnimationEnabled, AnimationTimer, SpriteAnimationSettings};
+use crate::animation::components::{AnimationEnabled, AnimationHandles, AnimationTimer, SpriteAnimationSettings};
 
 pub fn animation_on_added_component<
     Who: Component,
@@ -9,8 +9,7 @@ pub fn animation_on_added_component<
     Trigger: Component,
 >(
     mut commands: Commands,
-    mut asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    texture_atlases: Res<AnimationHandles>,
     mut query: Query<
         (Entity, &mut Transform, &AnimationSettings),
         (With<Who>, With<AnimationEnabled>, Added<Trigger>),
@@ -19,8 +18,7 @@ pub fn animation_on_added_component<
     for (entity, transform, animation_settings) in query.iter_mut() {
         create_animation(
             &mut commands,
-            &mut asset_server,
-            &mut texture_atlases,
+            &texture_atlases,
             entity,
             &transform,
             animation_settings,
@@ -34,8 +32,7 @@ pub fn animation_on_removed_component<
     Trigger: Component,
 >(
     mut commands: Commands,
-    mut asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    texture_atlases: Res<AnimationHandles>,
     mut removed: RemovedComponents<Trigger>,
     query: Query<(Entity, &Transform, &AnimationSettings), With<Who>>,
 ) {
@@ -44,8 +41,7 @@ pub fn animation_on_removed_component<
             if entity == removed_entity {
                 create_animation(
                     &mut commands,
-                    &mut asset_server,
-                    &mut texture_atlases,
+                    &texture_atlases,
                     entity,
                     &transform,
                     animation_settings,
@@ -83,25 +79,17 @@ pub fn animation_executor<
 
 fn create_animation(
     commands: &mut Commands,
-    asset_server: &mut Res<AssetServer>,
-    texture_atlases: &mut ResMut<Assets<TextureAtlas>>,
+    handles: &Res<AnimationHandles>,
     entity: Entity,
     transform: &Transform,
     animation_settings: &dyn SpriteAnimationSettings,
 ) {
-    let texture_handle = asset_server.load(&animation_settings.get_grid_info().file_path);
-    let texture_atlas = TextureAtlas::from_grid(
-        texture_handle,
-        animation_settings.get_grid_info().tile_size,
-        animation_settings.get_grid_info().columns,
-        animation_settings.get_grid_info().rows,
-        None,
-        None,
-    );
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+    let texture_atlas_handle = handles.handles.get(&animation_settings.get_grid_info().file_path)
+        .expect("Texture atlas not found");
+
     commands.entity(entity).remove::<Sprite>().insert((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle,
+            texture_atlas: texture_atlas_handle.clone_weak(),
             transform: Transform::from_translation(transform.translation.xy().extend(1.0))
                 .with_scale(animation_settings.get_grid_info().tile_scale),
             ..Default::default()
@@ -111,4 +99,25 @@ fn create_animation(
             Repeating,
         )),
     ));
+}
+
+pub fn animation_preload<Animation: SpriteAnimationSettings + Component>(
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut animation_handles: ResMut<AnimationHandles>,
+    asset_server: ResMut<AssetServer>,
+    query: Query<&Animation, Added<Animation>>
+) {
+    for animation_settings in query.iter() {
+        let texture_handle = asset_server.load(&animation_settings.get_grid_info().file_path);
+        let texture_atlas = TextureAtlas::from_grid(
+            texture_handle,
+            animation_settings.get_grid_info().tile_size,
+            animation_settings.get_grid_info().columns,
+            animation_settings.get_grid_info().rows,
+            None,
+            None,
+        );
+        let texture_atlas_handle = texture_atlases.add(texture_atlas);
+        animation_handles.handles.insert(animation_settings.get_grid_info().file_path, texture_atlas_handle);
+    }
 }

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::utils::HashMap;
 
 #[derive(Component)]
 pub struct AnimationEnabled;
@@ -32,4 +33,9 @@ pub trait SpriteAnimationSettings {
     fn get_last(&self) -> usize;
     fn animation_pace(&self) -> f32;
     fn get_grid_info(&self) -> GridInfo;
+}
+
+#[derive(Resource, Default)]
+pub struct AnimationHandles {
+    pub handles: HashMap<String, Handle<TextureAtlas>>
 }

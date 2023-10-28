@@ -38,7 +38,7 @@ pub fn initialize_current_level(
                 },
                 CurrentLevelSprite,
             ));
-            game_state.set(GameState::InGame);
+            game_state.set(GameState::InLevelSpritesLoading);
         }
         Err(_) => {}
     }

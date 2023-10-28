@@ -13,6 +13,6 @@ impl Plugin for QuestPlugin {
             Update,
             (activate_quests, complete_quests).run_if(in_state(GameState::InGame)),
         )
-        .add_systems(OnEnter(GameState::InGame), systems::init_quests);
+        .add_systems(PreStartup, systems::init_quests);
     }
 }

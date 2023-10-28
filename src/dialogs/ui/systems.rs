@@ -1,6 +1,7 @@
 use bevy::audio::PlaybackMode::Remove;
 use super::components::*;
 use bevy::prelude::*;
+use crate::assets::fonts::Fonts;
 use crate::clickable::components::Clicked;
 use crate::dialogs::dialog_runner::components::DialogEvent;
 use crate::dialogs::dialog_runner::context::StateContext;

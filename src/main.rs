@@ -30,6 +30,7 @@ pub mod ui;
 
 use bevy::prelude::*;
 use crate::animation::SpriteAnimationPlugin;
+use crate::assets::AssetsPlugin;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
@@ -59,6 +60,8 @@ use crate::quests::QuestPlugin;
 use crate::sound::SoundPlugin;
 use crate::text::TypeWritingTextPlugin;
 use crate::ui::UIUtilsPlugin;
+
+pub mod assets;
 
 extern crate pest;
 #[macro_use]
@@ -101,6 +104,7 @@ fn main() {
         .add_plugins(GlobalStatePlugin)
         .add_plugins(EventJournalPlugin)
         .add_plugins(QuestPlugin)
+        .add_plugins(AssetsPlugin)
         .run()
 }
 

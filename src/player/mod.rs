@@ -12,7 +12,7 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::InGame), initialize_player)
+        app.add_systems(OnEnter(GameState::InLevelSpritesLoading), initialize_player)
             .add_systems(OnExit(GameState::InGame), despawn_player)
             .add_systems(
                 Update,

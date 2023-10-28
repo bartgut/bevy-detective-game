@@ -10,6 +10,6 @@ pub struct NpcPlugin;
 
 impl Plugin for NpcPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::InGame), initialize_npcs);
+        app.add_systems(OnEnter(GameState::InLevelSpritesLoading), initialize_npcs);
     }
 }
