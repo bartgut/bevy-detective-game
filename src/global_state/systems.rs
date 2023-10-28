@@ -30,20 +30,3 @@ pub fn update_inventory_on_add<T: Inventory + Resource>(
             .remove::<AddCollectibleToInventory>();
     }
 }
-
-pub fn update_inventory_sound_effect_on_add(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    updates: Query<(Entity, &AddCollectibleToInventory), Added<AddCollectibleToInventory>>,
-) {
-    if !updates.is_empty() {
-        commands.spawn(AudioBundle {
-            source: asset_server.load("sound/items/item_received.ogg"),
-            settings: PlaybackSettings {
-                mode: Despawn,
-                ..default()
-            },
-            ..default()
-        });
-    }
-}

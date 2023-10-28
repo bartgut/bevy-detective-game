@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use crate::clickable::items::components::Collectible;
 use crate::dialogs::dialog_runner::context::StateContext;
+use crate::global_state::global_state::JournalEventMessage::AddedToInventory;
 use crate::event_journal::components::{ComponentToEvent, JournalEventMessage};
 use crate::inventory::components::Inventory;
 
@@ -15,8 +16,8 @@ pub struct AddCollectibleToInventory(pub Collectible);
 
 impl ComponentToEvent for AddCollectibleToInventory {
     fn to_event(&self) -> JournalEventMessage {
-        JournalEventMessage {
-            message: format!("You received a {}", self.0.name),
+        AddedToInventory {
+            0: format!("Dodano przedmiot {}", self.0.name),
         }
     }
 }

@@ -4,8 +4,10 @@ use bevy::prelude::*;
 pub struct JournalEventUI;
 
 #[derive(Event)]
-pub struct JournalEventMessage {
-    pub message: String,
+pub enum JournalEventMessage {
+    AddedToInventory(String),
+    NewQuest(String),
+    QuestCompleted(String),
 }
 
 pub trait ComponentToEvent {

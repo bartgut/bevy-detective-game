@@ -1,3 +1,4 @@
+use bevy::audio::PlaybackMode::Despawn;
 use bevy::prelude::*;
 use bevy::ui::PositionType::Absolute;
 use crate::event_journal::components::{JournalEventMessage, JournalEventUI};
@@ -16,7 +17,7 @@ pub fn ui_setup(mut commands: Commands) {
                     flex_direction: FlexDirection::Column,
                     ..default()
                 },
-                background_color: Color::BLACK.with_a(1.0).into(),
+                background_color: Color::BLACK.with_a(0.0).into(),
                 ..default()
             }),
         )
@@ -29,7 +30,23 @@ pub fn on_event_received(
     mut event_reader: EventReader<JournalEventMessage>,
 ) {
     for event in event_reader.iter() {
-        commands.entity(ui_node.single()).with_children(|parent| {
+        match event {
+            JournalEventMessage::AddedToInventory(msg) => {
+                event_ui_text(&mut commands, &asset_server, &ui_node.single(), &msg);
+                audio_setup(&mut commands, &asset_server, "sound/items/item_received.ogg")
+            }
+            JournalEventMessage::NewQuest(msg) => {
+                event_ui_text(&mut commands, &asset_server, &ui_node.single(), &msg)
+            }
+            JournalEventMessage::QuestCompleted(msg) => {
+                event_ui_text(&mut commands, &asset_server, &ui_node.single(), &msg)
+            }
+        }
+    }
+}
+
+fn event_ui_text(commands: &mut Commands, asset_server: &Res<AssetServer>, ui_node: &Entity, text: &str) {
+        commands.entity(*ui_node).with_children(|parent| {
             parent.spawn(AppearingTextBundle {
                 not_visible_timer: NotVisibleTimer(Timer::from_seconds(1.0, TimerMode::Once)),
                 appearing_timer: AppearingTimer(Timer::from_seconds(0.0, TimerMode::Once)),
@@ -37,7 +54,7 @@ pub fn on_event_received(
                 disappearing_timer: DisappearingTimer(Timer::from_seconds(1.0, TimerMode::Once)),
                 start_state: NOT_VISIBLE,
                 text: TextBundle::from_section(
-                    event.message.clone(),
+                    text,
                     TextStyle {
                         font: asset_server.load("fonts/Noir_regular.ttf"),
                         font_size: 20.0,
@@ -48,5 +65,16 @@ pub fn on_event_received(
                 .with_style(Style { ..default() }),
             });
         });
-    }
 }
+
+fn audio_setup(commands: &mut Commands, asset_server: &Res<AssetServer>, audio: &str) {
+        commands.spawn(AudioBundle {
+            source: asset_server.load(audio),
+            settings: PlaybackSettings {
+                mode: Despawn,
+                ..default()
+            },
+            ..default()
+        });
+}
+
