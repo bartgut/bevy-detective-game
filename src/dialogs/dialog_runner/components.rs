@@ -9,6 +9,13 @@ pub enum DialogState {
 }
 
 #[derive(Clone, Debug)]
+pub struct DialogOption {
+    pub text: String,
+    pub node: String,
+    pub used: bool
+}
+
+#[derive(Clone, Debug)]
 pub enum DialogEvent {
     Dialog {
         speaker: String,
@@ -17,7 +24,7 @@ pub enum DialogEvent {
     },
     Options {
         speaker: String,
-        options: Vec<(String, String)>,
+        options: Vec<DialogOption>,
     },
     Waiting,
     End,

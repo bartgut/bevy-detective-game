@@ -3,7 +3,7 @@ use super::components::*;
 use bevy::prelude::*;
 use crate::assets::fonts::Fonts;
 use crate::clickable::components::Clicked;
-use crate::dialogs::dialog_runner::components::DialogEvent;
+use crate::dialogs::dialog_runner::components::{DialogEvent, DialogOption};
 use crate::dialogs::dialog_runner::context::StateContext;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
@@ -48,7 +48,7 @@ pub fn build_dialog_ui_from_event(
 pub fn build_options_ui(
     commands: &mut Commands,
     asset_server: Res<AssetServer>,
-    options: &Vec<(String, String)>,
+    options: &Vec<DialogOption>,
 ) {
     commands
         .spawn((
@@ -122,7 +122,8 @@ pub fn build_options_ui(
                                     ..default()
                                 },
                                 OptionUINode {
-                                    node_title: option.1.to_string(),
+                                    node_title: option.node.to_string(),
+                                    used: option.used,
                                 },
                             ))
                             .with_children(|parent| {
@@ -130,12 +131,12 @@ pub fn build_options_ui(
                                     TextBundle {
                                         text: Text {
                                             sections: vec![TextSection {
-                                                value: option.0.to_string(),
+                                                value: option.text.to_string(),
                                                 style: TextStyle {
                                                     font: asset_server
                                                         .load("fonts/Noir_regular.ttf"),
                                                     font_size: 20.0,
-                                                    color: Color::WHITE,
+                                                    color: if option.used { Color::GRAY } else { Color::WHITE }
                                                 },
                                             }],
                                             alignment: TextAlignment::Center,
@@ -286,7 +287,8 @@ pub fn interact_with_dialog_text(
             Interaction::None => {
                 for child in children.iter() {
                     if let Ok(mut text) = text_query.get_mut(*child) {
-                        text.sections[0].style.color = Color::WHITE
+                        let color = if node.used { Color::GRAY } else { Color::WHITE };
+                        text.sections[0].style.color = color;
                     }
                 }
             }

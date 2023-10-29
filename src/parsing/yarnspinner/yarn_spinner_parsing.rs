@@ -212,6 +212,7 @@ pub fn load_from_file(file_name: &str) -> Vec<Node> {
                                                         text: text,
                                                         jump_to_node: node_title,
                                                         condition: condition,
+                                                        used: false,
                                                     });
                                                 }
                                                 _ => unreachable!(),

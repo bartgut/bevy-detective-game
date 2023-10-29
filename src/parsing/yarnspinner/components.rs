@@ -16,6 +16,7 @@ pub struct OptionPossibility {
     pub text: String,
     pub jump_to_node: String,
     pub condition: Option<Condition>,
+    pub used: bool,
 }
 
 #[derive(Clone, Debug)]

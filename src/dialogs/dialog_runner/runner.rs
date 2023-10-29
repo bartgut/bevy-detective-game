@@ -17,14 +17,34 @@ lazy_static! {
 
 pub struct DialogRunner<T: StateContext> {
     nodes: Vec<Node>,
-    current_node: Node,
-    current_line: LineType,
+    current_node_index: usize,
     current_line_index: usize,
     dialog_state: DialogState,
     _phantom: PhantomData<T>,
 }
 
 impl<T: StateContext> DialogRunner<T> {
+
+    pub fn current_node(&self) -> &Node {
+        self.nodes.get(self.current_node_index).expect("No current node")
+    }
+
+    pub fn current_line(&self) -> &LineType {
+        let current_line = self.current_line_index;
+        let current_node_lines = &self.current_node().lines;
+        &current_node_lines[current_line]
+    }
+
+    pub fn current_node_mut(&mut self) -> &mut Node {
+        self.nodes.get_mut(self.current_node_index).expect("No current node")
+    }
+
+    pub fn current_line_mut(&mut self) -> &mut LineType {
+        let current_line = self.current_line_index;
+        let current_node_lines = &mut self.current_node_mut().lines;
+        &mut current_node_lines[current_line]
+    }
+
     pub fn register(&self) {
         #[yarn_command("addInventory")]
         fn func_commands(commands: &mut Commands, item_name: String, item_description: String) {
@@ -39,16 +59,13 @@ impl<T: StateContext> DialogRunner<T> {
     }
 
     pub fn create_from_nodes(nodes: Vec<Node>, start_node: &str) -> Self {
-        let current_node = nodes
+        let current_node_index = nodes
             .iter()
-            .find(|node| node.title == start_node)
-            .unwrap()
-            .clone();
-        let current_line = current_node.lines.first().unwrap().clone();
+            .position(|node| node.title == start_node)
+            .expect("No start node found");
         let x = Self {
             nodes,
-            current_node,
-            current_line,
+            current_node_index: current_node_index,
             current_line_index: 0,
             dialog_state: DialogState::Start,
             _phantom: PhantomData,
@@ -76,7 +93,11 @@ impl<T: StateContext> DialogRunner<T> {
                 let options = possibilites
                     .iter()
                     .filter(|&x| self.passes_condition(x, context))
-                    .map(|possibility| (possibility.text.clone(), possibility.jump_to_node.clone()))
+                    .map(|possibility| DialogOption {
+                        text: possibility.text.clone(),
+                        node: possibility.jump_to_node.clone(),
+                        used: possibility.used.clone()
+                    })
                     .collect();
                 Some(DialogEvent::Options {
                     speaker: speaker.clone(),
@@ -102,7 +123,7 @@ impl<T: StateContext> DialogRunner<T> {
     }
 
     fn update_context(&mut self, context: &mut T) {
-        match &self.current_line {
+        match &self.current_line() {
             LineType::SetLine {
                 variable_name,
                 value,
@@ -114,15 +135,13 @@ impl<T: StateContext> DialogRunner<T> {
     }
 
     fn perform_jump(&mut self) {
-        match &self.current_line {
+        match &self.current_line() {
             LineType::JumpLine { node_title } => {
-                self.current_node = self
+                self.current_node_index = self
                     .nodes
                     .iter()
-                    .find(|node| node.title == *node_title)
-                    .unwrap()
-                    .clone();
-                self.current_line = self.current_node.lines.first().unwrap().clone();
+                    .position(|node| node.title == *node_title)
+                    .expect("No node found");
                 self.current_line_index = 0;
             }
             _ => {}
@@ -130,7 +149,7 @@ impl<T: StateContext> DialogRunner<T> {
     }
 
     fn execute_command(&mut self, commands: &mut Commands) {
-        match &self.current_line {
+        match &self.current_line() {
             LineType::CommandLine { func_name, args } => {
                 COMMAND_REGISTRY.lock().unwrap().get(func_name).unwrap()(
                     commands,
@@ -146,10 +165,8 @@ impl<T: StateContext> DialogRunner<T> {
             DialogState::Waiting => {}
             _ => {
                 self.current_line_index += 1;
-                if self.current_line_index >= self.current_node.lines.len() {
+                if self.current_line_index >= self.current_node().lines.len() {
                     self.dialog_state = DialogState::End;
-                } else {
-                    self.current_line = self.current_node.lines[self.current_line_index].clone();
                 }
             }
         }
@@ -178,7 +195,7 @@ impl<T: StateContext> DialogRunner<T> {
                 self.update_context(context);
                 self.perform_jump();
                 self.execute_command(commands);
-                let event = self.line_to_event(&self.current_line, context);
+                let event = self.line_to_event(&self.current_line(), context);
                 let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
@@ -191,7 +208,7 @@ impl<T: StateContext> DialogRunner<T> {
                 self.update_context(context);
                 self.perform_jump();
                 self.execute_command(commands);
-                let event = self.line_to_event(&self.current_line, context);
+                let event = self.line_to_event(&self.current_line(), context);
                 let new_state = Self::event_to_dialog_state(&event);
                 self.dialog_state = new_state.clone();
                 self.move_pointer();
@@ -208,10 +225,27 @@ impl<T: StateContext> DialogRunner<T> {
     pub fn make_decision(&mut self, decision: String) {
         match self.dialog_state {
             DialogState::Waiting => {
-                self.current_line = LineType::JumpLine {
-                    node_title: decision.to_string(),
-                };
-                self.perform_jump();
+                // set used to true
+                match self.current_line_mut() {
+                    LineType::OptionLine {
+                        speaker: _speaker,
+                        possibilites,
+                    } => {
+                        let mut possibility = possibilites
+                            .iter_mut()
+                            .find(|possibility| possibility.jump_to_node == decision)
+                            .expect("No possibility found");
+                        possibility.used = true;
+                    }
+                    _ => {}
+                }
+
+                self.current_node_index = self
+                    .nodes
+                    .iter()
+                    .position(|node| node.title == decision)
+                    .expect("No node found");
+                self.current_line_index = 0;
                 self.dialog_state = DialogState::Start;
             }
             _ => {}
@@ -219,13 +253,11 @@ impl<T: StateContext> DialogRunner<T> {
     }
 
     pub fn reset_to(&mut self, node_title: &str) {
-        self.current_node = self
+        self.current_node_index = self
             .nodes
             .iter()
-            .find(|node| node.title == node_title)
-            .unwrap()
-            .clone();
-        self.current_line = self.current_node.lines.first().unwrap().clone();
+            .position(|node| node.title == node_title)
+            .expect("No node found");
         self.current_line_index = 0;
         self.dialog_state = DialogState::Start;
     }

@@ -17,6 +17,7 @@ pub struct OptionUI;
 #[derive(Component)]
 pub struct OptionUINode {
     pub node_title: String,
+    pub used: bool,
 }
 
 impl UIInteractionSoundEffect for OptionUINode {
