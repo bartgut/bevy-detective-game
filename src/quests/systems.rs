@@ -6,7 +6,7 @@ use crate::quests::components::{Quest, QuestStatus};
 pub fn init_quests(mut commands: Commands) {
     commands.spawn(Quest {
         short_description: "Porozmawiaj z kolejarzem".to_string(),
-        long_description: "Porozmawiaj z kolejarzem o morderstwie".to_string(),
+        long_description: "Porozmawiaj z kolejarzem o morderstwie. To on jako pierwszy znalazl ofiare i poinformowal o tym policje".to_string(),
         status: QuestStatus::Inactive,
         activation_condition: |_| true,
         completion_condition: |context| context.get_value("railwayman_already_talked").filter(|v| **v == true).is_some(),
@@ -16,7 +16,7 @@ pub fn init_quests(mut commands: Commands) {
 pub fn activate_quests(
     mut query: Query<&mut Quest>,
     mut event_sender: EventWriter<JournalEventMessage>,
-    state_context: Res<GlobalState>
+    state_context: Res<GlobalState>,
 ) {
     for mut quest in query.iter_mut() {
         match quest.status {
@@ -34,7 +34,7 @@ pub fn activate_quests(
 pub fn complete_quests(
     mut query: Query<&mut Quest>,
     mut event_sender: EventWriter<JournalEventMessage>,
-    state_context: Res<GlobalState>
+    state_context: Res<GlobalState>,
 ) {
     for mut quest in query.iter_mut() {
         match quest.status {

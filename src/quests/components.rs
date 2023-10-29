@@ -24,12 +24,13 @@ impl ComponentToEvent for Quest {
     fn to_event(&self) -> JournalEventMessage {
         match self.status {
             QuestStatus::Active => NewQuest {
-                0: format!("Nowe zadanie: {}", self.long_description),
+                0: format!("Nowe zadanie: {}", self.short_description),
             },
             QuestStatus::Complete => QuestCompleted {
                 0: format!("Zadanie wykonane: {}", self.short_description),
             },
-            _ => NewQuest { // TODO change
+            _ => NewQuest {
+                // TODO change
                 0: "".to_string(),
             },
         }
