@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use crate::text::typewriting::components::TextWithPause;
 use crate::text::typewriting::systems::{create_type_writing_text_with_pauses};
-use crate::ui::components::{FullScreenText, InvisibleToVisibleTransition};
+use crate::ui::components::{ButtonInteractionAction, FullScreenText, InvisibleToVisibleTransition};
 
 pub fn full_screen_text(
     mut command: Commands,
@@ -58,6 +58,31 @@ pub fn invisible_to_visible_transition(
                 transition_settings.0.elapsed_secs()
                     / transition_settings.0.duration().as_secs_f32(),
             );
+        }
+    }
+}
+
+pub fn button_interaction_hover_handle<T: Component>(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    query: Query<(&Interaction, &Children, &ButtonInteractionAction<T>), Changed<Interaction>>,
+    mut t_entities: Query<&mut T>,
+) {
+    for (interaction, children, action) in query.iter() {
+        for child in children.iter() {
+            if let Ok(mut child) = t_entities.get_mut(*child) {
+                match *interaction {
+                    Interaction::Hovered => {
+                        (action.on_hover)(&mut commands, &asset_server, &mut child);
+                    }
+                    Interaction::Pressed => {
+                        (action.on_pressed)(&mut commands, &asset_server, &mut child);
+                    }
+                    Interaction::None => {
+                        (action.on_none)(&mut commands, &asset_server, &mut child);
+                    }
+                }
+            }
         }
     }
 }

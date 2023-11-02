@@ -11,6 +11,7 @@ use crate::in_game_state::InGameState;
 use crate::npc::components::{DialogableNPC, NPCInDialog};
 use crate::sound::components::UIInteractionSoundEffect;
 use crate::text::typewriting::systems::create_type_writing_text;
+use crate::ui::components::ButtonInteractionAction;
 
 pub fn build_dialog_ui_from_event(
     commands: &mut Commands,
@@ -121,6 +122,10 @@ pub fn build_options_ui(
                                     background_color: Color::BLACK.into(),
                                     ..default()
                                 },
+                                ButtonInteractionAction::<Text> {
+                                    on_none: |_, _, _| {}, // custom logic
+                                    ..default()
+                                },
                                 OptionUINode {
                                     node_title: option.node.to_string(),
                                     used: option.used,
@@ -136,7 +141,11 @@ pub fn build_options_ui(
                                                     font: asset_server
                                                         .load("fonts/Noir_regular.ttf"),
                                                     font_size: 20.0,
-                                                    color: if option.used { Color::GRAY } else { Color::WHITE }
+                                                    color: if option.used {
+                                                        Color::GRAY
+                                                    } else {
+                                                        Color::WHITE
+                                                    },
                                                 },
                                             }],
                                             alignment: TextAlignment::Center,
@@ -249,24 +258,6 @@ pub fn build_dialog_ui(
         .id()
 }
 
-pub fn interact_sound_effect<T: Component + UIInteractionSoundEffect>(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    ui_elements: Query<(&Interaction, &T), Changed<Interaction>>,
-) {
-    for (interaction, entity) in ui_elements.iter() {
-        match *interaction {
-            Interaction::Hovered => {
-                entity.on_hover(&mut commands, &asset_server);
-            }
-            Interaction::Pressed => {
-                entity.on_pressed(&mut commands, &asset_server);
-            }
-            _ => {}
-        }
-    }
-}
-
 pub fn interact_with_dialog_text(
     mut button_query: Query<(&Interaction, &mut Children, &OptionUINode), Changed<Interaction>>,
     mut text_query: Query<&mut Text>,
@@ -277,13 +268,6 @@ pub fn interact_with_dialog_text(
             Interaction::Pressed => {
                 dialogs.runner.make_decision(node.node_title.clone());
             }
-            Interaction::Hovered => {
-                for child in children.iter() {
-                    if let Ok(mut text) = text_query.get_mut(*child) {
-                        text.sections[0].style.color = Color::RED
-                    }
-                }
-            }
             Interaction::None => {
                 for child in children.iter() {
                     if let Ok(mut text) = text_query.get_mut(*child) {
@@ -292,6 +276,7 @@ pub fn interact_with_dialog_text(
                     }
                 }
             }
+            _ => (),
         }
     }
 }

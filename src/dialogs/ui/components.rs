@@ -19,27 +19,3 @@ pub struct OptionUINode {
     pub node_title: String,
     pub used: bool,
 }
-
-impl UIInteractionSoundEffect for OptionUINode {
-    fn on_hover(&self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
-        commands.spawn(AudioBundle {
-            source: asset_server.load(format!("sound/ui/button_hover.ogg")),
-            settings: PlaybackSettings {
-                mode: Despawn,
-                ..default()
-            },
-            ..default()
-        });
-    }
-
-    fn on_pressed(&self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
-        commands.spawn(AudioBundle {
-            source: asset_server.load(format!("sound/ui/button_clicked.ogg")),
-            settings: PlaybackSettings {
-                mode: Despawn,
-                ..default()
-            },
-            ..default()
-        });
-    }
-}

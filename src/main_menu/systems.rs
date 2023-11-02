@@ -2,6 +2,7 @@ use bevy::app::AppExit;
 use bevy::prelude::*;
 use crate::game_state::GameState;
 use crate::level_state::LevelState;
+use crate::ui::components::ButtonInteractionAction;
 use super::components::*;
 
 pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -12,12 +13,22 @@ pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetSe
                 .spawn((main_menu_image(&asset_server), MainMenuImage))
                 .with_children(|parent| {
                     parent
-                        .spawn((new_game_button(), StartGameButton, MainMenuButton))
+                        .spawn((
+                            new_game_button(),
+                            ButtonInteractionAction { ..default() },
+                            StartGameButton,
+                            MainMenuButton,
+                        ))
                         .with_children(|parent| {
                             parent.spawn((new_game_text(&asset_server), StartGameText));
                         });
                     parent
-                        .spawn((quit_game_button(), QuitGameButton, MainMenuButton))
+                        .spawn((
+                            quit_game_button(),
+                            ButtonInteractionAction { ..default() },
+                            QuitGameButton,
+                            MainMenuButton,
+                        ))
                         .with_children(|parent| {
                             parent.spawn((quit_game_text(&asset_server), QuitGameText));
                         });
@@ -33,7 +44,6 @@ pub fn despawn_main_menu_ui(mut commands: Commands, query: Query<Entity, With<Ma
 
 pub fn new_game_button_click(
     mut button_query: Query<&Interaction, (Changed<Interaction>, With<StartGameButton>)>,
-    mut text_query: Query<&mut Text, With<StartGameText>>,
     mut game_state: ResMut<NextState<GameState>>,
     mut level_state: ResMut<NextState<LevelState>>,
 ) {
@@ -43,23 +53,13 @@ pub fn new_game_button_click(
                 level_state.set(LevelState::TrainPlatform);
                 game_state.set(GameState::Intro);
             }
-            Interaction::Hovered => {
-                for mut text in text_query.iter_mut() {
-                    text.sections[0].style.color = Color::RED;
-                }
-            }
-            _ => {
-                for mut text in text_query.iter_mut() {
-                    text.sections[0].style.color = Color::WHITE;
-                }
-            }
+            _ => (),
         }
     }
 }
 
 pub fn quit_game_button_interaction(
     mut button_query: Query<&Interaction, (Changed<Interaction>, With<QuitGameButton>)>,
-    mut text_query: Query<&mut Text, With<QuitGameText>>,
     mut exit: EventWriter<AppExit>,
 ) {
     for interaction in button_query.iter_mut() {
@@ -67,16 +67,7 @@ pub fn quit_game_button_interaction(
             Interaction::Pressed => {
                 exit.send(AppExit);
             }
-            Interaction::Hovered => {
-                for mut text in text_query.iter_mut() {
-                    text.sections[0].style.color = Color::RED;
-                }
-            }
-            _ => {
-                for mut text in text_query.iter_mut() {
-                    text.sections[0].style.color = Color::WHITE;
-                }
-            }
+            _ => (),
         }
     }
 }

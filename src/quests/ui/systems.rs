@@ -6,6 +6,7 @@ use crate::quests::ui::components::{
     QuestLogListTitleUI, QuestLogListUI, QuestLogUI,
 };
 use crate::spawnable::components::Spawnable;
+use crate::ui::components::ButtonInteractionAction;
 
 pub fn on_enter(mut commands: Commands, asset_server: Res<AssetServer>, quests: Query<&Quest>) {
     QuestLogUI.spawn(&mut commands, &asset_server);
@@ -47,7 +48,6 @@ pub fn quest_buttons(
     for quest_log_ui in quest_log_ui.iter() {
         commands.entity(quest_log_ui).with_children(|parent| {
             for active_quest in active_quests.iter() {
-                println!("Active quest: {:?}", active_quest.short_description);
                 parent
                     .spawn(active_quest_button(active_quest))
                     .with_children(|parent| {
@@ -127,7 +127,9 @@ pub fn quest_buttons_interaction(
     }
 }
 
-fn active_quest_button(quest: &Quest) -> (ButtonBundle, QuestDetails) {
+fn active_quest_button(
+    quest: &Quest,
+) -> (ButtonBundle, QuestDetails, ButtonInteractionAction<Text>) {
     (
         ButtonBundle {
             style: Style {
@@ -144,6 +146,7 @@ fn active_quest_button(quest: &Quest) -> (ButtonBundle, QuestDetails) {
             title: quest.short_description.clone(),
             description: quest.long_description.clone(),
         },
+        ButtonInteractionAction::<Text> { ..default() },
     )
 }
 
