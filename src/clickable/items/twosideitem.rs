@@ -1,7 +1,9 @@
 use bevy::audio::PlaybackMode::Remove;
 use super::behaviour::ClickableBehaviour;
 use bevy::prelude::*;
-use crate::dialogs::ui::systems::build_dialog_ui;
+use crate::dialogs::dialog_runner::components::DialogEvent::Dialog;
+use crate::dialogs::dialog_runner::components::DialogEventBundle;
+use crate::dialogs::dialog_runner::components::DialogEventOwnership::PARENT;
 use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Clone)]
@@ -60,11 +62,21 @@ impl TwoSideItem {
         }
     }
 
-    fn show_dialog_if_needed(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+    fn show_dialog_if_needed(&mut self, commands: &mut Commands) {
         match &self.additional_dialog {
             Some((subject, text)) => {
-                self.dialog_entity =
-                    Some(build_dialog_ui(commands, &asset_server, &subject, &text));
+                self.dialog_entity = Some(
+                    commands
+                        .spawn(DialogEventBundle {
+                            event: Dialog {
+                                speaker: subject.clone(),
+                                text: text.clone(),
+                                tags: vec![],
+                            },
+                            ownership: PARENT,
+                        })
+                        .id(),
+                )
             }
             None => {}
         }
@@ -95,7 +107,7 @@ impl ClickableBehaviour for TwoSideItem {
         self.state_update.clone().map(|(key, value)| {
             commands.spawn(UpdateGlobalState(key.clone(), value));
         });
-        self.show_dialog_if_needed(commands, &asset_server);
+        self.show_dialog_if_needed(commands);
         self.play_sound_if_needed(commands, &asset_server);
     }
 

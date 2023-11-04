@@ -1,3 +1,5 @@
+use bevy::prelude::{Bundle, Component};
+use bevy::time::Timer;
 use crate::parsing::yarnspinner::components::Tag;
 
 #[derive(Clone, Debug)]
@@ -12,10 +14,10 @@ pub enum DialogState {
 pub struct DialogOption {
     pub text: String,
     pub node: String,
-    pub used: bool
+    pub used: bool,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Component)]
 pub enum DialogEvent {
     Dialog {
         speaker: String,
@@ -29,3 +31,18 @@ pub enum DialogEvent {
     Waiting,
     End,
 }
+
+#[derive(Component)]
+pub enum DialogEventOwnership {
+    PARENT,
+    TIMER(f32),
+}
+
+#[derive(Bundle)]
+pub struct DialogEventBundle {
+    pub event: DialogEvent,
+    pub ownership: DialogEventOwnership,
+}
+
+#[derive(Component)]
+pub struct DialogEventTimer(pub Timer);

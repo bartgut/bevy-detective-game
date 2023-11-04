@@ -1,58 +1,89 @@
 use bevy::audio::PlaybackMode::Remove;
+use bevy::ecs::system::EntityCommands;
 use super::components::*;
 use bevy::prelude::*;
 use crate::assets::fonts::Fonts;
 use crate::clickable::components::Clicked;
-use crate::dialogs::dialog_runner::components::{DialogEvent, DialogOption};
+use crate::dialogs::dialog_runner::components::{
+    DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer, DialogOption,
+};
 use crate::dialogs::dialog_runner::context::StateContext;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
 use crate::npc::components::{DialogableNPC, NPCInDialog};
-use crate::sound::components::UIInteractionSoundEffect;
 use crate::text::typewriting::systems::create_type_writing_text;
 use crate::ui::components::ButtonInteractionAction;
 
-pub fn build_dialog_ui_from_event(
-    commands: &mut Commands,
-    asset_server: Res<AssetServer>,
-    event: &DialogEvent,
+pub fn dialog_ui_events_with_timer_ownership(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut query: Query<(Entity, &mut DialogEventTimer)>,
 ) {
-    match event {
-        DialogEvent::Dialog {
-            speaker,
-            text,
-            tags,
-        } => {
-            let id = build_dialog_ui(commands, &asset_server, speaker, text);
-            for tag in tags.iter() {
-                if tag.name == "audio" {
-                    commands.entity(id).insert(AudioBundle {
-                        source: asset_server.load(format!("dialogs/audio/{}", tag.value.clone())),
-                        settings: PlaybackSettings {
-                            mode: Remove,
-                            ..default()
-                        },
-                        ..default()
-                    });
-                }
-            }
+    for (entity, mut timer) in query.iter_mut() {
+        if timer.0.tick(time.delta()).just_finished() {
+            commands.entity(entity).despawn_recursive();
         }
-        DialogEvent::Options {
-            speaker: _,
-            options,
-        } => build_options_ui(commands, asset_server, options),
-        _ => {}
     }
 }
 
-pub fn build_options_ui(
-    commands: &mut Commands,
+pub fn dialog_ui_from_event(
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
+    fonts: Res<Fonts>,
+    query: Query<(Entity, &DialogEvent, &DialogEventOwnership), Added<DialogEvent>>,
+) {
+    for (entity, event, ownership) in query.iter() {
+        let mut owning_entity = commands.entity(entity);
+
+        match ownership {
+            DialogEventOwnership::PARENT => (),
+            DialogEventOwnership::TIMER(time) => {
+                owning_entity.insert(DialogEventTimer(Timer::from_seconds(
+                    *time,
+                    TimerMode::Once,
+                )));
+            }
+        }
+
+        match event {
+            DialogEvent::Dialog {
+                speaker,
+                text,
+                tags,
+            } => {
+                build_dialog_ui(&mut owning_entity, &asset_server, &fonts, speaker, text);
+                for tag in tags.iter() {
+                    if tag.name == "audio" {
+                        owning_entity.insert(AudioBundle {
+                            source: asset_server
+                                .load(format!("dialogs/audio/{}", tag.value.clone())),
+                            settings: PlaybackSettings {
+                                mode: Remove,
+                                ..default()
+                            },
+                            ..default()
+                        });
+                    }
+                }
+            }
+            DialogEvent::Options {
+                speaker: _,
+                options,
+            } => build_options_ui(&mut owning_entity, &asset_server, &fonts, options),
+            _ => {}
+        }
+    }
+}
+
+fn build_options_ui(
+    owning_entity: &mut EntityCommands,
+    asset_server: &Res<AssetServer>,
+    fonts: &Res<Fonts>,
     options: &Vec<DialogOption>,
 ) {
-    commands
-        .spawn((
+    owning_entity
+        .insert((
             NodeBundle {
                 style: Style {
                     width: Val::Percent(100.0),
@@ -63,10 +94,6 @@ pub fn build_options_ui(
                     row_gap: Val::Px(8.0),
                     column_gap: Val::Px(8.0),
                     top: Val::Percent(80.0),
-                    /*position: UiRect {
-                        top: Val::Percent(80.0),
-                        ..default()
-                    },*/
                     ..default()
                 },
                 background_color: Color::BLACK.into(),
@@ -138,8 +165,7 @@ pub fn build_options_ui(
                                             sections: vec![TextSection {
                                                 value: option.text.to_string(),
                                                 style: TextStyle {
-                                                    font: asset_server
-                                                        .load("fonts/Noir_regular.ttf"),
+                                                    font: fonts.noir_font_regular.clone_weak(),
                                                     font_size: 20.0,
                                                     color: if option.used {
                                                         Color::GRAY
@@ -168,15 +194,15 @@ pub fn build_options_ui(
         });
 }
 
-//image + text on the bottom of the screen
-pub fn build_dialog_ui(
-    commands: &mut Commands,
+fn build_dialog_ui(
+    owning_entity: &mut EntityCommands,
     asset_server: &Res<AssetServer>,
+    fonts: &Res<Fonts>,
     speaker: &String,
     text: &String,
-) -> Entity {
-    commands
-        .spawn((
+) {
+    owning_entity
+        .insert((
             NodeBundle {
                 style: Style {
                     width: Val::Percent(100.0),
@@ -232,7 +258,7 @@ pub fn build_dialog_ui(
                                     sections: vec![TextSection {
                                         value: "".to_string(),
                                         style: TextStyle {
-                                            font: asset_server.load("fonts/Noir_regular.ttf"),
+                                            font: fonts.noir_font_regular.clone_weak(),
                                             font_size: 20.0,
                                             color: Color::WHITE,
                                         },
@@ -254,8 +280,7 @@ pub fn build_dialog_ui(
                         ))
                         .insert(create_type_writing_text(&text.to_string(), 0.05, None));
                 });
-        })
-        .id()
+        });
 }
 
 pub fn interact_with_dialog_text(
@@ -311,12 +336,10 @@ pub fn load_dialog(
 
 pub fn mouse_button_input(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
     mut global_state: ResMut<GlobalState>,
     buttons: Res<Input<MouseButton>>,
     mut dialogs: ResMut<Dialogs>,
-    dialog_query: Query<Entity, With<DialogUI>>,
-    option_query: Query<Entity, With<OptionUI>>,
+    mut current_dialog_event: Query<Entity, With<DialogEvent>>,
     mut npc_dialog: Query<(Entity, &mut DialogableNPC), With<NPCInDialog>>,
     mut game_state: ResMut<NextState<InGameState>>,
 ) {
@@ -327,11 +350,8 @@ pub fn mouse_button_input(
             DialogEvent::Waiting => {}
             DialogEvent::End => {
                 game_state.set(InGameState::InGame);
-                if let Ok(dialog_entity) = dialog_query.get_single() {
-                    commands.entity(dialog_entity).despawn_recursive();
-                }
-                if let Ok(option_entity) = option_query.get_single() {
-                    commands.entity(option_entity).despawn_recursive();
+                if let Ok(current_dialog_event) = current_dialog_event.get_single() {
+                    commands.entity(current_dialog_event).despawn_recursive();
                 }
                 commands.entity(entity).remove::<NPCInDialog>();
                 dialogs
@@ -339,13 +359,13 @@ pub fn mouse_button_input(
                     .reset_to(dialog_npc_config.reset_node.as_str());
             }
             _ => {
-                if let Ok(dialog_entity) = dialog_query.get_single() {
-                    commands.entity(dialog_entity).despawn_recursive();
+                if let Ok(current_dialog_event) = current_dialog_event.get_single() {
+                    commands.entity(current_dialog_event).despawn_recursive();
                 }
-                if let Ok(option_entity) = option_query.get_single() {
-                    commands.entity(option_entity).despawn_recursive();
-                }
-                build_dialog_ui_from_event(&mut commands, asset_server, &event);
+                commands.spawn(DialogEventBundle {
+                    event: event.clone(),
+                    ownership: DialogEventOwnership::PARENT,
+                });
             }
         }
     }

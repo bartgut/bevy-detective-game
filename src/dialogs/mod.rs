@@ -23,6 +23,8 @@ impl Plugin for DialogsPlugin {
                 mouse_button_input
                     .after(interact_with_dialog_text)
                     .run_if(in_state(InGameState::Dialog)),
-            );
+            )
+            .add_systems(Update, dialog_ui_from_event)
+            .add_systems(Update, dialog_ui_events_with_timer_ownership);
     }
 }

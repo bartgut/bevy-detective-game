@@ -7,6 +7,8 @@ use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
 use crate::clickable::components::ClickCondition::InventoryCondition;
+use crate::dialogs::dialog_runner::components::{DialogEvent, DialogEventBundle};
+use crate::dialogs::dialog_runner::components::DialogEventOwnership::TIMER;
 
 #[derive(Component)]
 pub struct LibraryDoor;
@@ -33,6 +35,14 @@ impl SpawnableChild for LibraryDoor {
                         0: |inventory| inventory.has_item("library_keys"),
                     }],
                     failure: |commands, asset_server| {
+                        commands.spawn(DialogEventBundle {
+                            event: DialogEvent::Dialog {
+                                speaker: "Player".to_string(),
+                                text: "Zamkniete, potrzebuje klucza".to_string(),
+                                tags: vec![],
+                            },
+                            ownership: TIMER(3.0),
+                        });
                         commands.spawn(AudioBundle {
                             source: asset_server.load(format!("sound/items/door_locked.ogg")),
                             settings: PlaybackSettings {
