@@ -43,10 +43,10 @@ impl Plugin for ClickablePlugin {
             .add_systems(Update, clickable_clicked_no_conditions)
             .add_systems(Update, clickable_click::<OneSideItem>)
             .add_systems(Update, clickable_click::<TwoSideItem>)
-            .add_systems(Update, collectible_click)
             .add_systems(Update, clickable_clicked::<OneSideItem>)
             .add_systems(Update, clickable_clicked::<TwoSideItem>)
             .add_systems(Update, clickable_clicked::<LevelTeleport>)
-            .add_systems(Update, cursor_change_on_hover);
+            .add_systems(Update, cursor_change_on_hover)
+            .add_systems(PostUpdate, collectible_click);
     }
 }
