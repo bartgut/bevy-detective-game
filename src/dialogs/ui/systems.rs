@@ -31,6 +31,7 @@ pub fn dialog_ui_from_event(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     fonts: Res<Fonts>,
+    mut avatars: ResMut<AvatarHandles>,
     query: Query<(Entity, &DialogEvent, &DialogEventOwnership), Added<DialogEvent>>,
 ) {
     for (entity, event, ownership) in query.iter() {
@@ -52,7 +53,14 @@ pub fn dialog_ui_from_event(
                 text,
                 tags,
             } => {
-                build_dialog_ui(&mut owning_entity, &asset_server, &fonts, speaker, text);
+                build_dialog_ui(
+                    &mut owning_entity,
+                    &asset_server,
+                    &mut avatars,
+                    &fonts,
+                    speaker,
+                    text,
+                );
                 for tag in tags.iter() {
                     if tag.name == "audio" {
                         owning_entity.insert(AudioBundle {
@@ -197,6 +205,7 @@ fn build_options_ui(
 fn build_dialog_ui(
     owning_entity: &mut EntityCommands,
     asset_server: &Res<AssetServer>,
+    avatars: &mut ResMut<AvatarHandles>,
     fonts: &Res<Fonts>,
     speaker: &String,
     text: &String,
@@ -231,9 +240,7 @@ fn build_dialog_ui(
                         align_items: AlignItems::Center,
                         ..default()
                     },
-                    image: asset_server
-                        .load(format!("images/avatars/{}.png", speaker))
-                        .into(),
+                    image: avatars.get_weak_or_add(speaker, asset_server).into(),
                     ..default()
                 },
                 DialogUIImage,
