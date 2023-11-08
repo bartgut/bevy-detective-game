@@ -28,6 +28,10 @@ impl AvatarHandles {
         if let Some(handle) = self.handles.get(key) {
             return handle.clone_weak();
         }
+        self.load(key, asset_server)
+    }
+
+    pub fn load(&mut self, key: &str, asset_server: &Res<AssetServer>) -> Handle<Image> {
         let handle = asset_server.load(format!("images/avatars/{}.png", key));
         self.handles.insert(key.to_string(), handle.clone());
         handle.clone_weak()
