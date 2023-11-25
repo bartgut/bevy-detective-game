@@ -29,6 +29,7 @@ pub mod text;
 pub mod ui;
 
 use bevy::prelude::*;
+use rive_bevy::RivePlugin;
 use crate::animation::SpriteAnimationPlugin;
 use crate::assets::AssetsPlugin;
 use crate::clickable::ClickablePlugin;
@@ -72,6 +73,7 @@ extern crate pest_derive;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_plugins(RivePlugin)
         .add_systems(PreStartup, camera_setup)
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(LevelsResource {

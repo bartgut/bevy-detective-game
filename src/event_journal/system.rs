@@ -43,7 +43,7 @@ pub fn on_event_received(
                 audio_setup(
                     &mut commands,
                     &asset_server,
-                    "sound/items/item_received.ogg",
+                    &String::from("sound/items/item_received.ogg"),
                 )
             }
             JournalEventMessage::NewQuest(msg) => event_ui_text(
@@ -84,7 +84,7 @@ fn event_ui_text(commands: &mut Commands, font_handle: Handle<Font>, ui_node: &E
     });
 }
 
-fn audio_setup(commands: &mut Commands, asset_server: &Res<AssetServer>, audio: &str) {
+fn audio_setup(commands: &mut Commands, asset_server: &Res<AssetServer>, audio: &String) {
     commands.spawn(AudioBundle {
         source: asset_server.load(audio),
         settings: PlaybackSettings {

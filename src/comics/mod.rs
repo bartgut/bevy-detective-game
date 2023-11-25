@@ -7,7 +7,9 @@ use crate::comics::systems::{
 pub mod components;
 pub mod config;
 pub mod renderer;
+mod rive;
 mod systems;
+
 pub struct ComicsPlugin;
 
 impl Plugin for ComicsPlugin {

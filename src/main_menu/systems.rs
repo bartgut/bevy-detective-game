@@ -1,39 +1,50 @@
 use bevy::app::AppExit;
 use bevy::prelude::*;
+use bevy::render::render_resource::Extent3d;
+use rive_bevy::{GenericEvent, SceneTarget, SpriteEntity, StateMachine};
 use crate::game_state::GameState;
 use crate::level_state::LevelState;
 use crate::ui::components::ButtonInteractionAction;
 use super::components::*;
 
-pub fn initialize_main_menu_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn initialize_main_menu_ui(
+    mut commands: Commands,
+    mut images: ResMut<Assets<Image>>,
+    asset_server: Res<AssetServer>,
+) {
+    let mut main_menu_ui = Image::default();
+    main_menu_ui.resize(Extent3d {
+        width: 1280,
+        height: 960,
+        ..default()
+    });
+    let animation_image_handle = images.add(main_menu_ui.clone());
+
+    let sprite_entity = commands
+        .spawn(SpriteBundle {
+            texture: animation_image_handle.clone(),
+            transform: Transform::from_scale(Vec3::splat(1.0)),
+            ..Default::default()
+        })
+        .insert(MainMenuUI)
+        .id();
+    let machine = StateMachine {
+        riv: asset_server.load("rive/main_menu.riv"),
+        handle: rive_bevy::Handle::Name("MainMenuStateMachine".into()),
+        artboard_handle: rive_bevy::Handle::Name("MainMenu".into()),
+        ..default()
+    };
+
     commands
-        .spawn((main_menu_bundle(), MainMenuUI))
-        .with_children(|parent| {
-            parent
-                .spawn((main_menu_image(&asset_server), MainMenuImage))
-                .with_children(|parent| {
-                    parent
-                        .spawn((
-                            new_game_button(),
-                            ButtonInteractionAction { ..default() },
-                            StartGameButton,
-                            MainMenuButton,
-                        ))
-                        .with_children(|parent| {
-                            parent.spawn((new_game_text(&asset_server), StartGameText));
-                        });
-                    parent
-                        .spawn((
-                            quit_game_button(),
-                            ButtonInteractionAction { ..default() },
-                            QuitGameButton,
-                            MainMenuButton,
-                        ))
-                        .with_children(|parent| {
-                            parent.spawn((quit_game_text(&asset_server), QuitGameText));
-                        });
-                });
-        });
+        .spawn(machine)
+        .insert(SceneTarget {
+            image: animation_image_handle,
+            sprite: SpriteEntity {
+                entity: Some(sprite_entity),
+            },
+            ..default()
+        })
+        .insert(MainMenuUI);
 }
 
 pub fn despawn_main_menu_ui(mut commands: Commands, query: Query<Entity, With<MainMenuUI>>) {
@@ -42,142 +53,18 @@ pub fn despawn_main_menu_ui(mut commands: Commands, query: Query<Entity, With<Ma
     }
 }
 
-pub fn new_game_button_click(
-    mut button_query: Query<&Interaction, (Changed<Interaction>, With<StartGameButton>)>,
+pub fn main_menu_interaction(
+    mut rive_event: EventReader<GenericEvent>,
     mut game_state: ResMut<NextState<GameState>>,
     mut level_state: ResMut<NextState<LevelState>>,
-) {
-    for interaction in button_query.iter_mut() {
-        match *interaction {
-            Interaction::Pressed => {
-                level_state.set(LevelState::TrainPlatform);
-                game_state.set(GameState::Intro);
-            }
-            _ => (),
-        }
-    }
-}
-
-pub fn quit_game_button_interaction(
-    mut button_query: Query<&Interaction, (Changed<Interaction>, With<QuitGameButton>)>,
     mut exit: EventWriter<AppExit>,
 ) {
-    for interaction in button_query.iter_mut() {
-        match *interaction {
-            Interaction::Pressed => {
-                exit.send(AppExit);
-            }
-            _ => (),
+    for event in rive_event.read() {
+        if event.name == "StartGame" {
+            level_state.set(LevelState::TrainPlatform);
+            game_state.set(GameState::Intro);
+        } else if event.name == "QuitGame" {
+            exit.send(AppExit);
         }
-    }
-}
-
-fn main_menu_bundle() -> NodeBundle {
-    NodeBundle {
-        style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            flex_direction: FlexDirection::Column,
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            row_gap: Val::Px(8.0),
-            column_gap: Val::Px(8.0),
-            ..default()
-        },
-        background_color: Color::NONE.into(),
-        ..default()
-    }
-}
-
-fn main_menu_image(asset_server: &Res<AssetServer>) -> ImageBundle {
-    ImageBundle {
-        style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            flex_direction: FlexDirection::Column,
-            ..default()
-        },
-        image: asset_server.load("images/main_menu/background.png").into(),
-        ..default()
-    }
-}
-
-fn new_game_button() -> ButtonBundle {
-    ButtonBundle {
-        style: Style {
-            width: Val::Auto,
-            height: Val::Auto,
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            ..default()
-        },
-        background_color: Color::NONE.into(),
-        ..default()
-    }
-}
-
-fn new_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
-    TextBundle {
-        style: Style {
-            width: Val::Auto,
-            height: Val::Auto,
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            ..default()
-        },
-        text: Text {
-            sections: vec![TextSection {
-                value: "Nowa gra".to_string(),
-                style: TextStyle {
-                    font: asset_server.load("fonts/Noir_regular.ttf"),
-                    font_size: 20.0,
-                    color: Color::WHITE,
-                },
-            }],
-            alignment: TextAlignment::Center,
-            ..default()
-        },
-        ..default()
-    }
-}
-
-fn quit_game_button() -> ButtonBundle {
-    ButtonBundle {
-        style: Style {
-            width: Val::Auto,
-            height: Val::Auto,
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            ..default()
-        },
-        background_color: Color::NONE.into(),
-        ..default()
-    }
-}
-
-fn quit_game_text(asset_server: &Res<AssetServer>) -> TextBundle {
-    TextBundle {
-        style: Style {
-            width: Val::Auto,
-            height: Val::Auto,
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            ..default()
-        },
-        text: Text {
-            sections: vec![TextSection {
-                value: "Koniec gry".to_string(),
-                style: TextStyle {
-                    font: asset_server.load("fonts/Noir_regular.ttf"),
-                    font_size: 20.0,
-                    color: Color::WHITE,
-                },
-            }],
-            alignment: TextAlignment::Center,
-            ..default()
-        },
-        ..default()
     }
 }

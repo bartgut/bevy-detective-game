@@ -14,8 +14,7 @@ impl Plugin for MainMenuPlugin {
             .add_systems(OnExit(GameState::MainMenu), despawn_main_menu_ui)
             .add_systems(
                 Update,
-                (new_game_button_click, quit_game_button_interaction)
-                    .run_if(in_state(GameState::MainMenu)),
+                (main_menu_interaction).run_if(in_state(GameState::MainMenu)),
             );
     }
 }
