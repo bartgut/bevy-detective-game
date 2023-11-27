@@ -35,6 +35,7 @@ use crate::assets::AssetsPlugin;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
+use crate::comics::rive::RiveComicsPlugin;
 use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::dialogs::DialogsPlugin;
 use crate::event_journal::EventJournalPlugin;
@@ -98,6 +99,7 @@ fn main() {
         .add_plugins(TypeWritingTextPlugin)
         .add_plugins(ClickablePlugin)
         .add_plugins(ComicsPlugin)
+        .add_plugins(RiveComicsPlugin)
         .add_plugins(UIUtilsPlugin)
         .add_plugins(SpriteAnimationPlugin)
         .add_plugins(WorldMapPlugin)

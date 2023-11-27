@@ -1,6 +1,4 @@
-use bevy::audio::PlaybackMode::Despawn;
 use bevy::prelude::*;
-use crate::sound::components::UIInteractionSoundEffect;
 
 #[derive(Component)]
 pub struct MainMenuUI;
