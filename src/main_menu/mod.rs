@@ -14,7 +14,11 @@ impl Plugin for MainMenuPlugin {
             .add_systems(OnExit(GameState::MainMenu), despawn_main_menu_ui)
             .add_systems(
                 Update,
-                (main_menu_interaction).run_if(in_state(GameState::MainMenu)),
+                (
+                    main_menu_next_step_interaction,
+                    main_menu_sound_effect_interaction,
+                )
+                    .run_if(in_state(GameState::MainMenu)),
             );
     }
 }

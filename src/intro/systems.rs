@@ -100,27 +100,9 @@ pub fn comics_start(mut commands: Commands) {
                 artboard_name: "Comics 1 page".to_string(),
                 animation_state_machine: "Page1SM".to_string(),
                 events_handler: |commands, asset_server, event| {
-                    if event.name == "1Appearing" {
+                    if event.name == "PageStart" {
                         commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page11.ogg",
-                            &asset_server,
-                        ));
-                    }
-                    if event.name == "2Appearing" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page12.ogg",
-                            &asset_server,
-                        ));
-                    }
-                    if event.name == "3Appearing" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page13.ogg",
-                            &asset_server,
-                        ));
-                    }
-                    if event.name == "4Appearing" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page14.ogg",
+                            "sound/comics/Comics1Page1.ogg",
                             &asset_server,
                         ));
                     }
@@ -129,7 +111,14 @@ pub fn comics_start(mut commands: Commands) {
             RiveComicsPage {
                 artboard_name: "Comics 2 page".to_string(),
                 animation_state_machine: "Page2SM".to_string(),
-                events_handler: |commands, asset_server, event| {},
+                events_handler: |commands, asset_server, event| {
+                    if event.name == "PageStart" {
+                        commands.spawn(dialog_bundle(
+                            "sound/comics/Comics1Page2.ogg",
+                            &asset_server,
+                        ));
+                    }
+                },
             },
             RiveComicsPage {
                 artboard_name: "Comics 3 page".to_string(),
