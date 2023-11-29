@@ -40,8 +40,10 @@ pub fn initialize_comics(
             ..default()
         };
 
+        let machine_entity = commands.spawn(machine).id();
+
         commands
-            .spawn(machine)
+            .entity(machine_entity)
             .insert(SceneTarget {
                 image: animation_image_handle.clone(),
                 sprite: SpriteEntity {
@@ -54,6 +56,7 @@ pub fn initialize_comics(
                 rive_file.clone(),
                 animation_image_handle.clone(),
                 comics_sprite,
+                machine_entity,
                 comics.pages.clone(),
             ));
     }

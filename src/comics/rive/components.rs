@@ -1,8 +1,5 @@
-use bevy::asset::AssetLoader;
-use bevy::asset::saver::AssetSaver;
 use bevy::prelude::*;
-use rive_bevy::{GenericEvent, Riv, StateMachine};
-use crate::assets::AssetsPlugin;
+use rive_bevy::{GenericEvent, Riv, SceneTarget, SpriteEntity, StateMachine};
 
 #[derive(Component)]
 pub struct RiveComicsUI;
@@ -26,6 +23,7 @@ pub struct RiveComicsSink {
     animation_image_handle: Handle<Image>,
     sprite_entity: Entity,
     pages: Vec<RiveComicsPage>,
+    machine_entity: Entity,
     current_page: usize,
 }
 
@@ -34,6 +32,7 @@ impl RiveComicsSink {
         rive_file_handle: Handle<Riv>,
         animation_image_handle: Handle<Image>,
         sprite_entity: Entity,
+        machine_entity: Entity,
         pages: Vec<RiveComicsPage>,
     ) -> Self {
         Self {
@@ -41,6 +40,7 @@ impl RiveComicsSink {
             animation_image_handle,
             sprite_entity,
             pages,
+            machine_entity,
             current_page: 0,
         }
     }
@@ -48,13 +48,27 @@ impl RiveComicsSink {
         self.current_page += 1;
 
         if let Some(page) = self.pages.get(self.current_page) {
-            let machine = StateMachine {
+            let new_machine = StateMachine {
                 riv: self.rive_file_handle.clone(),
                 handle: rive_bevy::Handle::Name(page.animation_state_machine.clone().into()),
                 artboard_handle: rive_bevy::Handle::Name(page.artboard_name.clone().into()),
                 ..default()
             };
-            commands.entity(self.sprite_entity).insert(machine);
+            commands
+                .entity(self.machine_entity)
+                .remove::<StateMachine>()
+                .remove::<SceneTarget>();
+            self.machine_entity = commands
+                .spawn(new_machine)
+                .insert(RiveComicsUI)
+                .insert(SceneTarget {
+                    image: self.animation_image_handle.clone(),
+                    sprite: SpriteEntity {
+                        entity: Some(self.sprite_entity),
+                    },
+                    ..default()
+                })
+                .id();
         }
     }
 
