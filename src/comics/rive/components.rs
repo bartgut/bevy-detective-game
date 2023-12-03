@@ -1,8 +1,11 @@
 use bevy::prelude::*;
-use rive_bevy::{GenericEvent, Riv, SceneTarget, SpriteEntity, StateMachine};
+use rive_bevy::{GenericEvent, Riv, RiveStateMachine, SceneTarget, SpriteEntity, StateMachine};
 
 #[derive(Component)]
 pub struct RiveComicsUI;
+
+#[derive(Component)]
+pub struct RiveComicsPageAudio;
 
 #[derive(Component)]
 pub struct RiveComics {
@@ -56,8 +59,10 @@ impl RiveComicsSink {
             };
             commands
                 .entity(self.machine_entity)
-                .remove::<StateMachine>()
-                .remove::<SceneTarget>();
+                .remove::<RiveStateMachine>()
+                .remove::<SceneTarget>()
+                .remove::<AudioSink>();
+
             self.machine_entity = commands
                 .spawn(new_machine)
                 .insert(RiveComicsUI)
@@ -73,11 +78,7 @@ impl RiveComicsSink {
     }
 
     pub fn is_finished(&self) -> bool {
-        if self.current_page >= self.pages.len() {
-            true
-        } else {
-            false
-        }
+        self.current_page >= self.pages.len()
     }
 
     pub fn event_handle(

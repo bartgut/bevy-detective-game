@@ -1,20 +1,14 @@
 use std::str::FromStr;
 use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
-use crate::comics::config::{ComicsFrame, ComicsPage, ComicsPages};
-use crate::comics::config::ComicsTemplate::Vertical2Images;
-use crate::comics::rive::components::{RiveComics, RiveComicsPage, RiveComicsSink};
-use crate::comics::rive::RiveComicsPlugin;
-use crate::comics_state::MultiPageComicsState;
+use crate::comics::rive::components::{RiveComics, RiveComicsPage, RiveComicsPageAudio, RiveComicsSink};
 use crate::game_state::GameState;
 use crate::intro_state::IntroState;
-use crate::level_state::LevelState;
 use crate::text::typewriting::components::{TextWithPause, TypeWritingTextSettings};
 use crate::ui::components::FullScreenText;
 use crate::ui::systems::full_screen_text;
 
 pub fn start_intro(commands: Commands, asset_server: Res<AssetServer>) {
-    //audio.play(asset_server.load("sound/background/intro.ogg"));
     full_screen_text(
         commands,
         asset_server,
@@ -71,6 +65,7 @@ pub fn mouse_interaction(
     intro_state: ResMut<State<IntroState>>,
     mut intro_state_mutator: ResMut<NextState<IntroState>>,
     mut comics_sink_query: Query<&mut RiveComicsSink>,
+    mut page_audio: Query<Entity, With<RiveComicsPageAudio>>,
 ) {
     if mouse_buttons.just_pressed(MouseButton::Left) {
         match intro_state.get() {
@@ -79,6 +74,9 @@ pub fn mouse_interaction(
             }
             IntroState::Comics1 => {
                 if let Some(mut comics_sink) = comics_sink_query.get_single_mut().ok() {
+                    for entity in page_audio.iter() {
+                        commands.entity(entity).despawn_recursive();
+                    }
                     comics_sink.next_page(&mut commands);
                     if comics_sink.is_finished() {
                         intro_state_mutator.set(IntroState::End);
@@ -100,11 +98,13 @@ pub fn comics_start(mut commands: Commands) {
                 artboard_name: "Comics 1 page".to_string(),
                 animation_state_machine: "Page1SM".to_string(),
                 events_handler: |commands, asset_server, event| {
-                    if event.name == "PageStart" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page1.ogg",
-                            &asset_server,
-                        ));
+                    if event.name == "Page1Start" {
+                        commands
+                            .spawn(dialog_bundle(
+                                "sound/comics/Comics1Page1.ogg",
+                                &asset_server,
+                            ))
+                            .insert(RiveComicsPageAudio);
                     }
                 },
             },
@@ -112,11 +112,13 @@ pub fn comics_start(mut commands: Commands) {
                 artboard_name: "Comics 2 page".to_string(),
                 animation_state_machine: "Page2SM".to_string(),
                 events_handler: |commands, asset_server, event| {
-                    if event.name == "PageStart" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page2.ogg",
-                            &asset_server,
-                        ));
+                    if event.name == "Page2Start" {
+                        commands
+                            .spawn(dialog_bundle(
+                                "sound/comics/Comics1Page2.ogg",
+                                &asset_server,
+                            ))
+                            .insert(RiveComicsPageAudio);
                     }
                 },
             },
@@ -124,11 +126,13 @@ pub fn comics_start(mut commands: Commands) {
                 artboard_name: "Comics 3 page".to_string(),
                 animation_state_machine: "Page3SM".to_string(),
                 events_handler: |commands, asset_server, event| {
-                    if event.name == "PageStart" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page3.ogg",
-                            &asset_server,
-                        ));
+                    if event.name == "Page3Start" {
+                        commands
+                            .spawn(dialog_bundle(
+                                "sound/comics/Comics1Page3.ogg",
+                                &asset_server,
+                            ))
+                            .insert(RiveComicsPageAudio);
                     }
                 },
             },
@@ -136,11 +140,13 @@ pub fn comics_start(mut commands: Commands) {
                 artboard_name: "Comics 4 page".to_string(),
                 animation_state_machine: "Page4SM".to_string(),
                 events_handler: |commands, asset_server, event| {
-                    if event.name == "PageStart" {
-                        commands.spawn(dialog_bundle(
-                            "sound/comics/Comics1Page4.ogg",
-                            &asset_server,
-                        ));
+                    if event.name == "Page4Start" {
+                        commands
+                            .spawn(dialog_bundle(
+                                "sound/comics/Comics1Page4.ogg",
+                                &asset_server,
+                            ))
+                            .insert(RiveComicsPageAudio);
                     }
                 },
             },
@@ -152,7 +158,7 @@ fn dialog_bundle(path: &str, asset_server: &Res<AssetServer>) -> AudioBundle {
     AudioBundle {
         source: asset_server.load(String::from_str(path).unwrap()),
         settings: PlaybackSettings {
-            mode: PlaybackMode::Despawn,
+            mode: PlaybackMode::Remove,
             ..default()
         },
         ..default()
