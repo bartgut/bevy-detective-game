@@ -22,7 +22,7 @@ impl SpawnableNPC for Railwayman {
                     level_initial_position: Vec3::new(-100.0, -130.0, 1.0),
                 },
                 DialogableNPC {
-                    dialog_file_name: String::from("railwayman_dialog"),
+                    dialog_handle: asset_server.load("dialogs/railwayman_dialog.yarn"),
                     start_node: String::from("RailwaymanDialogIntro"),
                     reset_node: String::from("RailwaymanDialogPossibleQuestions"),
                     first_dialog_mark: String::from("railwayman_already_talked"),

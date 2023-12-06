@@ -1,5 +1,6 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
+use crate::dialogs::dialogs::assets::YarnSpinnerDialog;
 
 #[derive(Component)]
 pub struct NPC {
@@ -9,7 +10,7 @@ pub struct NPC {
 
 #[derive(Component)]
 pub struct DialogableNPC {
-    pub dialog_file_name: String,
+    pub dialog_handle: Handle<YarnSpinnerDialog>,
     pub start_node: String,
     pub reset_node: String,
     pub first_dialog_mark: String,

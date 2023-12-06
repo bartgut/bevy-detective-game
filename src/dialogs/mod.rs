@@ -4,6 +4,7 @@ pub mod ui;
 
 use bevy::prelude::*;
 use ui::systems::*;
+use crate::dialogs::dialogs::assets::{YarnSpinnerDialog, YarnSpinnerDialogLoader};
 use crate::dialogs::ui::components::{AvatarHandles, OptionUINode};
 use crate::in_game_state::InGameState;
 use crate::main_menu::components::MainMenuButton;
@@ -13,6 +14,8 @@ pub struct DialogsPlugin;
 impl Plugin for DialogsPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(AvatarHandles { ..default() })
+            .init_asset::<YarnSpinnerDialog>()
+            .init_asset_loader::<YarnSpinnerDialogLoader>()
             .add_systems(OnEnter(InGameState::Dialog), load_dialog)
             .add_systems(
                 Update,

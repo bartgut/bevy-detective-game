@@ -6,14 +6,14 @@ use crate::pest::Parser;
 #[grammar = "assets/grammar/yarnspinner.pest"]
 pub struct YarnSpinnerParser;
 
-pub fn load_from_file(file_name: &str) -> Vec<Node> {
-    let dialog = fs::read_to_string(file_name).expect("Something went wrong reading the file");
+pub fn load_from_file(dialog: &str) -> Vec<YarnSpinnerNode> {
+    //let dialog = fs::read_to_string(file_name).expect("Something went wrong reading the file");
 
     let parsed = YarnSpinnerParser::parse(Rule::yarnspinner, &dialog).expect("unsuccessful parse");
 
-    let mut nodes: Vec<Node> = vec![];
+    let mut nodes: Vec<YarnSpinnerNode> = vec![];
     for section in parsed.into_iter() {
-        let mut node = Node {
+        let mut node = YarnSpinnerNode {
             title: "".to_string(),
             lines: vec![],
         };

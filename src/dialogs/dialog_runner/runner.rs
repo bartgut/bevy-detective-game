@@ -16,7 +16,7 @@ lazy_static! {
 }
 
 pub struct DialogRunner<T: StateContext> {
-    nodes: Vec<Node>,
+    nodes: Vec<YarnSpinnerNode>,
     current_node_index: usize,
     current_line_index: usize,
     dialog_state: DialogState,
@@ -24,9 +24,10 @@ pub struct DialogRunner<T: StateContext> {
 }
 
 impl<T: StateContext> DialogRunner<T> {
-
-    pub fn current_node(&self) -> &Node {
-        self.nodes.get(self.current_node_index).expect("No current node")
+    pub fn current_node(&self) -> &YarnSpinnerNode {
+        self.nodes
+            .get(self.current_node_index)
+            .expect("No current node")
     }
 
     pub fn current_line(&self) -> &LineType {
@@ -35,8 +36,10 @@ impl<T: StateContext> DialogRunner<T> {
         &current_node_lines[current_line]
     }
 
-    pub fn current_node_mut(&mut self) -> &mut Node {
-        self.nodes.get_mut(self.current_node_index).expect("No current node")
+    pub fn current_node_mut(&mut self) -> &mut YarnSpinnerNode {
+        self.nodes
+            .get_mut(self.current_node_index)
+            .expect("No current node")
     }
 
     pub fn current_line_mut(&mut self) -> &mut LineType {
@@ -58,7 +61,7 @@ impl<T: StateContext> DialogRunner<T> {
         }
     }
 
-    pub fn create_from_nodes(nodes: Vec<Node>, start_node: &str) -> Self {
+    pub fn create_from_nodes(nodes: Vec<YarnSpinnerNode>, start_node: &str) -> Self {
         let current_node_index = nodes
             .iter()
             .position(|node| node.title == start_node)
@@ -96,7 +99,7 @@ impl<T: StateContext> DialogRunner<T> {
                     .map(|possibility| DialogOption {
                         text: possibility.text.clone(),
                         node: possibility.jump_to_node.clone(),
-                        used: possibility.used.clone()
+                        used: possibility.used.clone(),
                     })
                     .collect();
                 Some(DialogEvent::Options {

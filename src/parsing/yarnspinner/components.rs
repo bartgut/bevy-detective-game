@@ -45,7 +45,7 @@ pub enum LineType {
 }
 
 #[derive(Clone, Debug)]
-pub struct Node {
+pub struct YarnSpinnerNode {
     pub title: String,
     pub lines: Vec<LineType>,
 }

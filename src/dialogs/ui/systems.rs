@@ -2,15 +2,19 @@ use bevy::audio::PlaybackMode::Remove;
 use bevy::ecs::system::EntityCommands;
 use super::components::*;
 use bevy::prelude::*;
+use bevy::prelude::TimerMode::Repeating;
 use crate::assets::fonts::Fonts;
 use crate::clickable::components::Clicked;
 use crate::dialogs::dialog_runner::components::{
     DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer, DialogOption,
 };
 use crate::dialogs::dialog_runner::context::StateContext;
+use crate::dialogs::dialog_runner::runner::DialogRunner;
+use crate::dialogs::dialogs::assets::YarnSpinnerDialog;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
+use crate::in_game_state::InGameState::Dialog;
 use crate::npc::components::{DialogableNPC, NPCInDialog};
 use crate::text::typewriting::systems::create_type_writing_text;
 use crate::ui::components::ButtonInteractionAction;
@@ -329,16 +333,22 @@ pub fn start_dialog(
 
 pub fn load_dialog(
     mut commands: Commands,
+    dialog_assets: Res<Assets<YarnSpinnerDialog>>,
     npc_dialog: Query<&DialogableNPC, Added<NPCInDialog>>,
     global_state: Res<GlobalState>,
 ) {
     let dialog_npc_config = npc_dialog.get_single().unwrap();
+    let dialog = dialog_assets
+        .get(dialog_npc_config.dialog_handle.clone_weak())
+        .unwrap();
+    let start_node = dialog_npc_config
+        .node(global_state.get_value(dialog_npc_config.first_dialog_mark.as_str()));
     commands.remove_resource::<Dialogs>();
-    commands.insert_resource(Dialogs::load_from_file(
-        format!("assets/dialogs/{}.yarn", dialog_npc_config.dialog_file_name).as_str(),
-        dialog_npc_config
-            .node(global_state.get_value(dialog_npc_config.first_dialog_mark.as_str())),
-    ));
+    commands.insert_resource(Dialogs {
+        name: "test".to_string(),
+        runner: DialogRunner::create_from_nodes(dialog.nodes.clone(), start_node),
+        timer: Timer::from_seconds(1.0, Repeating),
+    });
 }
 
 pub fn mouse_button_input(
