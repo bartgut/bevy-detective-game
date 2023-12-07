@@ -6,6 +6,7 @@ use crate::clickable::components::{
     HoveredOverClickable,
 };
 use crate::clickable::items::behaviour::ClickableBehaviour;
+use crate::clickable::items::event_handler::EventHandler;
 use crate::clickable::items::resource::ItemResource;
 use crate::game::world_map::world_map::WorldMap;
 use crate::global_state::global_state::GlobalState;
@@ -13,6 +14,18 @@ use crate::in_game_state::InGameState;
 use crate::level_state::LevelState;
 use crate::levels::components::CurrentLevelSprite;
 use crate::player::components::Player;
+
+pub fn event_handler<T: Event>(
+    mut commands: Commands,
+    mut reader: EventReader<T>,
+    query: Query<(&EventHandler<T>)>,
+) {
+    for event in reader.read() {
+        for (handler) in query.iter() {
+            (handler.event_handle)(&mut commands, event);
+        }
+    }
+}
 
 pub fn gray_out_all(
     mut level_query: Query<(&mut Sprite, &Children), With<CurrentLevelSprite>>,

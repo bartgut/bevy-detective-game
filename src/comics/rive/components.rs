@@ -9,7 +9,7 @@ pub struct RiveComicsPageAudio;
 
 #[derive(Component)]
 pub struct RiveComics {
-    pub rive_file: String,
+    pub rive_file_handle: Handle<Riv>,
     pub pages: Vec<RiveComicsPage>,
 }
 

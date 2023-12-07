@@ -5,20 +5,18 @@ use crate::comics::rive::components::{RiveComics, RiveComicsSink, RiveComicsUI};
 
 pub fn initialize_comics(
     mut commands: Commands,
-    mut images: ResMut<Assets<Image>>,
     asset_server: Res<AssetServer>,
     comics_query: Query<&RiveComics, Added<RiveComics>>,
 ) {
     if let Some(comics) = comics_query.get_single().ok() {
         let comics_first_page = &comics.pages[0];
         let mut comics_ui = Image::default();
-        let rive_file = asset_server.load(comics.rive_file.clone());
         comics_ui.resize(Extent3d {
             width: 1280,
             height: 960,
             ..default()
         });
-        let animation_image_handle = images.add(comics_ui.clone());
+        let animation_image_handle = asset_server.add(comics_ui.clone());
 
         let comics_sprite = commands
             .spawn(SpriteBundle {
@@ -30,7 +28,7 @@ pub fn initialize_comics(
             .id();
 
         let machine = StateMachine {
-            riv: rive_file.clone(),
+            riv: comics.rive_file_handle.clone_weak(),
             handle: rive_bevy::Handle::Name(
                 comics_first_page.animation_state_machine.clone().into(),
             ),
@@ -53,7 +51,7 @@ pub fn initialize_comics(
             })
             .insert(RiveComicsUI)
             .insert(RiveComicsSink::new(
-                rive_file.clone(),
+                comics.rive_file_handle.clone(),
                 animation_image_handle.clone(),
                 comics_sprite,
                 machine_entity,

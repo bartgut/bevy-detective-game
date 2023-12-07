@@ -1,11 +1,13 @@
 use bevy::prelude::*;
+use rive_bevy::GenericEvent;
 use crate::clickable::items::onesideitem::OneSideItem;
+use crate::clickable::items::rive_item::RiveItem;
 use crate::clickable::items::systems::collectible_click;
 use crate::clickable::items::twosideitem::TwoSideItem;
 use crate::clickable::systems::{
     clickable_can_be_clicked, clickable_click, clickable_clicked, clickable_clicked_no_conditions,
-    clickable_condition_check, clickable_first_click, cursor_change_on_hover, gray_out_all,
-    hover_entry, initialize_items, print_when_hovered_clickable,
+    clickable_condition_check, clickable_first_click, cursor_change_on_hover, event_handler,
+    gray_out_all, hover_entry, initialize_items, print_when_hovered_clickable,
     print_when_hovered_clickable_global, return_to_normal_colors,
 };
 use crate::game_state::GameState;
@@ -45,7 +47,10 @@ impl Plugin for ClickablePlugin {
             .add_systems(Update, clickable_click::<TwoSideItem>)
             .add_systems(Update, clickable_clicked::<OneSideItem>)
             .add_systems(Update, clickable_clicked::<TwoSideItem>)
+            .add_systems(Update, clickable_click::<RiveItem>)
+            .add_systems(Update, clickable_clicked::<RiveItem>)
             .add_systems(Update, clickable_clicked::<LevelTeleport>)
+            .add_systems(Update, event_handler::<GenericEvent>)
             .add_systems(Update, cursor_change_on_hover)
             .add_systems(PostUpdate, collectible_click);
     }

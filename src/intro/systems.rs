@@ -90,9 +90,9 @@ pub fn mouse_interaction(
     }
 }
 
-pub fn comics_start(mut commands: Commands) {
+pub fn comics_start(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(RiveComics {
-        rive_file: "rive/comics.riv".to_string(),
+        rive_file_handle: asset_server.load("rive/comics.riv"),
         pages: vec![
             RiveComicsPage {
                 artboard_name: "Comics 1 page".to_string(),

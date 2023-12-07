@@ -11,6 +11,22 @@ pub fn init_quests(mut commands: Commands) {
         activation_condition: |_| true,
         completion_condition: |context| context.get_value("railwayman_already_talked").filter(|v| **v == true).is_some(),
     });
+    commands.spawn(Quest {
+        short_description: "Zbadaj plakat wykladu".into(),
+        long_description: "Zbadaj plakat wykladu. Moze znajdziesz tam jakies wskazowki".into(),
+        status: QuestStatus::Inactive,
+        activation_condition: |_| true,
+        completion_condition: |context| {
+            context
+                .get_value("lecturer_name_known")
+                .and_then(|name| {
+                    context
+                        .get_value("lecture_date_known")
+                        .map(|date| *name && *date)
+                })
+                .unwrap_or(false)
+        },
+    });
 }
 
 pub fn activate_quests(
