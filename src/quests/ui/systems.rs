@@ -1,24 +1,27 @@
 use bevy::prelude::*;
 use crate::assets::fonts::Fonts;
-use crate::quests::components::{Quest, QuestStatus};
+use crate::quests::components::{QuestStatus, QuestSystem};
+use crate::quests::loader::format::{QuestBundle, QuestRaw};
 use crate::quests::ui::components::{
     QuestDetails, QuestLogDetailsDescription, QuestLogDetailsTitle, QuestLogListActiveUI,
-    QuestLogListTitleUI, QuestLogListUI, QuestLogUI,
+    QuestLogListTitleUI, QuestLogUI,
 };
 use crate::spawnable::components::Spawnable;
 use crate::ui::components::ButtonInteractionAction;
 
-pub fn on_enter(mut commands: Commands, asset_server: Res<AssetServer>, quests: Query<&Quest>) {
+pub fn on_enter(mut commands: Commands, asset_server: Res<AssetServer>) {
     QuestLogUI.spawn(&mut commands, &asset_server);
 }
 
 pub fn quest_buttons(
     mut commands: Commands,
     font: Res<Fonts>,
-    quests: Query<&Quest>,
+    quest_system: Res<QuestSystem>,
+    quest_asset: Res<Assets<QuestBundle>>,
     quest_log_ui: Query<Entity, Added<QuestLogListActiveUI>>,
     quest_log_title: Query<Entity, Added<QuestLogListTitleUI>>,
 ) {
+    let quests = &quest_asset.get(&quest_system.quest).unwrap().quests; // TODO fix later
     let (active_quests, completed_quests): (Vec<_>, Vec<_>) = quests
         .iter()
         .filter(|quest| {
@@ -54,7 +57,7 @@ pub fn quest_buttons(
                         parent.spawn(TextBundle {
                             text: Text {
                                 sections: vec![TextSection {
-                                    value: active_quest.short_description.clone(),
+                                    value: active_quest.name.clone(),
                                     style: TextStyle {
                                         font: font.noir_font_regular.clone_weak(),
                                         font_size: 20.0,
@@ -128,7 +131,7 @@ pub fn quest_buttons_interaction(
 }
 
 fn active_quest_button(
-    quest: &Quest,
+    quest: &QuestRaw,
 ) -> (ButtonBundle, QuestDetails, ButtonInteractionAction<Text>) {
     (
         ButtonBundle {
@@ -143,8 +146,8 @@ fn active_quest_button(
             ..default()
         },
         QuestDetails {
-            title: quest.short_description.clone(),
-            description: quest.long_description.clone(),
+            title: quest.name.clone(),
+            description: quest.description.clone(),
         },
         ButtonInteractionAction::<Text> { ..default() },
     )

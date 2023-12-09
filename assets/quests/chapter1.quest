@@ -1,0 +1,31 @@
+ (
+ quests: [
+    (
+        id: "talk_to_railwayman",
+        name: "Porozmawiaj z kolejarzem",
+        description: "Porozmawiaj z kolejarzem o morderstwie. To on jako pierwszy znalazl ofiare i poinformowal o tym policje",
+        status: Inactive,
+        activation_condition: [],
+        completion_condition: ["railwayman_already_talked"],
+        subsequent_tasks: []
+    ),
+    (
+       id: "flyer_analysis",
+       name: "Zbadaj plakat wykladu",
+       description: "Zbadaj plakat wykladu. Moze znajdziesz tam jakies wskazowki",
+       status: Inactive,
+       activation_condition: [],
+       completion_condition: ["lecturer_name_known", "lecture_date_known"],
+       subsequent_tasks: []
+    ),
+    (
+       id: "where_is_lecturer",
+       name: "Czy Nadia El-Masri jest w miescie?",
+       description: "Zapytaj sie w recepcji czy Nadia El-Masri jest w miescie",
+       status: Inactive,
+       activation_condition: ["lecturer_name_known"],
+       completion_condition: ["lecturer_location_known"],
+       subsequent_tasks: []
+    ),
+ ]
+)

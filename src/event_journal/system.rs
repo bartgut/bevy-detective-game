@@ -24,6 +24,7 @@ pub fn ui_setup(mut commands: Commands) {
         )
         .insert(JournalEventUI);
 }
+
 pub fn on_event_received(
     mut commands: Commands,
     mut ui_node: Query<Entity, With<JournalEventUI>>,

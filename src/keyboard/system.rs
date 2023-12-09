@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
 use crate::inventory::components::Inventory;
-use crate::quests::components::{Quest, QuestStatus};
 
 pub fn keyboard_event(
     _: Commands,
