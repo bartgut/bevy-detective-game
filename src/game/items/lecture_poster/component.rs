@@ -26,7 +26,6 @@ impl SpawnableChild for LecturePoster {
                     ..default()
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(-800.0, -120.0, 1.0),
                     required_distance: 150.0,
                 },
                 RiveItem {

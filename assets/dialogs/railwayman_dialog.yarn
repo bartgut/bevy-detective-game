@@ -36,7 +36,7 @@ Railwayman: Cale zycie prosze Pana, odkad pamietam, moj ojciec byl rowniez kolej
 title: RailwaymanKeys
 ---
 Player: Pociag jest zamkniety, czy to Pan ma do niego klucze? #audio:railwayman1/player_5.ogg
-<<addInventory train_key klucz>>
+<<addInventory library_keys klucz>>
 <<set $train_keys_received to true>>
 Railwayman: Tak, prosze bardzo. #audio:railwayman1/railwayman_6.ogg
 Player: Dziekuje. #audio:railwayman1/player_6.ogg

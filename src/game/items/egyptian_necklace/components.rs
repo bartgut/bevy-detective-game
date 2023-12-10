@@ -6,30 +6,28 @@ use crate::clickable::items::onesideitem::OneSideItem;
 use crate::spawnable::components::SpawnableChild;
 
 #[derive(Component)]
-pub struct LibraryKeys;
+pub struct EgyptianNecklace;
 
-impl SpawnableChild for LibraryKeys {
+impl SpawnableChild for EgyptianNecklace {
     fn spawn_child(&self, level: &mut EntityCommands, asset_server: &Res<AssetServer>) {
         level.with_children(|parent| {
             parent.spawn((
                 SpriteBundle {
-                    texture: asset_server
-                        .load(format!("images/items/librarykey/library_key_mini.png")),
-                    transform: Transform::from_translation(Vec3::new(-600.0, -120.0, 1.0)),
+                    sprite: Sprite {
+                        color: Color::rgba(0.0, 0.0, 0.0, 0.0),
+                        custom_size: Some(Vec2::new(32.0, 32.0)),
+                        ..default()
+                    },
+                    transform: Transform::from_translation(Vec3::new(210.0, -130.0, 1.0)),
                     ..default()
                 },
                 Clickable {
                     required_distance: 150.0,
                 },
-                Collectible {
-                    inventory_sprite: "NONE.jpg".to_string(),
-                    name: "library_keys".to_string(),
-                    description: "Library keys".to_string(),
-                },
                 OneSideItem {
-                    texture_file: "librarykey/library_key.png".to_string(),
+                    texture_file: "egyptian_necklace/egyptian_necklace.png".to_string(),
                     sprite_entity: None,
-                    click_sound: Some("items/key_grabbing.ogg".to_string()),
+                    click_sound: None,
                 },
             ));
         });

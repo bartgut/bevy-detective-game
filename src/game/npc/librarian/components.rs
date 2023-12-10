@@ -13,15 +13,14 @@ impl SpawnableNPC for Librarian {
             parent.spawn((
                 SpriteBundle {
                     texture: asset_server.load("images/npc/librarian/librarian.png"),
-                    transform: Transform::from_translation(Vec3::new(-1000.0, -120.0, 1.0)),
+                    transform: Transform::from_translation(Vec3::new(-1000.0, -60.0, 1.0)),
                     ..default()
                 },
                 NPC {
                     texture_file: String::from("librarian.png"),
-                    level_initial_position: Vec3::new(-1000.0, -120.0, 1.0),
+                    level_initial_position: Vec3::new(-1000.0, -600.0, 1.0),
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(-1000.0, -120.0, 1.0),
                     required_distance: 150.0,
                 },
                 DialogableNPC {

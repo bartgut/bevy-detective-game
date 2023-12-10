@@ -9,11 +9,24 @@ fn train_platform_level() -> (LevelState, LevelBundle) {
         LevelBundle {
             level_description: {
                 LevelDescription {
-                    level_name: String::from("train_platform"),
+                    level_name: String::from("library_level"),
                     player_initial_position: Transform::from_translation(Vec3::new(
-                        -600.0, -125.0, 0.0,
+                        -600.0, -60.0, 0.0,
                     )),
                 }
+            },
+            transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
+        },
+    )
+}
+
+fn ticket_office_level() -> (LevelState, LevelBundle) {
+    (
+        LevelState::TicketOffice,
+        LevelBundle {
+            level_description: LevelDescription {
+                level_name: String::from("ticket_office"),
+                player_initial_position: Transform::from_translation(Vec3::new(-600.0, -60.0, 0.0)),
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
         },
@@ -72,9 +85,11 @@ pub fn level_map() -> HashMap<LevelState, LevelBundle> {
     let (city_park_state, city_park_level_description) = city_park_level();
     let (library_state, library_level_description) = library_internals();
     let (morgue_state, morgue_description) = morgue();
+    let (ticket_office_state, ticket_office_level_description) = ticket_office_level();
     map.insert(train_platform_state, train_platform_level_description);
     map.insert(city_park_state, city_park_level_description);
     map.insert(library_state, library_level_description);
+    map.insert(ticket_office_state, ticket_office_level_description);
     map.insert(morgue_state, morgue_description);
     map
 }

@@ -25,7 +25,6 @@ impl SpawnableChild for HospitalPin {
                     level_state: LevelState::Morgue,
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(-250.0, -100.0, 1.0),
                     required_distance: 10000.0,
                 },
             ));

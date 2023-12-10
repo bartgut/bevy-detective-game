@@ -25,7 +25,6 @@ impl SpawnableChild for LibraryPin {
                     level_state: LevelState::TrainPlatform,
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(275.0, -125.0, 1.0),
                     required_distance: 10000.0,
                 },
             ));

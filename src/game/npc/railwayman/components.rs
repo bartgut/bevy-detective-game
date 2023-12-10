@@ -14,12 +14,12 @@ impl SpawnableNPC for Railwayman {
             parent.spawn((
                 SpriteBundle {
                     texture: asset_server.load("images/npc/railwayman/railwayman.png"),
-                    transform: Transform::from_translation(Vec3::new(-100.0, -130.0, 1.0)),
+                    transform: Transform::from_translation(Vec3::new(800.0, -60.0, 1.0)),
                     ..default()
                 },
                 NPC {
                     texture_file: String::from("railwayman/railwayman.png"),
-                    level_initial_position: Vec3::new(-100.0, -130.0, 1.0),
+                    level_initial_position: Vec3::new(800.0, -60.0, 1.0),
                 },
                 DialogableNPC {
                     dialog_handle: asset_server.load("dialogs/railwayman_dialog.yarn"),
@@ -28,7 +28,6 @@ impl SpawnableNPC for Railwayman {
                     first_dialog_mark: String::from("railwayman_already_talked"),
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(-100.0, -130.0, 1.0),
                     required_distance: 150.0,
                 },
                 AnimationEnabled,

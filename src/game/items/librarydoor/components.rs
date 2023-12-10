@@ -19,15 +19,14 @@ impl SpawnableChild for LibraryDoor {
             parent.spawn((
                 SpriteBundle {
                     sprite: Sprite {
-                        color: Color::rgb(0.0, 0.0, 0.0),
+                        color: Color::rgba(0.0, 0.0, 0.0, 0.0),
                         custom_size: Some(Vec2::new(70.0, 150.0)),
                         ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(-910.0, -120.0, 1.0)),
+                    transform: Transform::from_translation(Vec3::new(90.0, 0.0, 1.0)),
                     ..default()
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(-910.0, -120.0, 1.0),
                     required_distance: 150.0,
                 },
                 ClickConditions {
@@ -54,7 +53,7 @@ impl SpawnableChild for LibraryDoor {
                     },
                 },
                 LevelTeleport {
-                    level_state: LevelState::CityPark,
+                    level_state: LevelState::TicketOffice,
                 },
             ));
         });

@@ -3,7 +3,6 @@ use crate::global_state::global_state::GlobalState;
 
 #[derive(Component)]
 pub struct Clickable {
-    pub level_initial_position: Vec3,
     pub required_distance: f32,
 }
 

@@ -37,7 +37,7 @@ pub fn gray_out_all(
         let sprite = sprites.get_mut(child);
         match sprite {
             Ok(mut existing) => {
-                existing.color = Color::rgb(0.4, 0.4, 0.4);
+                existing.color = Color::rgba(0.4, 0.4, 0.4, existing.color.a());
             }
             Err(_) => {}
         }
@@ -53,7 +53,7 @@ pub fn return_to_normal_colors(
         for &child in children.iter() {
             let sprite = sprites.get_mut(child);
             match sprite {
-                Ok(mut existing) => existing.color = Color::default(),
+                Ok(mut existing) => existing.color = Color::rgba(1.0, 1.0, 1.0, existing.color.a()),
                 Err(_) => {}
             }
         }

@@ -26,7 +26,6 @@ impl SpawnableChild for CityParkPin {
                     level_state: LevelState::CityPark,
                 },
                 Clickable {
-                    level_initial_position: Vec3::new(200.0, -50.0, 1.0),
                     required_distance: 10000.0,
                 },
             ));

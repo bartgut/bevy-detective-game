@@ -5,6 +5,7 @@ pub enum LevelState {
     #[default]
     None,
     TrainPlatform,
+    TicketOffice,
     CityPark,
     Hospital,
     LibraryInternals,
