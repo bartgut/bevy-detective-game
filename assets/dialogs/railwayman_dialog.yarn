@@ -3,46 +3,50 @@ position: 156,-631
 ---
 Player: Pan Andrzej jak mniemam? #audio:railwayman1/player_1.ogg
 Railwayman: Zgadza sie #audio:railwayman1/railwayman_1.ogg
-Player: Wedlug mojego raportu to Pan jako pierwszy znalazl nieboszczyka.. #audio:railwayman1/player_2.ogg
-Railwayman: Tak.. Odrazu zadzwonilem na policje, to byl paskudny widok.. tyle krwi.. #audio:railwayman1/railwayman_2.ogg
+Player: Wedlugo mojego raportu to Pan zglosil na policje zaginiecie pociagu #audio:railwayman1/player_2.ogg
+Railwayman: Dokladnie tak, czekalem pol godziny, pozniej juz wiedzialem ze cos zlego musialo sie wydarzyc  #audio:railwayman1/railwayman_2.ogg
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
 title: RailwaymanDialogPossibleQuestions
 position: 154,-189
 ---
--> Player: Co robil Pan tak wczesniej na terenie dworca? Z tego co wiem najblizszy pociag mial kursowac za 2 godziny?
-    <<jump RailwaymanWhySoEarly>>
--> Player: Dlugo Pan tu pracuje?
-    <<jump RailwaymanWorking>>
--> Player: Pociag jest zamkniety, czy to Pan ma do niego klucze? <<if $train_keys_received == false>>
-    <<jump RailwaymanKeys>>
+-> Player: Znal sie Pan dobrze z kierowca pociagu?
+    <<jump BestFriends>>
+-> Player: Dlugi? Za czesto Panowie w barze bywali? <<if $mysterious_job == true>>
+    <<jump Debt>>
+-> Player: Ma Pan jakis pomysl jak ten pociag moglby zniknac? Czy na tej trasie mozna gdzies odbic?
+    <<jump Ideas>>
 -> Player: To wszystko, dziekuje
-    <<jump RailwaymanOutro>>
+    <<jump Outro>>
 ===
-title: RailwaymanWhySoEarly
+title: BestFriends
 position: 707,49
 ---
-Player: Co robil Pan tak wczesniej na terenie dworca? Z tego co wiem najblizszy pociag mial kursowac dopiero za 2 godziny. #audio:railwayman1/player_3.ogg
-Railwayman: Widzi Pan.. od smierci zony nie sypiam najlepiej, czesto przychodze wczesniej tutaj ogladac wschod slonca, tak latwiej. #audio:railwayman1/railwayman_3.ogg
+Player: Znal sie Pan dobrze z kierowca pociagu? #audio:railwayman1/player_3.ogg
+Railwayman: Pewnie, bylismy dobrymi kumplami, tacy wie Pan, starzy kawalerzy co nie maja co robic.  #audio:railwayman1/railwayman_3.ogg
+Player: Czy Pan Andrzej zachowywal sie jakos dziwnie w ostatnim czasie? Moze zwrocil Pan na cos uwage?
+Railwayman: I widzi Pan to mnie wlasnie martwi, ostatnio byl jakis takim podekscytowany, podobno mial dostac jakas dobra fuche co by pomogla mu wyjsc z dlugow.
+<<set $mysterious_job to true>>
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
-title: RailwaymanWorking
-position: -222,87
+title: Debt
 ---
-Player: Jak dlugo Pan tu pracuje? #audio:railwayman1/player_4.ogg
-Railwayman: Cale zycie prosze Pana, odkad pamietam, moj ojciec byl rowniez kolejarzem. #audio:railwayman1/railwayman_4.ogg
+Player: Dlugi? Za czesto Panowie w barze bywali?
+Railwayman: Alez bez przesady! Zdrowie juz nie pozwala na calonocne balangi, Andrzej lubil grac na automatach
+Player: Automatach? Rozumiem, ze fortuna sie go nie trzymala?
+Railwayman: Niestety, chlopak mial cale zycie pecha no i wpadl w klopoty finansowe. Stad byl taki podekscytowany ta nowa praca\
+Player: A co to miala byc za praca?
+Railwayman: A tego juz nie mowil, straszna tajemnice robil z tego
+<<set $railwayman_financial_issues to true>>
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
-title: RailwaymanKeys
+title: Ideas
 ---
-Player: Pociag jest zamkniety, czy to Pan ma do niego klucze? #audio:railwayman1/player_5.ogg
-<<addInventory library_keys klucz>>
-<<set $train_keys_received to true>>
-Railwayman: Tak, prosze bardzo. #audio:railwayman1/railwayman_6.ogg
-Player: Dziekuje. #audio:railwayman1/player_6.ogg
+Player: Ma Pan jakis pomysl jak ten pociag moglby zniknac? Czy na tej trasie mozna gdzies odbic?
+Railwayman: Niee, to niemozliwe, ta trasa jest prosta, naprawde nie wiem jak to sie stalo
 <<jump RailwaymanDialogPossibleQuestions>>
 ===
-title: RailwaymanOutro
+title: Outro
 position: 153,579
 ---
 Player: To wszystko z mojej strony.

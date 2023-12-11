@@ -3,29 +3,56 @@
     (
         id: "talk_to_railwayman",
         name: "Porozmawiaj z kolejarzem",
-        description: "Porozmawiaj z kolejarzem o morderstwie. To on jako pierwszy znalazl ofiare i poinformowal o tym policje",
+        description: "Na stacji kolejowej P. pracuje 2 kolejarzy, jeden z nich prowadzil zaginiony pociag dzisiejszego wieczora. Drugi kolejarz - Andrzej - jego bliski przyjaciel mial zaczac swoja zmiane wlasnie po tym kursie. To on jako pierwszy wszczal alarm, ze pociag zaginal. Moze bedzie mogl powiedziec cos o swoim zaginionym koledze?",
         status: Inactive,
         activation_condition: [],
         completion_condition: ["railwayman_already_talked"],
         subsequent_tasks: []
     ),
     (
+        id: "financial_issues",
+        name: "Finansowe problemy kolejarza",
+        description: "Zaginiony kolejarz rzekomo znajduje sie w trudnej sytuacji finansowej spowodowanej hazardem. Andrzej, bliski znajomy kolejarza, podzielil się ciekawa informacja. Podczas ostatniego wspolnego wyjscia do baru podobno kolejarz opowiadal mu, ze otrzymał jakas tajemnicza oferte, która moglaby pomoc mu wyjsc na prosta finansowa. Czyzby to miało jakiś zwiazek z zaginionym pociagiem?",
+        status: Inactive,
+        activation_condition: ["railwayman_financial_issues"],
+        completion_condition: ["TODO"],
+        subsequent_tasks: []
+    ),
+    (
+        id: "unlock_library_door",
+        name: "Zdobadz klucz do biblioteki",
+        description: "Po zniknieciu pociagu biblioteka zostala zamknieta by nie zatrzec zadnych sladow mogacych pomoc rozwiazac sprawe. Popros bibliotekarke o klucz.",
+        status: Inactive,
+        activation_condition: ["library_doors_locked"],
+        completion_condition: ["library_keys_received"],
+        subsequent_tasks: []
+    ),
+    (
        id: "flyer_analysis",
        name: "Zbadaj plakat wykladu",
-       description: "Zbadaj plakat wykladu. Moze znajdziesz tam jakies wskazowki",
+       description: "W bibliotece regularnie odbywają się weekendowe wykłady, na których gości się różnych mówców - pisarzy, polityków, a nawet ekspertów z różnych dziedzin. Dzień przed zaginięciem pociągu wykład prowadziła Nadia, Egipcjanka, która opowiadała o tajemnicach i legendach starożytnego Egiptu. Bibliotekarka wspomniała rowniez, że Nadia wykazywała duże zainteresowanie pewnym starożytnym egipskim manuskryptem, znajdującym się w archiwum biblioteki.",
        status: Inactive,
-       activation_condition: [],
+       activation_condition: ["knows_about_lecture"],
        completion_condition: ["lecturer_name_known", "lecture_date_known"],
        subsequent_tasks: []
     ),
     (
        id: "where_is_lecturer",
        name: "Czy Nadia El-Masri jest w miescie?",
-       description: "Zapytaj sie w recepcji czy Nadia El-Masri jest w miescie",
+       description: "Zapytaj bibliotekarki czy Nadia El-Masri jest jeszcze w miescie.",
        status: Inactive,
        activation_condition: ["lecturer_name_known"],
        completion_condition: ["lecturer_location_known"],
        subsequent_tasks: []
     ),
+    (
+       id: "first-meeting",
+       name: "Pierwsze spotkanie z Nadia El-Masri",
+       description: "Bibliotekarka zdradzila ze Nadia El-Masri nocuje w lokalnym hotelu Wisla, warto by bylo tam pojechac i z nia porozmawiac",
+       status: Inactive,
+       activation_condition: ["lecturer_location_known"],
+       completion_condition: ["TODO"],
+       subsequent_tasks: []
+    )
  ]
 )

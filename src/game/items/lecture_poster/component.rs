@@ -22,7 +22,7 @@ impl SpawnableChild for LecturePoster {
                 SpriteBundle {
                     texture: asset_server
                         .load(format!("images/items/librarykey/library_key_mini.png")),
-                    transform: Transform::from_translation(Vec3::new(-600.0, -120.0, 1.0)),
+                    transform: Transform::from_translation(Vec3::new(600.0, -120.0, 1.0)),
                     ..default()
                 },
                 Clickable {

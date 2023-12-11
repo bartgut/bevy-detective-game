@@ -9,6 +9,7 @@ use crate::spawnable::components::SpawnableChild;
 use crate::clickable::components::ClickCondition::InventoryCondition;
 use crate::dialogs::dialog_runner::components::{DialogEvent, DialogEventBundle};
 use crate::dialogs::dialog_runner::components::DialogEventOwnership::TIMER;
+use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Component)]
 pub struct LibraryDoor;
@@ -37,11 +38,14 @@ impl SpawnableChild for LibraryDoor {
                         commands.spawn(DialogEventBundle {
                             event: DialogEvent::Dialog {
                                 speaker: "Player".to_string(),
-                                text: "Zamkniete, potrzebuje klucza".to_string(),
+                                text:
+                                    "Zamkniete, pewno bibliotekarka na peronie bedzie miala klucz"
+                                        .to_string(),
                                 tags: vec![],
                             },
                             ownership: TIMER(3.0),
                         });
+                        commands.spawn(UpdateGlobalState("library_doors_locked".to_string(), true));
                         commands.spawn(AudioBundle {
                             source: asset_server.load(format!("sound/items/door_locked.ogg")),
                             settings: PlaybackSettings {

@@ -143,7 +143,7 @@ fn quest_log_ui_details_description_bundle() -> NodeBundle {
         style: Style {
             width: Val::Percent(100.0),
             height: Val::Percent(80.0),
-            flex_direction: FlexDirection::Row,
+            flex_direction: FlexDirection::Column,
             justify_content: JustifyContent::Start,
             align_items: AlignItems::Start,
             row_gap: Val::Percent(8.0),

@@ -24,7 +24,7 @@ impl SpawnableNPC for Librarian {
                     required_distance: 150.0,
                 },
                 DialogableNPC {
-                    dialog_handle: asset_server.load("dialogs/first_dialog.yarn"),
+                    dialog_handle: asset_server.load("dialogs/librarian1_dialog.yarn"),
                     start_node: String::from("Librarian1PlayerConversationIntro"),
                     reset_node: String::from("Librarian1PlayerPossibleQuestions"),
                     first_dialog_mark: String::from("librarian_already_talked"),

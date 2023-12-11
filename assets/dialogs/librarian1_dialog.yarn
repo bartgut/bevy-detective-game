@@ -1,0 +1,82 @@
+title: Librarian1PlayerConversationIntro
+position: 150,-475
+---
+Player: Dzien dobry Pani.. #audio:librarian1/player_1.ogg
+Librarian1: Julio #audio:librarian1/librarian_1.ogg
+Player: .. Pani Julio, mam kilka pytan jesli mozna.. #audio:librarian1/player_2.ogg
+Librarian1: Alez oczywiscie #audio:librarian1/librarian_2.ogg
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Librarian1PlayerPossibleQuestions
+position: 154,-189
+---
+-> Player: Dobrze znala Pani kolejarza prowadzacego pociag?
+    <<jump Railwayman>>
+-> Player: Czy w ostatnim czasie dzialo sie cos dziwnego? cos nietypowego?
+    <<jump UncommonEvents>>
+-> Player: Drzwi do biblioteki sa zamkniete. Czy ma Pani moze do nich klucz? <<if $library_doors_locked == true>>
+    <<jump LibraryDoorsLocked>>
+-> Player: Wyklad w bibliotece? <<if $knows_about_lecture == true>>
+    <<jump LibraryLecture>>
+-> Player: Moze Pani troche opowiedziec o wykladzie? <<if $lecture_happened == true>>
+    <<jump LectureDetails>>
+-> Player: Czy wie Pani czy Nadia El-Masri wyjechala juz z miasta? <<if $lecturer_name_known == true>>
+    <<jump NadiaElMasri>>
+-> Player: To wszystko, dziekuje
+    <<jump Librarian1PlayerOutro>>
+===
+title: LectureDetails
+---
+Player: Moze Pani troche opowiedziec o wykladzie?
+Librarian1: Prowadziła go pani Nadia, która opowiadała o starożytnym Egipcie. Była to prezentacja o tajemnicach i legendach tego kraju.
+Player: Czy w czasie tego wykładu lub po nim zauważyła Pani coś niezwykłego?
+Librarian1: Teraz, gdy Pan o tym wspomina.. pani Nadia była bardzo zainteresowana naszym archiwalnym egipskim manuskryptem. Po wykładzie spędziła długi czas w naszym archiwum, studiując ten dokument.
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: UncommonEvents
+---
+Player: Czy w ostatnim czasie dzialo sie cos dziwnego? cos nietypowego?
+Librarian1: Nie, weekend jak weekend, cotygodniowe wyklad, ruch jak zwykle. Przy kasie biletowej pewno ciagle wisi plakat, musze go zdjac.
+<<set $knows_about_lecture to true>>
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Railwayman
+position: 696,138
+---
+Player: Dobrze znala Pani kolejarza prowadzacego pociag?
+Librarian1: Tylko czysto zawodowo, byl zlata raczka, zawsze pomagal, gdy cos sie zepsulo w bibliotece.
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: LibraryDoorsLocked
+position: -172,-4
+---
+Player: Drzwi do biblioteki sa zamkniete. Czy ma Pani moze do nich klucz? #audio:librarian1/player_4.ogg
+Librarian1: Tak, pierwsi policjanci, ktorzy tutaj przyjechali kazali natychmiast zamknac bibliotek. Mam go w torebce sekunda.. prosze #audio:librarian1/librarian_5.ogg
+Player: Dziekuje. #audio:librarian1/player_5.ogg
+<<set $library_keys_received to true>>
+<<addInventory library_keys klucz>>
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: LibraryLecture
+position: 501,217
+---
+Librarian1: Tak, w naszej bibliotece regularnie organizujemy różne wydarzenia, w tym weekendowe wykłady z zaproszonymi gośćmi, jak pisarze czy eksperci z różnych dziedzin. #audio:librarian1/librarian_7.ogg
+Player: Troche inaczej kojarzyla mi sie biblioteka..
+Librarian1: To juz nie te czasy, teraz biblioteka jest jak centrum kultury.
+<<set $lecture_happened to true>>
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: NadiaElMasri
+---
+Player: Czy wie Pani czy Nadia El-Masri wyjechala juz z miasta?
+Librarian1: Raczej nie, chciala zatrzymac sie w miescie do jutra, zarezerwowalismy jej pokoj w hotelu Wisla.
+<<set $lecturer_location_known to true>>
+<<jump Librarian1PlayerPossibleQuestions>>
+===
+title: Librarian1PlayerOutro
+position: -34,286
+---
+Player: To wszystko z mojej strony. #audio:librarian1/player_6.ogg
+Librarian1: Dziekuje za rozmowe. #audio:librarian1/librarian_8.ogg
+<<set $librarian_already_talked to true>>
+===

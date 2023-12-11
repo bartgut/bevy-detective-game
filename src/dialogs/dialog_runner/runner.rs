@@ -119,7 +119,7 @@ impl<T: StateContext> DialogRunner<T> {
                     "!=" => value != &condition.value.parse::<bool>().unwrap(),
                     _ => false,
                 },
-                None => true,
+                None => false,
             },
             None => true,
         }
