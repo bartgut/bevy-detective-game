@@ -1,7 +1,7 @@
 WHITESPACE      = _{ " " }
 title           = @{ (ASCII_ALPHANUMERIC | "_")+ }
 title_header    = _{ "title:" ~ title ~ NEWLINE }
-position_number = @{ ("-")? ~ (ASCII_DIGIT)+ }
+position_number = _{ ("-")? ~ (ASCII_DIGIT)+ }
 position        = _{ "position: " ~ position_number ~ "," ~ position_number ~ NEWLINE }
 section_start   = _{ "---" ~ NEWLINE }
 section_end     = _{ "===" ~ NEWLINE }

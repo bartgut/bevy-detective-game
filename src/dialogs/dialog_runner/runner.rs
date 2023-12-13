@@ -91,9 +91,9 @@ impl<T: StateContext> DialogRunner<T> {
             }),
             LineType::OptionLine {
                 speaker,
-                possibilites,
+                possibilities,
             } => {
-                let options = possibilites
+                let options = possibilities
                     .iter()
                     .filter(|&x| self.passes_condition(x, context))
                     .map(|possibility| DialogOption {
@@ -232,9 +232,9 @@ impl<T: StateContext> DialogRunner<T> {
                 match self.current_line_mut() {
                     LineType::OptionLine {
                         speaker: _speaker,
-                        possibilites,
+                        possibilities,
                     } => {
-                        let mut possibility = possibilites
+                        let mut possibility = possibilities
                             .iter_mut()
                             .find(|possibility| possibility.jump_to_node == decision)
                             .expect("No possibility found");

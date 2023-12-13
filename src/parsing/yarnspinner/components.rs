@@ -40,7 +40,7 @@ pub enum LineType {
     },
     OptionLine {
         speaker: String,
-        possibilites: Vec<OptionPossibility>,
+        possibilities: Vec<OptionPossibility>,
     },
 }
 

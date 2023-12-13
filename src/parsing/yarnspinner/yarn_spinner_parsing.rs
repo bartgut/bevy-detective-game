@@ -1,4 +1,5 @@
 use std::fs;
+use pest::iterators::Pair;
 use super::components::*;
 use crate::pest::Parser;
 
@@ -7,249 +8,207 @@ use crate::pest::Parser;
 pub struct YarnSpinnerParser;
 
 pub fn load_from_file(dialog: &str) -> Vec<YarnSpinnerNode> {
-    //let dialog = fs::read_to_string(file_name).expect("Something went wrong reading the file");
+    let parsed = YarnSpinnerParser::parse(Rule::yarnspinner, dialog).expect("unsuccessful parse");
+    parsed.into_iter().map(parse_section).collect()
+}
 
-    let parsed = YarnSpinnerParser::parse(Rule::yarnspinner, &dialog).expect("unsuccessful parse");
+fn parse_section(section: Pair<Rule>) -> YarnSpinnerNode {
+    let mut node = YarnSpinnerNode {
+        title: String::new(),
+        lines: vec![],
+    };
 
-    let mut nodes: Vec<YarnSpinnerNode> = vec![];
-    for section in parsed.into_iter() {
-        let mut node = YarnSpinnerNode {
-            title: "".to_string(),
-            lines: vec![],
-        };
-        match section.as_rule() {
-            Rule::section => {
-                for field in section.into_inner() {
-                    match field.as_rule() {
-                        Rule::title => {
-                            node.title = field.as_str().to_string();
-                        }
-                        Rule::section_content => {
-                            for content in field.into_inner() {
-                                match content.as_rule() {
-                                    Rule::set_line => {
-                                        let mut variable_name = "".to_string();
-                                        let mut value = false;
-                                        for set_line_field in content.into_inner() {
-                                            match set_line_field.as_rule() {
+    if section.as_rule() == Rule::section {
+        for field in section.into_inner() {
+            match field.as_rule() {
+                Rule::title => node.title = field.as_str().to_string(),
+                Rule::section_content => {
+                    for content in field.into_inner() {
+                        node.lines.push(parse_content(content));
+                    }
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+    node
+}
+
+fn parse_content(content: Pair<Rule>) -> LineType {
+    match content.as_rule() {
+        Rule::set_line => parse_set_line(content),
+        Rule::command_line => parse_command_line(content),
+        Rule::dialog_line => parse_dialog_line(content),
+        Rule::option_lines => parse_option_lines(content),
+        Rule::jump_line => parse_jump_line(content),
+        _ => unreachable!(),
+    }
+}
+
+fn parse_set_line(content: Pair<Rule>) -> LineType {
+    let mut variable_name = String::new();
+    let mut value = false;
+
+    for set_line_field in content.into_inner() {
+        match set_line_field.as_rule() {
+            Rule::variable_name => variable_name = set_line_field.as_str().to_string(),
+            Rule::boolean_value => value = set_line_field.as_str().parse::<bool>().unwrap(),
+            _ => unreachable!(),
+        }
+    }
+
+    LineType::SetLine {
+        variable_name,
+        value,
+    }
+}
+
+fn parse_command_line(content: Pair<Rule>) -> LineType {
+    let mut func_name = String::new();
+    let mut args: Vec<String> = vec![];
+
+    for command_line_field in content.into_inner() {
+        match command_line_field.as_rule() {
+            Rule::function_name => func_name = command_line_field.as_str().to_string(),
+            Rule::args => {
+                for command_arg_field in command_line_field.into_inner() {
+                    match command_arg_field.as_rule() {
+                        Rule::arg => args.push(command_arg_field.as_str().to_string()),
+                        _ => unreachable!(),
+                    }
+                }
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    LineType::CommandLine { func_name, args }
+}
+
+fn parse_dialog_line(content: Pair<Rule>) -> LineType {
+    let mut speaker = String::new();
+    let mut text = String::new();
+    let mut tags: Vec<Tag> = vec![];
+    let condition: Option<Condition> = None;
+
+    for dialog_line_field in content.into_inner() {
+        match dialog_line_field.as_rule() {
+            Rule::speaker => speaker = dialog_line_field.as_str().to_string(),
+            Rule::dialog => text = dialog_line_field.as_str().to_string(),
+            Rule::tags => {
+                let mut name = String::new();
+                let mut value = String::new();
+                for tag_field in dialog_line_field.into_inner() {
+                    match tag_field.as_rule() {
+                        Rule::tag_name => name = tag_field.as_str().to_string(),
+                        Rule::tag_value => value = tag_field.as_str().to_string(),
+                        _ => unreachable!(),
+                    }
+                }
+                tags.push(Tag { name, value });
+            }
+            Rule::condition => {} // Handle condition if needed
+            _ => unreachable!(),
+        }
+    }
+
+    LineType::DialogLine {
+        speaker,
+        text,
+        condition,
+        tags,
+    }
+}
+
+fn parse_option_lines(content: Pair<Rule>) -> LineType {
+    let mut option_possibilities: Vec<OptionPossibility> = vec![];
+    let speaker = String::new();
+
+    for option_lines_field in content.into_inner() {
+        match option_lines_field.as_rule() {
+            Rule::option_line => {
+                let mut text = String::new();
+                let mut node_title = String::new();
+                let mut condition: Option<Condition> = None;
+
+                for option_line_field in option_lines_field.into_inner() {
+                    match option_line_field.as_rule() {
+                        Rule::dialog_line => {
+                            for dialog_line_field in option_line_field.into_inner() {
+                                match dialog_line_field.as_rule() {
+                                    Rule::speaker => {}
+                                    Rule::dialog => text = dialog_line_field.as_str().to_string(),
+                                    Rule::if_statement => {
+                                        let mut variable_name = String::new();
+                                        let mut condition_sign = String::new();
+                                        let mut value = String::new();
+
+                                        for if_statement_field in dialog_line_field.into_inner() {
+                                            match if_statement_field.as_rule() {
                                                 Rule::variable_name => {
                                                     variable_name =
-                                                        set_line_field.as_str().to_string();
+                                                        if_statement_field.as_str().to_string()
+                                                }
+                                                Rule::condition => {
+                                                    condition_sign =
+                                                        if_statement_field.as_str().to_string()
                                                 }
                                                 Rule::boolean_value => {
-                                                    value = set_line_field
-                                                        .as_str()
-                                                        .to_string()
-                                                        .parse::<bool>()
-                                                        .unwrap();
+                                                    value = if_statement_field.as_str().to_string()
                                                 }
                                                 _ => unreachable!(),
                                             }
                                         }
-                                        node.lines.push(LineType::SetLine {
-                                            variable_name: variable_name,
-                                            value: value,
+
+                                        condition = Some(Condition {
+                                            variable_name,
+                                            condition: condition_sign,
+                                            value,
                                         });
-                                    }
-                                    Rule::command_line => {
-                                        let mut func_name = "".to_string();
-                                        let mut args: Vec<String> = vec![];
-                                        for command_line_field in content.into_inner() {
-                                            match command_line_field.as_rule() {
-                                                Rule::function_name => {
-                                                    func_name =
-                                                        command_line_field.as_str().to_string();
-                                                }
-                                                Rule::args => {
-                                                    for command_arg_field in
-                                                        command_line_field.into_inner()
-                                                    {
-                                                        match command_arg_field.as_rule() {
-                                                            Rule::arg => {
-                                                                args.push(
-                                                                    command_arg_field
-                                                                        .as_str()
-                                                                        .to_string(),
-                                                                );
-                                                            }
-                                                            _ => unreachable!(),
-                                                        }
-                                                    }
-                                                }
-                                                _ => unreachable!(),
-                                            }
-                                        }
-                                        node.lines.push(LineType::CommandLine {
-                                            func_name: func_name,
-                                            args: args,
-                                        });
-                                    }
-                                    Rule::dialog_line => {
-                                        let mut speaker = "".to_string();
-                                        let mut text = "".to_string();
-                                        let mut tags: Vec<Tag> = vec![];
-                                        let condition: Option<Condition> = None;
-                                        for dialog_line_field in content.into_inner() {
-                                            match dialog_line_field.as_rule() {
-                                                Rule::speaker => {
-                                                    speaker =
-                                                        dialog_line_field.as_str().to_string();
-                                                }
-                                                Rule::dialog => {
-                                                    text = dialog_line_field.as_str().to_string();
-                                                }
-                                                Rule::tags => {
-                                                    let mut name = "".to_string();
-                                                    let mut value = "".to_string();
-                                                    for tag_field in dialog_line_field.into_inner()
-                                                    {
-                                                        match tag_field.as_rule() {
-                                                            Rule::tag_name => {
-                                                                name =
-                                                                    tag_field.as_str().to_string();
-                                                            }
-                                                            Rule::tag_value => {
-                                                                value =
-                                                                    tag_field.as_str().to_string();
-                                                            }
-                                                            _ => unreachable!(),
-                                                        }
-                                                    }
-                                                    tags.push(Tag {
-                                                        name: name,
-                                                        value: value,
-                                                    });
-                                                }
-                                                Rule::condition => {}
-                                                _ => unreachable!(),
-                                            }
-                                        }
-                                        node.lines.push(LineType::DialogLine {
-                                            speaker: speaker,
-                                            text: text,
-                                            condition: condition,
-                                            tags: tags,
-                                        });
-                                    }
-                                    Rule::option_lines => {
-                                        let mut option_possiblitites: Vec<OptionPossibility> =
-                                            vec![];
-                                        let speaker = "".to_string();
-                                        for option_lines_field in content.into_inner() {
-                                            match option_lines_field.as_rule() {
-                                                Rule::option_line => {
-                                                    let mut text = "".to_string();
-                                                    let mut node_title = "".to_string();
-                                                    let mut condition: Option<Condition> = None;
-                                                    for option_line_field in
-                                                        option_lines_field.into_inner()
-                                                    {
-                                                        match option_line_field.as_rule() {
-                                                            Rule::dialog_line => {
-                                                                for dialog_line_field in
-                                                                    option_line_field.into_inner()
-                                                                {
-                                                                    match dialog_line_field
-                                                                        .as_rule()
-                                                                    {
-                                                                        Rule::speaker => {}
-                                                                        Rule::dialog => {
-                                                                            text =
-                                                                                dialog_line_field
-                                                                                    .as_str()
-                                                                                    .to_string();
-                                                                        }
-                                                                        Rule::if_statement => {
-                                                                            let mut variable_name =
-                                                                                "".to_string();
-                                                                            let mut condition_sign =
-                                                                                "".to_string();
-                                                                            let mut value =
-                                                                                "".to_string();
-                                                                            for if_statement_field in
-                                                                                dialog_line_field
-                                                                                    .into_inner()
-                                                                            {
-                                                                                match if_statement_field.as_rule() {
-                                                                                    Rule::variable_name => {
-                                                                                        variable_name = if_statement_field.as_str().to_string();
-                                                                                    },
-                                                                                    Rule::condition => {
-                                                                                        condition_sign = if_statement_field.as_str().to_string();
-                                                                                    },
-                                                                                    Rule::boolean_value => {
-                                                                                        value = if_statement_field.as_str().to_string();
-                                                                                    },
-                                                                                    _ => unreachable!()
-                                                                                }
-                                                                            }
-                                                                            condition = Some(Condition { variable_name: variable_name, condition: condition_sign, value: value });
-                                                                        }
-                                                                        _ => unreachable!(),
-                                                                    }
-                                                                }
-                                                            }
-                                                            Rule::jump_line => {
-                                                                for jump_line_field in
-                                                                    option_line_field.into_inner()
-                                                                {
-                                                                    match jump_line_field.as_rule()
-                                                                    {
-                                                                        Rule::title => {
-                                                                            node_title =
-                                                                                jump_line_field
-                                                                                    .as_str()
-                                                                                    .to_string();
-                                                                        }
-                                                                        _ => unreachable!(),
-                                                                    }
-                                                                }
-                                                            }
-                                                            _ => unreachable!(),
-                                                        }
-                                                    }
-                                                    option_possiblitites.push(OptionPossibility {
-                                                        text: text,
-                                                        jump_to_node: node_title,
-                                                        condition: condition,
-                                                        used: false,
-                                                    });
-                                                }
-                                                _ => unreachable!(),
-                                            }
-                                        }
-                                        node.lines.push(LineType::OptionLine {
-                                            speaker: speaker,
-                                            possibilites: option_possiblitites,
-                                        });
-                                    }
-                                    Rule::jump_line => {
-                                        for jump_line_field in content.into_inner() {
-                                            match jump_line_field.as_rule() {
-                                                Rule::title => {
-                                                    node.lines.push(LineType::JumpLine {
-                                                        node_title: jump_line_field
-                                                            .as_str()
-                                                            .to_string(),
-                                                    });
-                                                }
-                                                _ => unreachable!(),
-                                            }
-                                        }
                                     }
                                     _ => unreachable!(),
                                 }
                             }
                         }
-                        Rule::position_number => {}
+                        Rule::jump_line => {
+                            for jump_line_field in option_line_field.into_inner() {
+                                match jump_line_field.as_rule() {
+                                    Rule::title => {
+                                        node_title = jump_line_field.as_str().to_string()
+                                    }
+                                    _ => unreachable!(),
+                                }
+                            }
+                        }
                         _ => unreachable!(),
                     }
                 }
+
+                option_possibilities.push(OptionPossibility {
+                    text,
+                    jump_to_node: node_title,
+                    condition,
+                    used: false,
+                });
             }
-            Rule::EOI => {}
             _ => unreachable!(),
         }
-        nodes.push(node);
     }
-    nodes
+
+    LineType::OptionLine {
+        speaker,
+        possibilities: option_possibilities,
+    }
+}
+
+fn parse_jump_line(content: Pair<Rule>) -> LineType {
+    let node_title = content
+        .into_inner()
+        .find_map(|field| match field.as_rule() {
+            Rule::title => Some(field.as_str().to_string()),
+            _ => None,
+        })
+        .expect("Jump line missing title");
+
+    LineType::JumpLine { node_title }
 }

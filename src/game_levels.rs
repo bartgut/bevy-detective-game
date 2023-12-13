@@ -25,8 +25,9 @@ fn ticket_office_level() -> (LevelState, LevelBundle) {
         LevelState::TicketOffice,
         LevelBundle {
             level_description: LevelDescription {
-                level_name: String::from("ticket_office"),
-                player_initial_position: Transform::from_translation(Vec3::new(-600.0, -60.0, 0.0)),
+                level_name: String::from("ticket-office_level"),
+                player_initial_position: Transform::from_translation(Vec3::new(-600.0, -60.0, 0.0))
+                    .with_scale(Vec3::new(3.0, 3.0, 3.0)),
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
         },
