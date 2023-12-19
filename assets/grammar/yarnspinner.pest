@@ -15,10 +15,11 @@ tags      =  { ("#" ~ tag_name ~ ":" ~ tag_value) }
 condition    = { "==" | "!=" }
 if_statement = { "<<if" ~ "$" ~ variable_name ~ condition ~ boolean_value ~ ">>" }
 
-dialog_line  = { speaker ~ ":" ~ dialog ~ (if_statement)? ~ (tags)* ~ NEWLINE }
-option_line  = { "->" ~ dialog_line ~ jump_line }
-jump_line    = { "<<jump" ~ title ~ ">>" ~ NEWLINE }
-option_lines = { (option_line)+ }
+option_dialog_line = { speaker ~ ":" ~ dialog ~ (if_statement)? ~ (tags)* ~ NEWLINE }
+dialog_line        = { speaker ~ ":" ~ dialog ~ (tags)* ~ NEWLINE }
+option_line        = { "->" ~ option_dialog_line ~ jump_line }
+jump_line          = { "<<jump" ~ title ~ ">>" ~ NEWLINE }
+option_lines       = { (option_line)+ }
 
 variable_name = @{ (ASCII_ALPHANUMERIC | "_")+ }
 function_name = @{ (ASCII_ALPHANUMERIC | "_")+ }

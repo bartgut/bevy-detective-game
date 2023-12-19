@@ -89,25 +89,12 @@ fn parse_dialog_line(content: Pair<Rule>) -> LineType {
     let mut speaker = String::new();
     let mut text = String::new();
     let mut tags: Vec<Tag> = vec![];
-    let condition: Option<Condition> = None;
 
     for dialog_line_field in content.into_inner() {
         match dialog_line_field.as_rule() {
             Rule::speaker => speaker = dialog_line_field.as_str().to_string(),
             Rule::dialog => text = dialog_line_field.as_str().to_string(),
-            Rule::tags => {
-                let mut name = String::new();
-                let mut value = String::new();
-                for tag_field in dialog_line_field.into_inner() {
-                    match tag_field.as_rule() {
-                        Rule::tag_name => name = tag_field.as_str().to_string(),
-                        Rule::tag_value => value = tag_field.as_str().to_string(),
-                        _ => unreachable!(),
-                    }
-                }
-                tags.push(Tag { name, value });
-            }
-            Rule::condition => {} // Handle condition if needed
+            Rule::tags => tags.push(parse_tag(dialog_line_field)),
             _ => unreachable!(),
         }
     }
@@ -115,9 +102,23 @@ fn parse_dialog_line(content: Pair<Rule>) -> LineType {
     LineType::DialogLine {
         speaker,
         text,
-        condition,
         tags,
     }
+}
+
+fn parse_tag(content: Pair<Rule>) -> Tag {
+    let mut name = String::new();
+    let mut value = String::new();
+
+    for tag_field in content.into_inner() {
+        match tag_field.as_rule() {
+            Rule::tag_name => name = tag_field.as_str().to_string(),
+            Rule::tag_value => value = tag_field.as_str().to_string(),
+            _ => unreachable!(),
+        }
+    }
+
+    Tag { name, value }
 }
 
 fn parse_option_lines(content: Pair<Rule>) -> LineType {
@@ -133,38 +134,13 @@ fn parse_option_lines(content: Pair<Rule>) -> LineType {
 
                 for option_line_field in option_lines_field.into_inner() {
                     match option_line_field.as_rule() {
-                        Rule::dialog_line => {
+                        Rule::option_dialog_line => {
                             for dialog_line_field in option_line_field.into_inner() {
                                 match dialog_line_field.as_rule() {
                                     Rule::speaker => {}
                                     Rule::dialog => text = dialog_line_field.as_str().to_string(),
                                     Rule::if_statement => {
-                                        let mut variable_name = String::new();
-                                        let mut condition_sign = String::new();
-                                        let mut value = String::new();
-
-                                        for if_statement_field in dialog_line_field.into_inner() {
-                                            match if_statement_field.as_rule() {
-                                                Rule::variable_name => {
-                                                    variable_name =
-                                                        if_statement_field.as_str().to_string()
-                                                }
-                                                Rule::condition => {
-                                                    condition_sign =
-                                                        if_statement_field.as_str().to_string()
-                                                }
-                                                Rule::boolean_value => {
-                                                    value = if_statement_field.as_str().to_string()
-                                                }
-                                                _ => unreachable!(),
-                                            }
-                                        }
-
-                                        condition = Some(Condition {
-                                            variable_name,
-                                            condition: condition_sign,
-                                            value,
-                                        });
+                                        condition = Some(parse_if_statement(dialog_line_field))
                                     }
                                     _ => unreachable!(),
                                 }
@@ -198,6 +174,26 @@ fn parse_option_lines(content: Pair<Rule>) -> LineType {
     LineType::OptionLine {
         speaker,
         possibilities: option_possibilities,
+    }
+}
+
+fn parse_if_statement(dialog_line_field: Pair<Rule>) -> Condition {
+    let mut variable_name = String::new();
+    let mut condition_sign = String::new();
+    let mut value = String::new();
+
+    for if_statement_field in dialog_line_field.into_inner() {
+        match if_statement_field.as_rule() {
+            Rule::variable_name => variable_name = if_statement_field.as_str().to_string(),
+            Rule::condition => condition_sign = if_statement_field.as_str().to_string(),
+            Rule::boolean_value => value = if_statement_field.as_str().to_string(),
+            _ => unreachable!(),
+        }
+    }
+    Condition {
+        variable_name,
+        condition: condition_sign,
+        value,
     }
 }
 

@@ -32,7 +32,6 @@ pub enum LineType {
     DialogLine {
         speaker: String,
         text: String,
-        condition: Option<Condition>,
         tags: Vec<Tag>,
     },
     JumpLine {

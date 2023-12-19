@@ -82,7 +82,6 @@ impl<T: StateContext> DialogRunner<T> {
             LineType::DialogLine {
                 speaker,
                 text,
-                condition: _condition,
                 tags,
             } => Some(DialogEvent::Dialog {
                 speaker: speaker.clone(),
