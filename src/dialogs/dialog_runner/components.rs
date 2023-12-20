@@ -1,6 +1,6 @@
 use bevy::prelude::{Bundle, Component};
 use bevy::time::Timer;
-use crate::parsing::yarnspinner::components::Tag;
+use bevy_yarnspinner::parsing::components::Tag;
 
 #[derive(Clone, Debug)]
 pub enum DialogState {

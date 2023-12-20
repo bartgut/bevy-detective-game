@@ -1,6 +1,6 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use crate::dialogs::dialogs::assets::YarnSpinnerDialog;
+use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
 
 #[derive(Component)]
 pub struct NPC {

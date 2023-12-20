@@ -8,13 +8,14 @@ edition = "2021"
 [dependencies]
 bevy = "0.12.0"
 pest = "2.7.3"
-pest_derive = "2.7.3"
+pest_derive = "2.7.5"
 rand = "0.8.5"
 buildstructor = "*"
 lazy_static = "1.4.0"
 rive-bevy = { git = "https://github.com/rive-app/rive-bevy" }
+bevy-yarnspinner = { path = "../bevy-yarnspinner" }
 noise = "0.8.2"
-thiserror = "1.0.48"
+thiserror = "1.0.51"
 ron = "0.8"
 serde = { version = "1", features = ["derive"] }
 

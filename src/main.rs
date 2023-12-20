@@ -20,7 +20,6 @@ pub mod levels;
 pub mod main_menu;
 pub mod movement;
 pub mod npc;
-pub mod parsing;
 pub mod player;
 pub mod quests;
 pub mod sound;
@@ -29,6 +28,7 @@ pub mod text;
 pub mod ui;
 
 use bevy::prelude::*;
+use bevy_yarnspinner::plugin::yarn_spinner_plugin::YarnSpinnerPlugin;
 use rive_bevy::RivePlugin;
 use crate::animation::SpriteAnimationPlugin;
 use crate::assets::AssetsPlugin;
@@ -75,6 +75,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(RivePlugin)
+        .add_plugins(YarnSpinnerPlugin)
         .add_systems(PreStartup, camera_setup)
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(LevelsResource {

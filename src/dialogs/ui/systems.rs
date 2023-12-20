@@ -3,6 +3,7 @@ use bevy::ecs::system::EntityCommands;
 use super::components::*;
 use bevy::prelude::*;
 use bevy::prelude::TimerMode::Repeating;
+use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
 use crate::assets::fonts::Fonts;
 use crate::clickable::components::Clicked;
 use crate::dialogs::dialog_runner::components::{
@@ -10,7 +11,6 @@ use crate::dialogs::dialog_runner::components::{
 };
 use crate::dialogs::dialog_runner::context::StateContext;
 use crate::dialogs::dialog_runner::runner::DialogRunner;
-use crate::dialogs::dialogs::assets::YarnSpinnerDialog;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;

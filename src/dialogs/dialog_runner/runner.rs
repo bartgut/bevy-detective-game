@@ -2,11 +2,11 @@ use std::marker::PhantomData;
 use lazy_static::lazy_static;
 use crate::dialogs::dialog_runner::context::StateContext;
 use super::components::*;
-use crate::parsing::yarnspinner::components::*;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use bevy::prelude::Commands;
 use bevy_detective_derive::yarn_command;
+use bevy_yarnspinner::parsing::components::{LineType, OptionPossibility, YarnSpinnerNode};
 use crate::clickable::items::components::Collectible;
 use crate::global_state::global_state::AddCollectibleToInventory;
 
