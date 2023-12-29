@@ -104,9 +104,9 @@ impl ClickableBehaviour for TwoSideItem {
             })
             .id();
         self.current_texture_sprite = Some(x);
-        self.state_update.clone().map(|(key, value)| {
-            commands.spawn(UpdateGlobalState(key.clone(), value));
-        });
+        if let Some((key, value)) = &self.state_update {
+            commands.spawn(UpdateGlobalState(key.clone(), *value));
+        }
         self.show_dialog_if_needed(commands);
         self.play_sound_if_needed(commands, &asset_server);
     }

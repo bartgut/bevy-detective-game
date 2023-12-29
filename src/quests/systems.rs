@@ -71,7 +71,7 @@ pub fn complete_quest_v2(
     if let Some(quest_bundle) = quest_asset.get_mut(&quest_system.quest) {
         for quest in quest_bundle.quests.iter_mut() {
             let should_be_activated = quest.completion_condition.iter().fold(true, |acc, flag| {
-                acc && state_context.get_value(flag).unwrap_or(&false).clone()
+                acc && *state_context.get_value(flag).unwrap_or(&false)
             });
 
             if should_be_activated && quest.status == QuestStatus::Active {
