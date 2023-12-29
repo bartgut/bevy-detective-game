@@ -1,10 +1,10 @@
 use bevy::asset::AssetServer;
 use bevy::prelude::{Assets, Commands, EventReader, EventWriter, Res, ResMut};
-use crate::dialogs::dialog_runner::context::StateContext;
 use crate::event_journal::components::JournalEventMessage;
 use crate::global_state::global_state::GlobalState;
 use crate::quests::components::{QuestStatus, QuestSystem};
 use crate::quests::loader::format::{QuestBundle, QuestEventMessage};
+use bevy_yarnspinner::dialog_runner::context::StateContext;
 
 pub fn init_quests(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(QuestSystem {
@@ -45,7 +45,7 @@ pub fn to_journal_event(
                     if let Some(quest) = quest_bundle.quests.iter().find(|q| q.id == *id) {
                         journal_event_writer.send(JournalEventMessage::NewQuest(format!(
                             "Nowe zadanie: {}",
-                            quest.name.clone()
+                            quest.name
                         )));
                     }
                 }
@@ -53,7 +53,7 @@ pub fn to_journal_event(
                     if let Some(quest) = quest_bundle.quests.iter().find(|q| q.id == *id) {
                         journal_event_writer.send(JournalEventMessage::QuestCompleted(format!(
                             "Zadanie wykonane: {}",
-                            quest.name.clone()
+                            quest.name
                         )));
                     }
                 }

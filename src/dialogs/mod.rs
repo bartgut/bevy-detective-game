@@ -1,4 +1,3 @@
-pub mod dialog_runner;
 pub mod dialogs;
 pub mod ui;
 use bevy::prelude::*;

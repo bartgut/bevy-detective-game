@@ -28,6 +28,7 @@ pub mod text;
 pub mod ui;
 
 use bevy::prelude::*;
+use bevy::utils::tracing::callsite::register;
 use bevy_yarnspinner::plugin::yarn_spinner_plugin::YarnSpinnerPlugin;
 use rive_bevy::RivePlugin;
 use crate::animation::SpriteAnimationPlugin;
@@ -40,6 +41,7 @@ use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::dialogs::DialogsPlugin;
 use crate::event_journal::EventJournalPlugin;
 use crate::game::world_map::WorldMapPlugin;
+use crate::game::yarn_functions::yarn_commands_register;
 use crate::game_items::items_map;
 use crate::game_levels::level_map;
 use crate::game_npc::npc_map;
@@ -77,6 +79,7 @@ fn main() {
         .add_plugins(RivePlugin)
         .add_plugins(YarnSpinnerPlugin)
         .add_systems(PreStartup, camera_setup)
+        .add_systems(PreStartup, yarn_setup)
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(LevelsResource {
             levels: level_map(),
@@ -115,4 +118,8 @@ fn main() {
 
 fn camera_setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
+}
+
+fn yarn_setup(mut commands: Commands) {
+    yarn_commands_register();
 }

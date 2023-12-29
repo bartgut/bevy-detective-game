@@ -1,14 +1,14 @@
 use bevy::audio::PlaybackMode::Despawn;
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
+use bevy_yarnspinner::dialog_runner::components::{DialogEvent, DialogEventBundle};
+use bevy_yarnspinner::dialog_runner::components::DialogEventOwnership::TIMER;
 use crate::clickable::components::{Clickable, ClickConditions};
 use crate::inventory::components::Inventory;
 use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
 use crate::clickable::components::ClickCondition::InventoryCondition;
-use crate::dialogs::dialog_runner::components::{DialogEvent, DialogEventBundle};
-use crate::dialogs::dialog_runner::components::DialogEventOwnership::TIMER;
 use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Component)]

@@ -1,9 +1,9 @@
 use bevy::audio::PlaybackMode::Remove;
 use super::behaviour::ClickableBehaviour;
 use bevy::prelude::*;
-use crate::dialogs::dialog_runner::components::DialogEvent::Dialog;
-use crate::dialogs::dialog_runner::components::DialogEventBundle;
-use crate::dialogs::dialog_runner::components::DialogEventOwnership::PARENT;
+use bevy_yarnspinner::dialog_runner::components::DialogEvent::Dialog;
+use bevy_yarnspinner::dialog_runner::components::DialogEventBundle;
+use bevy_yarnspinner::dialog_runner::components::DialogEventOwnership::PARENT;
 use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Clone)]

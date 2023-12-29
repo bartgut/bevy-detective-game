@@ -3,13 +3,13 @@ use bevy::ecs::system::EntityCommands;
 use bevy::prelude::{BuildChildren, Component, Res};
 use crate::spawnable::components::SpawnableChild;
 use bevy::prelude::*;
+use bevy_yarnspinner::dialog_runner::components::DialogEvent::Dialog;
+use bevy_yarnspinner::dialog_runner::components::DialogEventBundle;
+use bevy_yarnspinner::dialog_runner::components::DialogEventOwnership::TIMER;
 use rive_bevy::GenericEvent;
 use crate::clickable::components::Clickable;
 use crate::clickable::items::event_handler::EventHandler;
 use crate::clickable::items::rive_item::RiveItem;
-use crate::dialogs::dialog_runner::components::DialogEvent::Dialog;
-use crate::dialogs::dialog_runner::components::DialogEventBundle;
-use crate::dialogs::dialog_runner::components::DialogEventOwnership::TIMER;
 use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Component)]

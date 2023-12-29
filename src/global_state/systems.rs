@@ -1,6 +1,6 @@
 use bevy::audio::PlaybackMode::Despawn;
 use bevy::prelude::*;
-use crate::dialogs::dialog_runner::context::StateContext;
+use bevy_yarnspinner::dialog_runner::context::StateContext;
 use crate::event_journal::components::{ComponentToEvent, JournalEventMessage};
 use crate::global_state::global_state::{AddCollectibleToInventory, UpdateGlobalState};
 use crate::inventory::components::Inventory;

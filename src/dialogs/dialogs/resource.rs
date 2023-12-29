@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::dialogs::dialog_runner::runner::*;
+use bevy_yarnspinner::dialog_runner::runner::DialogRunner;
 use crate::global_state::global_state::GlobalState;
 
 #[derive(Resource)]

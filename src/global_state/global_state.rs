@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use bevy_yarnspinner::dialog_runner::context::StateContext;
 use crate::clickable::items::components::Collectible;
-use crate::dialogs::dialog_runner::context::StateContext;
 use crate::global_state::global_state::JournalEventMessage::AddedToInventory;
 use crate::event_journal::components::{ComponentToEvent, JournalEventMessage};
 use crate::inventory::components::Inventory;

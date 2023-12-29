@@ -4,13 +4,13 @@ use super::components::*;
 use bevy::prelude::*;
 use bevy::prelude::TimerMode::Repeating;
 use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
-use crate::assets::fonts::Fonts;
-use crate::clickable::components::Clicked;
-use crate::dialogs::dialog_runner::components::{
+use bevy_yarnspinner::dialog_runner::components::{
     DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer, DialogOption,
 };
-use crate::dialogs::dialog_runner::context::StateContext;
-use crate::dialogs::dialog_runner::runner::DialogRunner;
+use bevy_yarnspinner::dialog_runner::context::StateContext;
+use bevy_yarnspinner::dialog_runner::runner::DialogRunner;
+use crate::assets::fonts::Fonts;
+use crate::clickable::components::Clicked;
 use crate::dialogs::dialogs::resource::*;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
@@ -302,7 +302,7 @@ pub fn interact_with_dialog_text(
     for (interaction, children, node) in button_query.iter_mut() {
         match *interaction {
             Interaction::Pressed => {
-                dialogs.runner.make_decision(node.node_title.clone());
+                dialogs.runner.make_decision(&node.node_title);
             }
             Interaction::None => {
                 for child in children.iter() {
