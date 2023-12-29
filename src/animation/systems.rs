@@ -95,7 +95,7 @@ fn create_animation(
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone_weak(),
             transform: Transform::from_translation(transform.translation.xy().extend(1.0))
-                .with_scale(animation_settings.get_grid_info().tile_scale),
+                .with_scale(transform.scale),
             ..Default::default()
         },
         AnimationTimer(Timer::from_seconds(

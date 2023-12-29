@@ -14,7 +14,8 @@ impl SpawnableNPC for Railwayman {
             parent.spawn((
                 SpriteBundle {
                     texture: asset_server.load("images/npc/railwayman/railwayman.png"),
-                    transform: Transform::from_translation(Vec3::new(800.0, -60.0, 1.0)),
+                    transform: Transform::from_translation(Vec3::new(800.0, -60.0, 1.0))
+                        .with_scale(Vec3::new(1.3, 1.3, 1.0)),
                     ..default()
                 },
                 NPC {

@@ -10,7 +10,6 @@ pub struct GridInfo {
     pub rows: usize,
     pub columns: usize,
     pub tile_size: Vec2,
-    pub tile_scale: Vec3,
 }
 
 impl Default for GridInfo {
@@ -20,7 +19,6 @@ impl Default for GridInfo {
             rows: 1,
             columns: 1,
             tile_size: Vec2::new(64.0, 64.0),
-            tile_scale: Vec3::new(1.0, 1.0, 1.0),
         }
     }
 }
@@ -37,5 +35,5 @@ pub trait SpriteAnimationSettings {
 
 #[derive(Resource, Default)]
 pub struct AnimationHandles {
-    pub handles: HashMap<String, Handle<TextureAtlas>>
+    pub handles: HashMap<String, Handle<TextureAtlas>>,
 }

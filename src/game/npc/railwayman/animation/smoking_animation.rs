@@ -23,7 +23,6 @@ impl SpriteAnimationSettings for SmokingAnimation {
             rows: 1,
             columns: 75,
             tile_size: Vec2::new(68.0, 120.0),
-            tile_scale: Vec3::new(1.4, 1.4, 1.0),
         }
     }
 }

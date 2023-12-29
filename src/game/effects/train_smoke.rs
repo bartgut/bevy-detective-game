@@ -28,7 +28,6 @@ impl SpriteAnimationSettings for TrainSmokeAnimation {
             rows: 1,
             columns: 150,
             tile_size: Vec2::new(84.0, 150.0),
-            tile_scale: Vec3::new(2.0, 2.0, 2.0),
         }
     }
 }

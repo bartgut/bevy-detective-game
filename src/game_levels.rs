@@ -10,9 +10,11 @@ fn train_platform_level() -> (LevelState, LevelBundle) {
             level_description: {
                 LevelDescription {
                     level_name: String::from("library_level"),
-                    player_initial_position: Transform::from_translation(Vec3::new(
-                        -600.0, -60.0, 0.0,
-                    )),
+                    player_initial_position: Transform {
+                        translation: Vec3::new(-600.0, -60.0, 0.0),
+                        scale: Vec3::new(1.5, 1.5, 1.0),
+                        ..default()
+                    },
                 }
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
@@ -26,8 +28,8 @@ fn ticket_office_level() -> (LevelState, LevelBundle) {
         LevelBundle {
             level_description: LevelDescription {
                 level_name: String::from("ticket-office_level"),
-                player_initial_position: Transform::from_translation(Vec3::new(-600.0, -60.0, 0.0))
-                    .with_scale(Vec3::new(3.0, 3.0, 3.0)),
+                player_initial_position: Transform::from_translation(Vec3::new(-600.0, -70.0, 0.0))
+                    .with_scale(Vec3::new(2.5, 2.5, 1.0)),
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
         },

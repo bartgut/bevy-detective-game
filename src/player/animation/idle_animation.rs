@@ -23,7 +23,6 @@ impl SpriteAnimationSettings for IdleAnimation {
             rows: 1,
             columns: 30,
             tile_size: Vec2::new(69.0, 130.0),
-            tile_scale: Vec3::new(1.4, 1.4, 1.0),
         }
     }
 }

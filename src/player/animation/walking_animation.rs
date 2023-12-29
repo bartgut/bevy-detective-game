@@ -23,7 +23,6 @@ impl SpriteAnimationSettings for WalkingAnimation {
             rows: 1,
             columns: 30,
             tile_size: Vec2::new(69.0, 109.0),
-            tile_scale: Vec3::new(1.55, 1.55, 1.0),
         }
     }
 }
