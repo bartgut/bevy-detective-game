@@ -13,55 +13,56 @@ use crate::clickable::items::rive_item::RiveItem;
 use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Component)]
-pub struct LecturePoster;
+pub struct CombinationLock;
 
-impl SpawnableChild for LecturePoster {
+impl SpawnableChild for CombinationLock {
     fn spawn_child(&self, level: &mut EntityCommands, asset_server: &Res<AssetServer>) {
         level.with_children(|parent| {
             parent.spawn((
                 SpriteBundle {
-                    texture: asset_server
-                        .load(format!("images/items/nadia_flyer/nadia_flyer.png")),
-                    transform: Transform {
-                        translation: Vec3::new(600.0, 0.0, 1.0),
-                        scale: Vec3::new(0.07, 0.07, 1.0),
+                    sprite: Sprite {
+                        color: Color::rgba(0.0, 0.0, 0.0, 1.0),
+                        custom_size: Some(Vec2::new(110.0, 110.0)),
                         ..default()
                     },
+                    transform: Transform::from_translation(Vec3::new(200.0, 0.0, 1.0)),
                     ..default()
                 },
                 Clickable {
                     required_distance: 150.0,
                 },
                 RiveItem {
-                    rive_file: asset_server.load("rive/main_menu.riv"),
-                    artboard_name: "Flyer".to_string(),
-                    animation_state_machine: "FlyerStateMachine".to_string(),
+                    rive_file: asset_server.load("rive/combination_lock.riv"),
+                    artboard_name: "CombinationLock".to_string(),
+                    animation_state_machine: "CombinationLockMachine".to_string(),
                     entity: None,
                 },
                 EventHandler::<GenericEvent> {
                     event_handle: |commands, event| {
-                        if event.name == "NameClicked" {
+                        if event.name == "WrongCodeSet" {
                             commands.spawn(DialogEventBundle {
                                 event: Dialog {
                                     speaker: "Player".into(),
-                                    text: "Nadia.. ciekawe, mam nadzieje, że nie wyjechala jeszcze z miasta".into(),
+                                    text: "Zly kod".into(),
                                     tags: vec![],
                                 },
-                                ownership: TIMER(5.0),
+                                ownership: TIMER(3.0),
                             });
-                            commands.spawn(UpdateGlobalState("lecturer_name_known".into(), true));
                         }
 
-                        if event.name == "DateClicked" {
+                        if event.name == "CorrectCodeSet" {
                             commands.spawn(DialogEventBundle {
                                 event: Dialog {
                                     speaker: "Player".into(),
-                                    text: "20 maja, dzien przed zaginieciem pociagu".into(),
+                                    text: "Poprawny kod".into(),
                                     tags: vec![],
                                 },
-                                ownership: TIMER(5.0),
+                                ownership: TIMER(3.0),
                             });
-                            commands.spawn(UpdateGlobalState("lecture_date_known".into(), true));
+                            commands.spawn(UpdateGlobalState(
+                                "monitoring_room_door_unlocked".into(),
+                                true,
+                            ));
                         }
                     },
                 },

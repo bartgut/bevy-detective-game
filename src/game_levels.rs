@@ -74,7 +74,7 @@ fn morgue() -> (LevelState, LevelBundle) {
                 player_initial_position: Transform::from_translation(Vec3::new(
                     -600.0, -125.0, 0.0,
                 ))
-                .with_scale(Vec3::new(1.5, 1.5, 1.5)), // TODO make it work with animations
+                .with_scale(Vec3::new(1.5, 1.5, 1.5)),
             },
             transform: Transform::from_translation(Vec3::new(300.0, 0.0, 0.0)),
         },

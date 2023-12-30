@@ -3,44 +3,45 @@ use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_yarnspinner::dialog_runner::components::{DialogEvent, DialogEventBundle};
 use bevy_yarnspinner::dialog_runner::components::DialogEventOwnership::TIMER;
-use crate::clickable::components::{Clickable, ClickConditions};
-use crate::inventory::components::Inventory;
+use bevy_yarnspinner::dialog_runner::context::StateContext;
+use crate::clickable::components::{Clickable, ClickCondition, ClickConditions};
+use crate::global_state::global_state::UpdateGlobalState;
 use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
-use crate::clickable::components::ClickCondition::InventoryCondition;
-use crate::global_state::global_state::UpdateGlobalState;
 
 #[derive(Component)]
-pub struct LibraryDoor;
+pub struct MonitoringRoomDoor;
 
-impl SpawnableChild for LibraryDoor {
+impl SpawnableChild for MonitoringRoomDoor {
     fn spawn_child(&self, level: &mut EntityCommands, _: &Res<AssetServer>) {
         level.with_children(|parent| {
             parent.spawn((
                 SpriteBundle {
                     sprite: Sprite {
                         color: Color::rgba(0.0, 0.0, 0.0, 0.0),
-                        custom_size: Some(Vec2::new(70.0, 150.0)),
+                        custom_size: Some(Vec2::new(110.0, 240.0)),
                         ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(90.0, 0.0, 1.0)),
+                    transform: Transform::from_translation(Vec3::new(20.0, -20.0, 1.0)),
                     ..default()
                 },
                 Clickable {
                     required_distance: 150.0,
                 },
                 ClickConditions {
-                    condition: vec![InventoryCondition {
-                        0: |inventory| inventory.has_item("library_keys"),
+                    condition: vec![ClickCondition::StateCondition {
+                        0: |state| {
+                            state
+                                .get_value("monitoring_room_door_unlocked")
+                                .map_or(false, |value| *value)
+                        },
                     }],
                     failure: |commands, asset_server| {
                         commands.spawn(DialogEventBundle {
                             event: DialogEvent::Dialog {
                                 speaker: "Player".to_string(),
-                                text:
-                                    "Zamkniete, pewno bibliotekarka na peronie bedzie miala klucz"
-                                        .to_string(),
+                                text: "Zamkniete, musze wpisac poprawny kod".to_string(),
                                 tags: vec![],
                             },
                             ownership: TIMER(6.0),
