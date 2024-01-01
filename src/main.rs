@@ -38,6 +38,7 @@ use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
 use crate::comics::rive::RiveComicsPlugin;
 use crate::comics_state::{ComicsState, MultiPageComicsState};
+use crate::conditional_visibility::VisibilityConditionalPlugin;
 use crate::dialogs::DialogsPlugin;
 use crate::event_journal::EventJournalPlugin;
 use crate::game::world_map::WorldMapPlugin;
@@ -66,6 +67,7 @@ use crate::text::TypeWritingTextPlugin;
 use crate::ui::UIUtilsPlugin;
 
 pub mod assets;
+mod conditional_visibility;
 
 extern crate pest;
 #[macro_use]
@@ -113,6 +115,7 @@ fn main() {
         .add_plugins(EventJournalPlugin)
         .add_plugins(QuestPlugin)
         .add_plugins(AssetsPlugin)
+        .add_plugins(VisibilityConditionalPlugin)
         .run()
 }
 

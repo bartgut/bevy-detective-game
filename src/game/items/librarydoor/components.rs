@@ -8,8 +8,7 @@ use crate::inventory::components::Inventory;
 use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
-use crate::clickable::components::ClickCondition::InventoryCondition;
-use crate::global_state::global_state::UpdateGlobalState;
+use crate::global_state::global_state::{ConditionFunc, UpdateGlobalState};
 
 #[derive(Component)]
 pub struct LibraryDoor;
@@ -31,7 +30,7 @@ impl SpawnableChild for LibraryDoor {
                     required_distance: 150.0,
                 },
                 ClickConditions {
-                    condition: vec![InventoryCondition {
+                    condition: vec![ConditionFunc::InventoryCondition {
                         0: |inventory| inventory.has_item("library_keys"),
                     }],
                     failure: |commands, asset_server| {

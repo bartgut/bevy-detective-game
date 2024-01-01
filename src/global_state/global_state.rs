@@ -4,6 +4,7 @@ use bevy_yarnspinner::dialog_runner::context::StateContext;
 use crate::clickable::items::components::Collectible;
 use crate::global_state::global_state::JournalEventMessage::AddedToInventory;
 use crate::event_journal::components::{ComponentToEvent, JournalEventMessage};
+use crate::global_state::global_state::ConditionFunc::{InventoryCondition, StateCondition};
 use crate::inventory::components::Inventory;
 
 #[derive(Component)]
@@ -54,5 +55,19 @@ impl Inventory for GlobalState {
 
     fn get_all_items(&self) -> Vec<Collectible> {
         self.inventory.clone()
+    }
+}
+
+pub enum ConditionFunc {
+    StateCondition(fn(&dyn StateContext) -> bool),
+    InventoryCondition(fn(&dyn Inventory) -> bool),
+}
+
+impl ConditionFunc {
+    pub fn passed<T: StateContext + Inventory>(&self, state: &T) -> bool {
+        match self {
+            StateCondition(condition) => condition(state),
+            InventoryCondition(condition) => condition(state),
+        }
     }
 }

@@ -4,8 +4,8 @@ use bevy::prelude::*;
 use bevy_yarnspinner::dialog_runner::components::{DialogEvent, DialogEventBundle};
 use bevy_yarnspinner::dialog_runner::components::DialogEventOwnership::TIMER;
 use bevy_yarnspinner::dialog_runner::context::StateContext;
-use crate::clickable::components::{Clickable, ClickCondition, ClickConditions};
-use crate::global_state::global_state::UpdateGlobalState;
+use crate::clickable::components::{Clickable, ClickConditions};
+use crate::global_state::global_state::{ConditionFunc, UpdateGlobalState};
 use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
@@ -30,7 +30,7 @@ impl SpawnableChild for MonitoringRoomDoor {
                     required_distance: 150.0,
                 },
                 ClickConditions {
-                    condition: vec![ClickCondition::StateCondition {
+                    condition: vec![ConditionFunc::StateCondition {
                         0: |state| {
                             state
                                 .get_value("monitoring_room_door_unlocked")

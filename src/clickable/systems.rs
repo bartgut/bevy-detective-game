@@ -2,8 +2,7 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::math::Vec3Swizzles;
 use crate::clickable::components::{
-    CanBeClicked, Clickable, ClickCondition, ClickConditionCheck, ClickConditions, Clicked,
-    HoveredOverClickable,
+    CanBeClicked, Clickable, ClickConditionCheck, ClickConditions, Clicked, HoveredOverClickable,
 };
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::clickable::items::event_handler::EventHandler;
@@ -163,10 +162,13 @@ pub fn hover_entry<T: Component + ClickableBehaviour>(
 pub fn clickable_can_be_clicked(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,
-    clickable_query: Query<(Entity, &Transform, &Clickable)>,
+    clickable_query: Query<(Entity, &Transform, &Clickable, &ViewVisibility)>,
 ) {
     for player_transform in player_query.iter() {
-        for (entity, clickable_transform, clickable) in clickable_query.iter() {
+        for (entity, clickable_transform, clickable, view_visibility) in clickable_query.iter() {
+            if view_visibility.get() == false {
+                continue;
+            }
             if player_transform
                 .translation
                 .distance(clickable_transform.translation)
@@ -200,22 +202,7 @@ pub fn clickable_condition_check(
     mut newly_clicked: Query<(Entity, &ClickConditions), Added<ClickConditionCheck>>,
 ) {
     for (entity, conditions) in newly_clicked.iter_mut() {
-        let mut all_conditions_met = true;
-        for condition in conditions.condition.iter() {
-            match condition {
-                ClickCondition::StateCondition(condition) => {
-                    if !condition(&state) {
-                        all_conditions_met = false;
-                    }
-                }
-                ClickCondition::InventoryCondition(condition) => {
-                    if !condition(&state) {
-                        all_conditions_met = false;
-                    }
-                }
-            }
-        }
-        if all_conditions_met {
+        if conditions.passed(&state) {
             commands
                 .entity(entity)
                 .remove::<ClickConditionCheck>()

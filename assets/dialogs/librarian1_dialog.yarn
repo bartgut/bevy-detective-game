@@ -69,7 +69,7 @@ Librarian1: To juz nie te czasy, teraz biblioteka jest jak centrum kultury.
 title: NadiaElMasri
 ---
 Player: Czy wie Pani czy Nadia El-Masri wyjechala juz z miasta?
-Librarian1: Raczej nie, chciala zatrzymac sie w miescie do jutra, zarezerwowalismy jej pokoj w hotelu Wisla.
+Librarian1: Raczej nie, chciala zatrzymac sie w miescie do jutra, zarezerwowalismy jej pokoj w hotelu Wisla. Prosze podac mape.. o to tutaj.
 <<set $lecturer_location_known to true>>
 <<jump Librarian1PlayerPossibleQuestions>>
 ===

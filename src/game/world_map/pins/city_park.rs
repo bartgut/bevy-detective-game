@@ -1,6 +1,9 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use crate::clickable::components::Clickable;
+use bevy_yarnspinner::dialog_runner::context::StateContext;
+use crate::clickable::components::{Clickable};
+use crate::conditional_visibility::components::VisibilityCondition;
+use crate::global_state::global_state::ConditionFunc;
 use crate::level_state::LevelState;
 use crate::levels::components::LevelTeleport;
 use crate::spawnable::components::SpawnableChild;
@@ -22,6 +25,11 @@ impl SpawnableChild for CityParkPin {
                     ..Default::default()
                 },
                 CityParkPin,
+                VisibilityCondition {
+                    conditions: vec![ConditionFunc::StateCondition(|state| {
+                        *state.get_value("lecturer_location_known").unwrap_or(&false) == true
+                    })],
+                },
                 LevelTeleport {
                     level_state: LevelState::CityPark,
                 },

@@ -21,8 +21,8 @@ impl Spawnable for WorldMap {
             WorldMap,
             WorldMapSprite,
         ));
-        CityParkPin.spawn_child(&mut world_map, &asset_server);
         HospitalPin.spawn_child(&mut world_map, &asset_server);
         LibraryPin.spawn_child(&mut world_map, &asset_server);
+        CityParkPin.spawn_child(&mut world_map, &asset_server);
     }
 }
