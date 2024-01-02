@@ -5,7 +5,8 @@ use bevy::prelude::*;
 use bevy::prelude::TimerMode::Repeating;
 use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
 use bevy_yarnspinner::dialog_runner::components::{
-    DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer, DialogOption,
+    CurrentDialogEvent, DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer,
+    DialogOption,
 };
 use bevy_yarnspinner::dialog_runner::context::StateContext;
 use bevy_yarnspinner::dialog_runner::runner::DialogRunner;
@@ -37,18 +38,17 @@ pub fn dialog_ui_from_event(
     fonts: Res<Fonts>,
     mut avatars: ResMut<AvatarHandles>,
     query: Query<(Entity, &DialogEvent, &DialogEventOwnership), Added<DialogEvent>>,
+    mut current_dialog_event: Query<Entity, With<CurrentDialogEvent>>,
 ) {
     for (entity, event, ownership) in query.iter() {
+        delete_current_dialog_event(&mut current_dialog_event, &mut commands, &event);
         let mut owning_entity = commands.entity(entity);
 
-        match ownership {
-            DialogEventOwnership::PARENT => (),
-            DialogEventOwnership::TIMER(time) => {
-                owning_entity.insert(DialogEventTimer(Timer::from_seconds(
-                    *time,
-                    TimerMode::Once,
-                )));
-            }
+        if let DialogEventOwnership::TIMER(time) = ownership {
+            owning_entity.insert(DialogEventTimer(Timer::from_seconds(
+                *time,
+                TimerMode::Once,
+            )));
         }
 
         match event {
@@ -88,6 +88,19 @@ pub fn dialog_ui_from_event(
     }
 }
 
+fn delete_current_dialog_event(
+    query: &mut Query<Entity, With<CurrentDialogEvent>>,
+    commands: &mut Commands,
+    current_event: &DialogEvent,
+) {
+    if let Ok(current_dialog) = query.get_single() {
+        if let DialogEvent::Waiting = current_event {
+            return;
+        }
+        commands.entity(current_dialog).despawn_recursive();
+    }
+}
+
 fn build_options_ui(
     owning_entity: &mut EntityCommands,
     asset_server: &Res<AssetServer>,
@@ -95,6 +108,7 @@ fn build_options_ui(
     options: &Vec<DialogOption>,
 ) {
     owning_entity
+        .insert(CurrentDialogEvent)
         .insert((
             NodeBundle {
                 style: Style {
@@ -215,6 +229,7 @@ fn build_dialog_ui(
     text: &String,
 ) {
     owning_entity
+        .insert(CurrentDialogEvent)
         .insert((
             NodeBundle {
                 style: Style {
@@ -356,34 +371,22 @@ pub fn mouse_button_input(
     mut global_state: ResMut<GlobalState>,
     buttons: Res<Input<MouseButton>>,
     mut dialogs: ResMut<Dialogs>,
-    mut current_dialog_event: Query<Entity, With<DialogEvent>>,
     mut npc_dialog: Query<(Entity, &mut DialogableNPC), With<NPCInDialog>>,
     mut game_state: ResMut<NextState<InGameState>>,
 ) {
     let (entity, dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
     if buttons.just_pressed(MouseButton::Left) {
         let event = dialogs.runner.next_event(&mut global_state, &mut commands);
-        match event {
-            DialogEvent::Waiting => {}
-            DialogEvent::End => {
-                game_state.set(InGameState::InGame);
-                if let Ok(current_dialog_event) = current_dialog_event.get_single() {
-                    commands.entity(current_dialog_event).despawn_recursive();
-                }
-                commands.entity(entity).remove::<NPCInDialog>();
-                dialogs
-                    .runner
-                    .reset_to(dialog_npc_config.reset_node.as_str());
-            }
-            _ => {
-                if let Ok(current_dialog_event) = current_dialog_event.get_single() {
-                    commands.entity(current_dialog_event).despawn_recursive();
-                }
-                commands.spawn(DialogEventBundle {
-                    event: event.clone(),
-                    ownership: DialogEventOwnership::PARENT,
-                });
-            }
+        commands.spawn(DialogEventBundle {
+            event: event.clone(),
+            ownership: DialogEventOwnership::PARENT,
+        });
+        if let DialogEvent::End = event {
+            game_state.set(InGameState::InGame);
+            commands.entity(entity).remove::<NPCInDialog>();
+            dialogs
+                .runner
+                .reset_to(dialog_npc_config.reset_node.as_str());
         }
     }
 }
