@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use crate::game_state::GameState;
 
+pub mod asset_loading_monitor;
 pub mod fonts;
+
 pub struct AssetsPlugin;
 
 impl Plugin for AssetsPlugin {

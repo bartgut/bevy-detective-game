@@ -6,13 +6,19 @@ pub mod resource;
 pub mod systems;
 
 use systems::*;
+use crate::assets::asset_loading_monitor::AssetLoadingStateChangeExt;
 use crate::game_state::GameState;
+use crate::levels::components::CurrentLevel;
 
 pub struct LevelPlugin;
 
 impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::LevelLoading), load_current_level)
+            .add_component_loading_state::<CurrentLevel, GameState>(
+                GameState::LevelLoading,
+                GameState::LevelSpriteLoading,
+            )
             .add_systems(
                 OnEnter(GameState::LevelSpriteLoading),
                 initialize_current_level,

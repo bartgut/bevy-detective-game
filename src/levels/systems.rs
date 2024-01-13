@@ -9,14 +9,18 @@ use super::components::*;
 
 pub fn load_current_level(
     mut commands: Commands,
+    asset_server: Res<AssetServer>,
     current_level_state: Res<State<LevelState>>,
-    mut game_state: ResMut<NextState<GameState>>,
     levels: Res<LevelsResource>,
 ) {
     match levels.levels.get(current_level_state.get()) {
         Some(level) => {
-            commands.spawn(level.clone()).insert(CurrentLevel);
-            game_state.set(GameState::LevelSpriteLoading);
+            commands.spawn(level.clone()).insert(CurrentLevel {
+                level_handle: asset_server.load(format!(
+                    "images/levels/{}.png",
+                    level.level_description.level_name
+                )),
+            });
         }
         None => {}
     }
@@ -24,15 +28,14 @@ pub fn load_current_level(
 
 pub fn initialize_current_level(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    current_level_query: Query<(&LevelDescription, &Transform), With<CurrentLevel>>,
+    current_level_query: Query<(&Transform, &CurrentLevel)>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
     match current_level_query.get_single() {
-        Ok((level, transform)) => {
+        Ok((transform, current_level)) => {
             commands.spawn((
                 SpriteBundle {
-                    texture: asset_server.load(format!("images/levels/{}.png", level.level_name)),
+                    texture: current_level.level_handle.clone_weak(),
                     transform: transform.clone(),
                     ..default()
                 },

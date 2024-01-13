@@ -32,10 +32,12 @@ use bevy::utils::tracing::callsite::register;
 use bevy_yarnspinner::plugin::yarn_spinner_plugin::YarnSpinnerPlugin;
 use rive_bevy::RivePlugin;
 use crate::animation::SpriteAnimationPlugin;
+use crate::assets::asset_loading_monitor::AssetLoadingStateChangeExt;
 use crate::assets::AssetsPlugin;
 use crate::clickable::ClickablePlugin;
 use crate::clickable::items::resource::ItemResource;
 use crate::comics::ComicsPlugin;
+use crate::comics::rive::components::RiveComicsSink;
 use crate::comics::rive::RiveComicsPlugin;
 use crate::comics_state::{ComicsState, MultiPageComicsState};
 use crate::conditional_visibility::VisibilityConditionalPlugin;
@@ -52,6 +54,7 @@ use crate::global_state::GlobalStatePlugin;
 use crate::in_game_state::InGameState;
 use crate::intro::IntroPlugin;
 use crate::intro_state::IntroState;
+use crate::intro_state::IntroState::Comics1Loading;
 use crate::keyboard::KeyboardPlugin;
 use crate::level_state::LevelState;
 use crate::levels::LevelPlugin;
@@ -68,7 +71,6 @@ use crate::ui::UIUtilsPlugin;
 
 pub mod assets;
 mod conditional_visibility;
-
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;

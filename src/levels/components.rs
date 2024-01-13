@@ -1,5 +1,7 @@
+use bevy::asset::LoadState;
 use bevy::audio::PlaybackMode::Despawn;
 use bevy::prelude::*;
+use crate::assets::asset_loading_monitor::AssetLoadingMonitor;
 use crate::clickable::items::behaviour::ClickableBehaviour;
 use crate::level_state::LevelState;
 use crate::sound::components::AudioPlayable;
@@ -17,7 +19,15 @@ pub struct LevelDescription {
 }
 
 #[derive(Component)]
-pub struct CurrentLevel;
+pub struct CurrentLevel {
+    pub level_handle: Handle<Image>,
+}
+
+impl AssetLoadingMonitor for CurrentLevel {
+    fn loaded(&self, asset_server: &Res<AssetServer>) -> bool {
+        asset_server.get_load_state(self.level_handle.clone()) == Some(LoadState::Loaded)
+    }
+}
 
 #[derive(Component)]
 pub struct CurrentLevelSprite;

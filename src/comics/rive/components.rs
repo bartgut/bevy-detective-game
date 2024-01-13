@@ -1,5 +1,7 @@
+use bevy::asset::LoadState;
 use bevy::prelude::*;
 use rive_bevy::{GenericEvent, Riv, RiveStateMachine, SceneTarget, SpriteEntity, StateMachine};
+use crate::assets::asset_loading_monitor::AssetLoadingMonitor;
 
 #[derive(Component)]
 pub struct RiveComicsUI;
@@ -90,5 +92,11 @@ impl RiveComicsSink {
         if let Some(page) = self.pages.get(self.current_page) {
             (page.events_handler)(commands, asset_server, event);
         }
+    }
+}
+
+impl AssetLoadingMonitor for RiveComicsSink {
+    fn loaded(&self, asset_server: &Res<AssetServer>) -> bool {
+        asset_server.get_load_state(&self.rive_file_handle) == Some(LoadState::Loaded)
     }
 }

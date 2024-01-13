@@ -3,6 +3,7 @@ use bevy::ecs::system::EntityCommands;
 use super::components::*;
 use bevy::prelude::*;
 use bevy::prelude::TimerMode::Repeating;
+use bevy::utils::HashSet;
 use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
 use bevy_yarnspinner::dialog_runner::components::{
     CurrentDialogEvent, DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer,
@@ -13,12 +14,14 @@ use bevy_yarnspinner::dialog_runner::runner::DialogRunner;
 use crate::assets::fonts::Fonts;
 use crate::clickable::components::Clicked;
 use crate::dialogs::dialogs::resource::*;
+use crate::dialogs::ui::dialog_internal_state::DialogInternalState;
 use crate::global_state::global_state::GlobalState;
 use crate::in_game_state::InGameState;
 use crate::in_game_state::InGameState::Dialog;
 use crate::npc::components::{DialogableNPC, NPCInDialog};
 use crate::text::typewriting::systems::create_type_writing_text;
 use crate::ui::components::ButtonInteractionAction;
+use bevy_yarnspinner::parsing::components::LineType;
 
 pub fn dialog_ui_events_with_timer_ownership(
     mut commands: Commands,
@@ -342,14 +345,17 @@ pub fn start_dialog(
             .entity(npc_dialog.get_single().unwrap())
             .insert(NPCInDialog)
             .remove::<Clicked>();
-        game_state.set(InGameState::Dialog);
+        game_state.set(Dialog);
     }
 }
 
 pub fn load_dialog(
     mut commands: Commands,
     dialog_assets: Res<Assets<YarnSpinnerDialog>>,
+    mut avatars_handle: ResMut<AvatarHandles>,
+    asset_server: Res<AssetServer>,
     npc_dialog: Query<&DialogableNPC, Added<NPCInDialog>>,
+    mut internal_dialog_state: ResMut<NextState<DialogInternalState>>,
     global_state: Res<GlobalState>,
 ) {
     let dialog_npc_config = npc_dialog.get_single().unwrap();
@@ -364,6 +370,8 @@ pub fn load_dialog(
         runner: DialogRunner::create_from_nodes(dialog.nodes.clone(), start_node),
         timer: Timer::from_seconds(1.0, Repeating),
     });
+    avatars_handle.add_from_dialog(&dialog, &asset_server);
+    internal_dialog_state.set(DialogInternalState::DialogAvatarLoading)
 }
 
 pub fn mouse_button_input(
@@ -373,6 +381,7 @@ pub fn mouse_button_input(
     mut dialogs: ResMut<Dialogs>,
     mut npc_dialog: Query<(Entity, &mut DialogableNPC), With<NPCInDialog>>,
     mut game_state: ResMut<NextState<InGameState>>,
+    mut dialog_internal_state: ResMut<NextState<DialogInternalState>>,
 ) {
     let (entity, dialog_npc_config) = npc_dialog.get_single_mut().unwrap();
     if buttons.just_pressed(MouseButton::Left) {
@@ -383,6 +392,7 @@ pub fn mouse_button_input(
         });
         if let DialogEvent::End = event {
             game_state.set(InGameState::InGame);
+            dialog_internal_state.set(DialogInternalState::NoDialog);
             commands.entity(entity).remove::<NPCInDialog>();
             dialogs
                 .runner

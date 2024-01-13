@@ -4,7 +4,9 @@ use bevy::prelude::*;
 use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
 
 use ui::systems::*;
+use crate::assets::asset_loading_monitor::AssetLoadingStateChangeExt;
 use crate::dialogs::ui::components::AvatarHandles;
+use crate::dialogs::ui::dialog_internal_state::DialogInternalState;
 use crate::in_game_state::InGameState;
 
 pub struct DialogsPlugin;
@@ -12,6 +14,11 @@ pub struct DialogsPlugin;
 impl Plugin for DialogsPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(AvatarHandles { ..default() })
+            .add_state::<DialogInternalState>()
+            .add_resource_loading_state::<AvatarHandles, DialogInternalState>(
+                DialogInternalState::DialogAvatarLoading,
+                DialogInternalState::Dialog,
+            )
             .add_systems(OnEnter(InGameState::Dialog), load_dialog)
             .add_systems(
                 Update,
@@ -22,7 +29,7 @@ impl Plugin for DialogsPlugin {
                 Update,
                 mouse_button_input
                     .after(interact_with_dialog_text)
-                    .run_if(in_state(InGameState::Dialog)),
+                    .run_if(in_state(DialogInternalState::Dialog)),
             )
             .add_systems(Update, dialog_ui_from_event)
             .add_systems(Update, dialog_ui_events_with_timer_ownership);

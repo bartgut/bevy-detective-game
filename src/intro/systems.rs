@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
+use crate::assets::asset_loading_monitor::AssetLoadingMonitor;
 use crate::comics::rive::components::{RiveComics, RiveComicsPage, RiveComicsPageAudio, RiveComicsSink};
 use crate::game_state::GameState;
 use crate::intro_state::IntroState;
@@ -70,7 +71,7 @@ pub fn mouse_interaction(
     if mouse_buttons.just_pressed(MouseButton::Left) {
         match intro_state.get() {
             IntroState::TypewritingReport => {
-                intro_state_mutator.set(IntroState::Comics1);
+                intro_state_mutator.set(IntroState::Comics1Loading);
             }
             IntroState::Comics1 => {
                 if let Some(mut comics_sink) = comics_sink_query.get_single_mut().ok() {
@@ -86,6 +87,7 @@ pub fn mouse_interaction(
             IntroState::End => {
                 game_state.set(GameState::LevelLoading);
             }
+            _ => {} // loading phases
         }
     }
 }
