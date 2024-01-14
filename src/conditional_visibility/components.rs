@@ -12,7 +12,6 @@ impl VisibilityCondition {
     pub fn passed<T: StateContext + Inventory>(&self, state: &T) -> bool {
         self.conditions
             .iter()
-            .map(|condition| condition.passed(state))
-            .all(|x| x)
+            .all(|condition| condition.passed(state))
     }
 }

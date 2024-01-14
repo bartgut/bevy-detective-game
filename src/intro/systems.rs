@@ -81,6 +81,7 @@ pub fn mouse_interaction(
                     comics_sink.next_page(&mut commands);
                     if comics_sink.is_finished() {
                         intro_state_mutator.set(IntroState::End);
+                        game_state.set(GameState::LevelLoading);
                     }
                 }
             }
