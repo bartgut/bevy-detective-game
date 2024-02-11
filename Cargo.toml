@@ -13,7 +13,7 @@ rand = "0.8.5"
 buildstructor = "*"
 lazy_static = "1.4.0"
 rive-bevy = { git = "https://github.com/rive-app/rive-bevy" }
-bevy-yarnspinner = { path = "../bevy-yarnspinner" }
+bevy-yarnspinner = { git = "https://github.com/bartgut/bevy-yarnspinner" }
 noise = "0.8.2"
 thiserror = "1.0.51"
 ron = "0.8"

@@ -60,6 +60,7 @@ use crate::level_state::LevelState;
 use crate::levels::LevelPlugin;
 use crate::levels::resource::LevelsResource;
 use crate::main_menu::MainMenuPlugin;
+use crate::materials::MaterialsPlugin;
 use crate::movement::MovementPlugin;
 use crate::npc::NpcPlugin;
 use crate::npc::resource::NPCResource;
@@ -71,6 +72,8 @@ use crate::ui::UIUtilsPlugin;
 
 pub mod assets;
 mod conditional_visibility;
+mod materials;
+
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
@@ -117,6 +120,7 @@ fn main() {
         .add_plugins(EventJournalPlugin)
         .add_plugins(QuestPlugin)
         .add_plugins(AssetsPlugin)
+        .add_plugins(MaterialsPlugin)
         .add_plugins(VisibilityConditionalPlugin)
         .run()
 }

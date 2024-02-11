@@ -10,6 +10,7 @@ use crate::clickable::systems::{
     gray_out_all, hover_entry, initialize_items, print_when_hovered_clickable,
     print_when_hovered_clickable_global, return_to_normal_colors,
 };
+use crate::game::items::train_station_fog::train_station_fog_prepare;
 use crate::game_state::GameState;
 use crate::in_game_state::InGameState;
 use crate::levels::components::LevelTeleport;
@@ -24,6 +25,7 @@ pub struct ClickablePlugin;
 impl Plugin for ClickablePlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::InLevelSpritesLoading), initialize_items)
+            .add_systems(PreStartup, train_station_fog_prepare)
             .add_systems(OnEnter(InGameState::LookingAtItem), gray_out_all)
             .add_systems(OnExit(InGameState::LookingAtItem), return_to_normal_colors)
             .add_systems(

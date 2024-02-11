@@ -6,3 +6,4 @@ pub mod librarydoor;
 pub mod librarykeys;
 pub mod loverphoto;
 pub mod monitoring_room_door;
+pub mod train_station_fog;
