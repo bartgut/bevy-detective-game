@@ -29,6 +29,7 @@ pub mod ui;
 
 use bevy::prelude::*;
 use bevy::utils::tracing::callsite::register;
+use bevy_hanabi::HanabiPlugin;
 use bevy_yarnspinner::plugin::yarn_spinner_plugin::YarnSpinnerPlugin;
 use rive_bevy::RivePlugin;
 use crate::animation::SpriteAnimationPlugin;
@@ -84,6 +85,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(RivePlugin)
+        .add_plugins(HanabiPlugin)
         .add_plugins(YarnSpinnerPlugin)
         .add_systems(PreStartup, camera_setup)
         .add_systems(PreStartup, yarn_setup)

@@ -5,7 +5,8 @@ use bevy::prelude::*;
 use bevy::prelude::TimerMode::Repeating;
 use bevy_yarnspinner::asset::asset::YarnSpinnerDialog;
 use bevy_yarnspinner::dialog_runner::components::{
-    DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer, DialogOption,
+    CurrentDialogEvent, DialogEvent, DialogEventBundle, DialogEventOwnership, DialogEventTimer,
+    DialogOption,
 };
 use bevy_yarnspinner::dialog_runner::context::StateContext;
 use bevy_yarnspinner::dialog_runner::runner::DialogRunner;
@@ -19,10 +20,6 @@ use crate::in_game_state::InGameState::Dialog;
 use crate::npc::components::{DialogableNPC, NPCInDialog};
 use crate::text::typewriting::systems::create_type_writing_text;
 use crate::ui::components::ButtonInteractionAction;
-
-// TODO move to yarnspinner subproject
-#[derive(Component)]
-pub struct CurrentDialogEvent;
 
 pub fn dialog_ui_events_with_timer_ownership(
     mut commands: Commands,
