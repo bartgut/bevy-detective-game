@@ -14,8 +14,8 @@ buildstructor = "*"
 lazy_static = "1.4.0"
 rive-bevy = { git = "https://github.com/rive-app/rive-bevy" }
 bevy-yarnspinner = { git = "https://github.com/bartgut/bevy-yarnspinner" }
-noise = "0.8.2"
+noise = "0.9.0"
 thiserror = "1.0.51"
 ron = "0.8"
 serde = { version = "1", features = ["derive"] }
-bevy_hanabi = { version = "0.9.0", default-features = false, features = [ "2d" ] }
+bevy_hanabi = { version = "0.9.0", default-features = false, features = ["2d"] }
